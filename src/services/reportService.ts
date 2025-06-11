@@ -187,7 +187,7 @@ class ReportService {
       </div>
     `).join('');
 
-    const relationshipsSection = data.includeRelationships ? `
+    const relationshipsSection = data.metadata.includeRelationships ? `
       <h2>Control Relationships</h2>
       ${data.relationships.map(rel => `
         <div style="margin-bottom: 12px; padding: 8px; background: #f8fafc; border-radius: 4px;">
