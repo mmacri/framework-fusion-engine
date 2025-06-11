@@ -1,0 +1,36 @@
+
+import { useState } from "react";
+import { Sidebar } from "@/components/Sidebar";
+import { ControlLibrary } from "@/components/ControlLibrary";
+import { FrameworkMapping } from "@/components/FrameworkMapping";
+import { GapAnalysis } from "@/components/GapAnalysis";
+import { Reports } from "@/components/Reports";
+import { DashboardOverview } from "@/components/DashboardOverview";
+
+export function Dashboard() {
+  const [activeView, setActiveView] = useState("dashboard");
+
+  const renderContent = () => {
+    switch (activeView) {
+      case "controls":
+        return <ControlLibrary />;
+      case "mapping":
+        return <FrameworkMapping />;
+      case "gaps":
+        return <GapAnalysis />;
+      case "reports":
+        return <Reports />;
+      default:
+        return <DashboardOverview />;
+    }
+  };
+
+  return (
+    <div className="flex h-screen">
+      <Sidebar activeView={activeView} onViewChange={setActiveView} />
+      <div className="flex-1 overflow-auto">
+        {renderContent()}
+      </div>
+    </div>
+  );
+}
