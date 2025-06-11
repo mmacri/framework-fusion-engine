@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -180,7 +179,6 @@ export function Reports() {
 
         <TabsContent value="custom" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Configuration Panel */}
             <div className="space-y-6">
               <Card>
                 <CardHeader>
@@ -217,7 +215,13 @@ export function Reports() {
                           <Checkbox
                             id={framework}
                             checked={selectedFrameworks.includes(framework)}
-                            onCheckedChange={() => handleFrameworkToggle(framework)}
+                            onCheckedChange={(checked) => {
+                              if (checked === true) {
+                                setSelectedFrameworks(prev => [...prev, framework]);
+                              } else {
+                                setSelectedFrameworks(prev => prev.filter(f => f !== framework));
+                              }
+                            }}
                           />
                           <label htmlFor={framework} className="text-sm">
                             {framework}
@@ -252,7 +256,7 @@ export function Reports() {
                         <Checkbox
                           id="metadata"
                           checked={includeMetadata}
-                          onCheckedChange={setIncludeMetadata}
+                          onCheckedChange={(checked) => setIncludeMetadata(checked === true)}
                         />
                         <label htmlFor="metadata" className="text-sm">
                           Include control metadata
@@ -262,7 +266,7 @@ export function Reports() {
                         <Checkbox
                           id="relationships"
                           checked={includeRelationships}
-                          onCheckedChange={setIncludeRelationships}
+                          onCheckedChange={(checked) => setIncludeRelationships(checked === true)}
                         />
                         <label htmlFor="relationships" className="text-sm">
                           Include relationship mappings
@@ -272,7 +276,7 @@ export function Reports() {
                         <Checkbox
                           id="gaps"
                           checked={includeGaps}
-                          onCheckedChange={setIncludeGaps}
+                          onCheckedChange={(checked) => setIncludeGaps(checked === true)}
                         />
                         <label htmlFor="gaps" className="text-sm">
                           Include gap analysis
@@ -284,7 +288,6 @@ export function Reports() {
               </Card>
             </div>
 
-            {/* Preview Panel */}
             <div className="space-y-6">
               <Card>
                 <CardHeader>

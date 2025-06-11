@@ -1,4 +1,3 @@
-
 import React, { useCallback, useMemo } from 'react';
 import {
   ReactFlow,
@@ -12,6 +11,7 @@ import {
   MiniMap,
   Background,
   Position,
+  MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Badge } from '@/components/ui/badge';
@@ -108,7 +108,7 @@ const mockEdges: NetworkEdge[] = [
       confidence: 95,
     },
     style: { stroke: '#10b981', strokeWidth: 3 },
-    markerEnd: { type: 'arrowclosed' as const, color: '#10b981' },
+    markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' },
   },
   {
     id: 'e2',
@@ -120,7 +120,7 @@ const mockEdges: NetworkEdge[] = [
       confidence: 78,
     },
     style: { stroke: '#f59e0b', strokeWidth: 2 },
-    markerEnd: { type: 'arrowclosed' as const, color: '#f59e0b' },
+    markerEnd: { type: MarkerType.ArrowClosed, color: '#f59e0b' },
   },
   {
     id: 'e3',
@@ -132,7 +132,7 @@ const mockEdges: NetworkEdge[] = [
       confidence: 65,
     },
     style: { stroke: '#3b82f6', strokeWidth: 1 },
-    markerEnd: { type: 'arrowclosed' as const, color: '#3b82f6' },
+    markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' },
   },
   {
     id: 'e4',
@@ -144,7 +144,7 @@ const mockEdges: NetworkEdge[] = [
       confidence: 92,
     },
     style: { stroke: '#10b981', strokeWidth: 3 },
-    markerEnd: { type: 'arrowclosed' as const, color: '#10b981' },
+    markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' },
   },
   {
     id: 'e5',
@@ -156,7 +156,7 @@ const mockEdges: NetworkEdge[] = [
       confidence: 71,
     },
     style: { stroke: '#f59e0b', strokeWidth: 2 },
-    markerEnd: { type: 'arrowclosed' as const, color: '#f59e0b' },
+    markerEnd: { type: MarkerType.ArrowClosed, color: '#f59e0b' },
   },
 ];
 
