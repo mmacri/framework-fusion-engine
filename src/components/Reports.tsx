@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,8 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Download, FileText, Table, BarChart3, Calendar } from "lucide-react";
+import { Download, FileText, Table, BarChart3, Calendar, CheckCircle, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+import { reportService } from "@/services/reportService";
 
 interface ReportTemplate {
   id: string;
@@ -67,7 +68,7 @@ const exportFormats = [
 ];
 
 export function Reports() {
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("template1");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("1");
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
   const [selectedFormat, setSelectedFormat] = useState<string>("pdf");
   const [includeMetadata, setIncludeMetadata] = useState(true);
@@ -75,6 +76,8 @@ export function Reports() {
   const [includeGaps, setIncludeGaps] = useState(false);
   const [customTitle, setCustomTitle] = useState("");
   const [customDescription, setCustomDescription] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
 
   const frameworks = ["NIST 800-53", "PCI-DSS", "HIPAA", "SOX", "Adobe CCF"];
 
@@ -96,22 +99,69 @@ export function Reports() {
     }
   };
 
-  const generateReport = () => {
-    // In a real implementation, this would trigger the report generation
-    console.log("Generating report with:", {
-      template: selectedTemplate,
-      frameworks: selectedFrameworks,
-      format: selectedFormat,
-      options: {
+  const generateReport = async () => {
+    if (selectedFrameworks.length === 0) {
+      toast({
+        title: "No frameworks selected",
+        description: "Please select at least one framework to generate a report.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      await reportService.generateReport({
+        title: customTitle || "Compliance Report",
+        description: customDescription || "Generated compliance report",
+        frameworks: selectedFrameworks,
+        format: selectedFormat as 'pdf' | 'excel' | 'csv' | 'json',
         includeMetadata,
         includeRelationships,
         includeGaps
-      },
-      custom: {
-        title: customTitle,
-        description: customDescription
-      }
-    });
+      });
+
+      toast({
+        title: "Report generated successfully",
+        description: `Your ${selectedFormat.toUpperCase()} report has been downloaded.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error generating report",
+        description: "There was an error generating your report. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const generateTemplateReport = async (template: any) => {
+    setIsGenerating(true);
+    try {
+      await reportService.generateReport({
+        title: template.name,
+        description: template.description,
+        frameworks: template.frameworks,
+        format: 'pdf',
+        includeMetadata: true,
+        includeRelationships: template.type === 'mapping',
+        includeGaps: template.type === 'gap'
+      });
+
+      toast({
+        title: "Report generated successfully",
+        description: `${template.name} has been downloaded as PDF.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error generating report",
+        description: "There was an error generating the template report. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -153,8 +203,17 @@ export function Reports() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Download className="h-4 w-4 mr-2" />
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => generateTemplateReport(template)}
+                        disabled={isGenerating}
+                      >
+                        {isGenerating ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <Download className="h-4 w-4 mr-2" />
+                        )}
                         Generate
                       </Button>
                     </div>
@@ -363,10 +422,19 @@ export function Reports() {
               <Button 
                 onClick={generateReport}
                 className="w-full"
-                disabled={selectedFrameworks.length === 0}
+                disabled={selectedFrameworks.length === 0 || isGenerating}
               >
-                <Download className="h-4 w-4 mr-2" />
-                Generate Report
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4 mr-2" />
+                    Generate Report
+                  </>
+                )}
               </Button>
             </div>
           </div>

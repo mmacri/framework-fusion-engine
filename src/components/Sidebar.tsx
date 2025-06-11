@@ -7,7 +7,8 @@ import {
   BarChart3,
   Download,
   Settings,
-  ChevronRight
+  ChevronRight,
+  HelpCircle
 } from "lucide-react";
 import {
   Sidebar as SidebarContainer,
@@ -47,6 +48,11 @@ const navigationItems = [
     title: "Reports & Export",
     icon: Download,
     id: "reports",
+  },
+  {
+    title: "User Guide",
+    icon: HelpCircle,
+    id: "guide",
   },
 ];
 

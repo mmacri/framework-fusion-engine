@@ -7,6 +7,7 @@ import { FrameworkMapping } from "@/components/FrameworkMapping";
 import { GapAnalysis } from "@/components/GapAnalysis";
 import { Reports } from "@/components/Reports";
 import { DashboardOverview } from "@/components/DashboardOverview";
+import { UserGuide } from "@/components/UserGuide";
 
 export function Dashboard() {
   const [activeView, setActiveView] = useState("dashboard");
@@ -21,6 +22,8 @@ export function Dashboard() {
         return <GapAnalysis />;
       case "reports":
         return <Reports />;
+      case "guide":
+        return <UserGuide />;
       default:
         return <DashboardOverview />;
     }
