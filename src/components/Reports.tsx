@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,7 @@ const exportFormats = [
 ];
 
 export function Reports() {
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("template1");
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
   const [selectedFormat, setSelectedFormat] = useState<string>("pdf");
   const [includeMetadata, setIncludeMetadata] = useState(true);

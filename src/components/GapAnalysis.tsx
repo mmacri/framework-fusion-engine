@@ -115,7 +115,7 @@ const mockGapAnalysis: GapAnalysisResult[] = [
 export function GapAnalysis() {
   const [selectedSource, setSelectedSource] = useState<string>("NIST 800-53");
   const [selectedTarget, setSelectedTarget] = useState<string>("PCI-DSS");
-  const [selectedPriority, setSelectedPriority] = useState<string>("");
+  const [selectedPriority, setSelectedPriority] = useState<string>("all");
 
   const frameworks = ["NIST 800-53", "PCI-DSS", "HIPAA", "SOX", "Adobe CCF"];
 
@@ -124,7 +124,7 @@ export function GapAnalysis() {
   ) || mockGapAnalysis[0];
 
   const filteredGaps = currentAnalysis.gaps.filter(gap => 
-    !selectedPriority || gap.priority === selectedPriority
+    selectedPriority === "all" || gap.priority === selectedPriority
   );
 
   const getPriorityColor = (priority: string) => {
@@ -192,7 +192,7 @@ export function GapAnalysis() {
               <SelectValue placeholder="All Priorities" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Priorities</SelectItem>
+              <SelectItem value="all">All Priorities</SelectItem>
               <SelectItem value="Critical">Critical</SelectItem>
               <SelectItem value="High">High</SelectItem>
               <SelectItem value="Medium">Medium</SelectItem>

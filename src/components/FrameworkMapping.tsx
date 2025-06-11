@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -60,7 +59,7 @@ const frameworks = ["NIST 800-53", "PCI-DSS", "HIPAA", "SOX", "Adobe CCF"];
 
 export function FrameworkMapping() {
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const handleFrameworkFilter = (framework: string) => {
     setSelectedFrameworks(prev => 
@@ -113,6 +112,7 @@ export function FrameworkMapping() {
                     <SelectValue placeholder="Filter by category" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
                     <SelectItem value="access">Access Control</SelectItem>
                     <SelectItem value="audit">Audit & Logging</SelectItem>
                     <SelectItem value="encryption">Encryption</SelectItem>
@@ -123,7 +123,7 @@ export function FrameworkMapping() {
               
               <NetworkVisualization 
                 selectedFrameworks={selectedFrameworks.length ? selectedFrameworks : undefined}
-                selectedCategory={selectedCategory || undefined}
+                selectedCategory={selectedCategory !== "all" ? selectedCategory : undefined}
               />
               
               <div className="flex gap-4 text-sm text-muted-foreground">

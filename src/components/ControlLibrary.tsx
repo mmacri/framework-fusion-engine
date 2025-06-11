@@ -106,9 +106,9 @@ const mockControls: Control[] = [
 
 export function ControlLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFramework, setSelectedFramework] = useState<string>("");
-  const [selectedFamily, setSelectedFamily] = useState<string>("");
-  const [selectedPriority, setSelectedPriority] = useState<string>("");
+  const [selectedFramework, setSelectedFramework] = useState<string>("all");
+  const [selectedFamily, setSelectedFamily] = useState<string>("all");
+  const [selectedPriority, setSelectedPriority] = useState<string>("all");
   const [sortField, setSortField] = useState<string>("controlId");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
@@ -121,9 +121,9 @@ export function ControlLibrary() {
       const matchesSearch = control.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            control.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            control.controlId.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFramework = !selectedFramework || control.framework === selectedFramework;
-      const matchesFamily = !selectedFamily || control.family === selectedFamily;
-      const matchesPriority = !selectedPriority || control.priority === selectedPriority;
+      const matchesFramework = selectedFramework === "all" || control.framework === selectedFramework;
+      const matchesFamily = selectedFamily === "all" || control.family === selectedFamily;
+      const matchesPriority = selectedPriority === "all" || control.priority === selectedPriority;
       
       return matchesSearch && matchesFramework && matchesFamily && matchesPriority;
     })
@@ -183,7 +183,7 @@ export function ControlLibrary() {
             <SelectValue placeholder="Framework" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Frameworks</SelectItem>
+            <SelectItem value="all">All Frameworks</SelectItem>
             {frameworks.map(framework => (
               <SelectItem key={framework} value={framework}>{framework}</SelectItem>
             ))}
@@ -195,7 +195,7 @@ export function ControlLibrary() {
             <SelectValue placeholder="Family" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Families</SelectItem>
+            <SelectItem value="all">All Families</SelectItem>
             {families.map(family => (
               <SelectItem key={family} value={family}>{family}</SelectItem>
             ))}
@@ -207,7 +207,7 @@ export function ControlLibrary() {
             <SelectValue placeholder="Priority" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Priorities</SelectItem>
+            <SelectItem value="all">All Priorities</SelectItem>
             {priorities.map(priority => (
               <SelectItem key={priority} value={priority}>{priority}</SelectItem>
             ))}
