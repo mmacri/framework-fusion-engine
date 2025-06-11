@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { Sidebar } from "@/components/Sidebar";
 import { ControlLibrary } from "@/components/ControlLibrary";
 import { FrameworkMapping } from "@/components/FrameworkMapping";
@@ -26,11 +27,13 @@ export function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen">
-      <Sidebar activeView={activeView} onViewChange={setActiveView} />
-      <div className="flex-1 overflow-auto">
-        {renderContent()}
+    <SidebarProvider>
+      <div className="flex h-screen w-full">
+        <Sidebar activeView={activeView} onViewChange={setActiveView} />
+        <div className="flex-1 overflow-auto">
+          {renderContent()}
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
