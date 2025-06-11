@@ -3,6 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { NetworkVisualization } from "@/components/NetworkVisualization";
+import { useState } from "react";
 
 const mappingData = [
   {
@@ -25,6 +28,20 @@ const mappingData = [
     relationship: "Indirect Support",
     confidence: 65,
     description: "Security responsibility assignment supports access control objectives"
+  },
+  {
+    source: "Adobe CCF-001",
+    target: "NIST AC-1",
+    relationship: "Direct Mapping",
+    confidence: 92,
+    description: "Identity and access management controls with direct correlation"
+  },
+  {
+    source: "Adobe CCF-001",
+    target: "PCI 7.1.1",
+    relationship: "Partial Overlap",
+    confidence: 71,
+    description: "Access control systems with some implementation differences"
   }
 ];
 
@@ -34,10 +51,25 @@ const frameworkMatrix = [
   { framework1: "NIST 800-53", framework2: "SOX", mapped: 98, total: 127, percentage: 77 },
   { framework1: "PCI-DSS", framework2: "HIPAA", mapped: 89, total: 164, percentage: 54 },
   { framework1: "PCI-DSS", framework2: "SOX", mapped: 76, total: 127, percentage: 60 },
-  { framework1: "HIPAA", framework2: "SOX", mapped: 45, total: 127, percentage: 35 }
+  { framework1: "HIPAA", framework2: "SOX", mapped: 45, total: 127, percentage: 35 },
+  { framework1: "Adobe CCF", framework2: "NIST 800-53", mapped: 234, total: 345, percentage: 68 },
+  { framework1: "Adobe CCF", framework2: "PCI-DSS", mapped: 156, total: 281, percentage: 55 }
 ];
 
+const frameworks = ["NIST 800-53", "PCI-DSS", "HIPAA", "SOX", "Adobe CCF"];
+
 export function FrameworkMapping() {
+  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+
+  const handleFrameworkFilter = (framework: string) => {
+    setSelectedFrameworks(prev => 
+      prev.includes(framework) 
+        ? prev.filter(f => f !== framework)
+        : [...prev, framework]
+    );
+  };
+
   return (
     <div className="p-6 space-y-6">
       <div className="border-b border-border pb-4">
@@ -47,12 +79,70 @@ export function FrameworkMapping() {
         </p>
       </div>
 
-      <Tabs defaultValue="relationships" className="space-y-4">
+      <Tabs defaultValue="visualization" className="space-y-4">
         <TabsList>
+          <TabsTrigger value="visualization">Visual Network</TabsTrigger>
           <TabsTrigger value="relationships">Control Relationships</TabsTrigger>
           <TabsTrigger value="matrix">Framework Matrix</TabsTrigger>
-          <TabsTrigger value="visualization">Visual Mapping</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="visualization" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Interactive Relationship Network</CardTitle>
+              <CardDescription>
+                Visual representation of control relationships across frameworks
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-4 items-center flex-wrap">
+                <div className="flex gap-2 flex-wrap">
+                  {frameworks.map(framework => (
+                    <Badge
+                      key={framework}
+                      variant={selectedFrameworks.includes(framework) ? "default" : "outline"}
+                      className="cursor-pointer"
+                      onClick={() => handleFrameworkFilter(framework)}
+                    >
+                      {framework}
+                    </Badge>
+                  ))}
+                </div>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Filter by category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="access">Access Control</SelectItem>
+                    <SelectItem value="audit">Audit & Logging</SelectItem>
+                    <SelectItem value="encryption">Encryption</SelectItem>
+                    <SelectItem value="monitoring">Monitoring</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <NetworkVisualization 
+                selectedFrameworks={selectedFrameworks.length ? selectedFrameworks : undefined}
+                selectedCategory={selectedCategory || undefined}
+              />
+              
+              <div className="flex gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-0.5 bg-green-500"></div>
+                  <span>Direct Mapping</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-0.5 bg-yellow-500"></div>
+                  <span>Partial Overlap</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-0.5 bg-blue-500"></div>
+                  <span>Indirect Support</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="relationships" className="space-y-4">
           <Card>
@@ -126,24 +216,6 @@ export function FrameworkMapping() {
                     </div>
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="visualization" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Visual Relationship Network</CardTitle>
-              <CardDescription>
-                Interactive visualization of control relationships (Coming Soon)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center h-64 bg-muted rounded-lg">
-                <p className="text-muted-foreground">
-                  Interactive network diagram will be available in the next iteration
-                </p>
               </div>
             </CardContent>
           </Card>

@@ -1,216 +1,347 @@
 
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, Filter, Download, Eye, ArrowUpDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, ExternalLink } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const sampleControls = [
+interface Control {
+  id: string;
+  controlId: string;
+  framework: string;
+  title: string;
+  description: string;
+  family: string;
+  priority: "Critical" | "High" | "Medium" | "Low";
+  status: "Active" | "Draft" | "Deprecated";
+  implementationGuidance: string;
+  testingProcedures: string;
+  mappedControls: string[];
+}
+
+const mockControls: Control[] = [
   {
-    id: "NIST-AC-1",
+    id: "1",
+    controlId: "AC-1",
     framework: "NIST 800-53",
     title: "Access Control Policy and Procedures",
     description: "The organization develops, documents, and disseminates access control policy and procedures.",
     family: "Access Control",
-    priority: "High",
+    priority: "Critical",
     status: "Active",
-    mappedControls: ["PCI-7.1.1", "HIPAA-164.312(a)(1)"],
-    lastUpdated: "2024-05-15"
+    implementationGuidance: "Establish formal access control policies that define roles, responsibilities, and procedures for managing user access to systems and data.",
+    testingProcedures: "Review documented access control policies and verify implementation through sampling of user accounts and access reviews.",
+    mappedControls: ["PCI 7.1.1", "HIPAA 164.312(a)(1)", "Adobe CCF-001"]
   },
   {
-    id: "PCI-8.2.1",
+    id: "2",
+    controlId: "7.1.1",
     framework: "PCI-DSS",
-    title: "User Identity Verification",
-    description: "Using unique identification for each user, authentication credentials are assigned.",
+    title: "Access Control Systems",
+    description: "Limit access to computing resources and cardholder information by business need-to-know.",
     family: "Access Control",
     priority: "Critical",
     status: "Active",
-    mappedControls: ["NIST-IA-2", "HIPAA-164.312(d)"],
-    lastUpdated: "2024-04-20"
+    implementationGuidance: "Implement role-based access controls that restrict user access based on job responsibilities and business requirements.",
+    testingProcedures: "Examine user access lists and verify that access is limited to minimum necessary for job function.",
+    mappedControls: ["NIST AC-1", "Adobe CCF-001"]
   },
   {
-    id: "HIPAA-164.312(a)(1)",
-    framework: "HIPAA Security",
-    title: "Assigned Security Responsibility",
-    description: "A covered entity must assign security responsibility to a specific individual.",
-    family: "Administrative Safeguards",
+    id: "3",
+    controlId: "164.312(a)(1)",
+    framework: "HIPAA",
+    title: "Access Control",
+    description: "Assign a unique name and/or number for identifying and tracking user identity.",
+    family: "Access Control",
     priority: "High",
     status: "Active",
-    mappedControls: ["NIST-AC-1", "SOX-CC6.1"],
-    lastUpdated: "2024-03-10"
+    implementationGuidance: "Implement unique user identification systems to ensure accountability and traceability of system access.",
+    testingProcedures: "Review user account naming conventions and verify uniqueness across systems.",
+    mappedControls: ["NIST AC-1", "SOX CC6.1"]
   },
   {
-    id: "SOX-CC6.1",
-    framework: "SOX ITGC",
-    title: "Logical and Physical Access Controls",
-    description: "The entity implements logical and physical access security measures.",
-    family: "Control Activities",
+    id: "4",
+    controlId: "CC6.1",
+    framework: "SOX",
+    title: "Logical Access",
+    description: "The entity implements logical access security software, infrastructure, and architectures.",
+    family: "Access Control",
     priority: "High",
     status: "Active",
-    mappedControls: ["NIST-AC-3", "PCI-7.1"],
-    lastUpdated: "2024-06-01"
+    implementationGuidance: "Deploy and maintain logical access controls including authentication, authorization, and access monitoring systems.",
+    testingProcedures: "Test logical access controls and review access management processes and procedures.",
+    mappedControls: ["HIPAA 164.312(a)(1)"]
   },
   {
-    id: "ADOBE-CCF-001",
+    id: "5",
+    controlId: "CCF-001",
     framework: "Adobe CCF",
-    title: "Information Security Management",
-    description: "Adobe maintains an information security management system.",
-    family: "Information Security",
+    title: "Identity and Access Management",
+    description: "Organization has implemented identity and access management controls to protect systems and data.",
+    family: "Access Control",
     priority: "Critical",
     status: "Active",
-    mappedControls: ["NIST-CA-1", "PCI-12.1"],
-    lastUpdated: "2024-06-10"
+    implementationGuidance: "Establish comprehensive IAM program including identity lifecycle management, access provisioning, and regular access reviews.",
+    testingProcedures: "Assess IAM implementation including user onboarding/offboarding processes and periodic access certifications.",
+    mappedControls: ["NIST AC-1", "PCI 7.1.1"]
+  },
+  {
+    id: "6",
+    controlId: "AU-1",
+    framework: "NIST 800-53",
+    title: "Audit and Accountability Policy",
+    description: "The organization develops, documents, and disseminates audit and accountability policy.",
+    family: "Audit and Accountability",
+    priority: "High",
+    status: "Active",
+    implementationGuidance: "Establish audit policies that define what events to log, retention requirements, and review procedures.",
+    testingProcedures: "Review audit policies and verify implementation through log analysis and audit trail testing.",
+    mappedControls: ["PCI 10.1", "SOX CC7.1"]
   }
 ];
 
-const priorityColors = {
-  Critical: "bg-red-100 text-red-800",
-  High: "bg-orange-100 text-orange-800",
-  Medium: "bg-yellow-100 text-yellow-800",
-  Low: "bg-green-100 text-green-800"
-};
-
 export function ControlLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFramework, setSelectedFramework] = useState("all");
-  const [selectedFamily, setSelectedFamily] = useState("all");
+  const [selectedFramework, setSelectedFramework] = useState<string>("");
+  const [selectedFamily, setSelectedFamily] = useState<string>("");
+  const [selectedPriority, setSelectedPriority] = useState<string>("");
+  const [sortField, setSortField] = useState<string>("controlId");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  const filteredControls = sampleControls.filter(control => {
-    const matchesSearch = control.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         control.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         control.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFramework = selectedFramework === "all" || control.framework === selectedFramework;
-    const matchesFamily = selectedFamily === "all" || control.family === selectedFamily;
-    
-    return matchesSearch && matchesFramework && matchesFamily;
-  });
+  const frameworks = Array.from(new Set(mockControls.map(c => c.framework)));
+  const families = Array.from(new Set(mockControls.map(c => c.family)));
+  const priorities = Array.from(new Set(mockControls.map(c => c.priority)));
 
-  const frameworks = [...new Set(sampleControls.map(c => c.framework))];
-  const families = [...new Set(sampleControls.map(c => c.family))];
+  const filteredControls = mockControls
+    .filter(control => {
+      const matchesSearch = control.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           control.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           control.controlId.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFramework = !selectedFramework || control.framework === selectedFramework;
+      const matchesFamily = !selectedFamily || control.family === selectedFamily;
+      const matchesPriority = !selectedPriority || control.priority === selectedPriority;
+      
+      return matchesSearch && matchesFramework && matchesFamily && matchesPriority;
+    })
+    .sort((a, b) => {
+      const aVal = a[sortField as keyof Control];
+      const bVal = b[sortField as keyof Control];
+      const modifier = sortDirection === "asc" ? 1 : -1;
+      return aVal < bVal ? -modifier : aVal > bVal ? modifier : 0;
+    });
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "Critical": return "bg-red-100 text-red-800";
+      case "High": return "bg-orange-100 text-orange-800";
+      case "Medium": return "bg-yellow-100 text-yellow-800";
+      case "Low": return "bg-green-100 text-green-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getFrameworkColor = (framework: string) => {
+    switch (framework) {
+      case "NIST 800-53": return "bg-blue-100 text-blue-800";
+      case "PCI-DSS": return "bg-green-100 text-green-800";
+      case "HIPAA": return "bg-purple-100 text-purple-800";
+      case "SOX": return "bg-orange-100 text-orange-800";
+      case "Adobe CCF": return "bg-red-100 text-red-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
       <div className="border-b border-border pb-4">
         <h1 className="text-3xl font-bold text-foreground">Control Library</h1>
         <p className="text-muted-foreground mt-2">
-          Browse and search across all compliance framework controls
+          Browse and manage compliance controls across all frameworks
         </p>
       </div>
 
-      {/* Search and Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Search & Filter Controls
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search controls by ID, title, or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={selectedFramework} onValueChange={setSelectedFramework}>
-              <SelectTrigger className="w-full lg:w-48">
-                <SelectValue placeholder="Framework" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Frameworks</SelectItem>
-                {frameworks.map(framework => (
-                  <SelectItem key={framework} value={framework}>{framework}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedFamily} onValueChange={setSelectedFamily}>
-              <SelectTrigger className="w-full lg:w-48">
-                <SelectValue placeholder="Family" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Families</SelectItem>
-                {families.map(family => (
-                  <SelectItem key={family} value={family}>{family}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      {/* Filters and Search */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+        <div className="lg:col-span-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search controls, descriptions, or IDs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        
+        <Select value={selectedFramework} onValueChange={setSelectedFramework}>
+          <SelectTrigger>
+            <SelectValue placeholder="Framework" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">All Frameworks</SelectItem>
+            {frameworks.map(framework => (
+              <SelectItem key={framework} value={framework}>{framework}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      {/* Results */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing {filteredControls.length} controls
-          </p>
+        <Select value={selectedFamily} onValueChange={setSelectedFamily}>
+          <SelectTrigger>
+            <SelectValue placeholder="Family" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">All Families</SelectItem>
+            {families.map(family => (
+              <SelectItem key={family} value={family}>{family}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+          <SelectTrigger>
+            <SelectValue placeholder="Priority" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">All Priorities</SelectItem>
+            {priorities.map(priority => (
+              <SelectItem key={priority} value={priority}>{priority}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Action Bar */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            {filteredControls.length} controls found
+          </span>
+        </div>
+        <div className="flex gap-2">
           <Button variant="outline" size="sm">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Export Results
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => {
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+          }}>
+            <ArrowUpDown className="h-4 w-4 mr-2" />
+            Sort {sortDirection === "asc" ? "↑" : "↓"}
           </Button>
         </div>
+      </div>
 
-        <div className="grid gap-4">
-          {filteredControls.map((control) => (
-            <Card key={control.id} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <CardTitle className="text-lg">{control.id}</CardTitle>
-                      <Badge variant="outline">{control.framework}</Badge>
-                      <Badge 
-                        className={priorityColors[control.priority as keyof typeof priorityColors]}
-                      >
-                        {control.priority}
-                      </Badge>
-                    </div>
-                    <CardDescription className="text-base font-medium">
-                      {control.title}
-                    </CardDescription>
-                  </div>
+      {/* Controls Grid */}
+      <div className="grid gap-4">
+        {filteredControls.map((control) => (
+          <Card key={control.id} className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className={getFrameworkColor(control.framework)}>
+                    {control.controlId}
+                  </Badge>
+                  <Badge className={getPriorityColor(control.priority)}>
+                    {control.priority}
+                  </Badge>
+                  <Badge variant="secondary">{control.family}</Badge>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">{control.description}</p>
-                
-                <div className="flex flex-wrap gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">Family: </span>
-                    <span className="text-muted-foreground">{control.family}</span>
-                  </div>
-                  <div>
-                    <span className="font-medium">Status: </span>
-                    <span className="text-muted-foreground">{control.status}</span>
-                  </div>
-                  <div>
-                    <span className="font-medium">Last Updated: </span>
-                    <span className="text-muted-foreground">{control.lastUpdated}</span>
-                  </div>
-                </div>
-
-                {control.mappedControls.length > 0 && (
-                  <div className="mt-4">
-                    <span className="text-sm font-medium">Mapped Controls: </span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {control.mappedControls.map((mapped) => (
-                        <Badge key={mapped} variant="secondary" className="text-xs">
-                          {mapped}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-3">
+                        <Badge variant="outline" className={getFrameworkColor(control.framework)}>
+                          {control.controlId}
                         </Badge>
-                      ))}
-                    </div>
+                        {control.title}
+                      </DialogTitle>
+                      <DialogDescription>
+                        {control.framework} - {control.family}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Tabs defaultValue="details" className="w-full">
+                      <TabsList>
+                        <TabsTrigger value="details">Details</TabsTrigger>
+                        <TabsTrigger value="implementation">Implementation</TabsTrigger>
+                        <TabsTrigger value="testing">Testing</TabsTrigger>
+                        <TabsTrigger value="mappings">Mappings</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="details" className="space-y-4">
+                        <div>
+                          <h4 className="font-medium mb-2">Description</h4>
+                          <p className="text-sm text-muted-foreground">{control.description}</p>
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="implementation" className="space-y-4">
+                        <div>
+                          <h4 className="font-medium mb-2">Implementation Guidance</h4>
+                          <p className="text-sm text-muted-foreground">{control.implementationGuidance}</p>
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="testing" className="space-y-4">
+                        <div>
+                          <h4 className="font-medium mb-2">Testing Procedures</h4>
+                          <p className="text-sm text-muted-foreground">{control.testingProcedures}</p>
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="mappings" className="space-y-4">
+                        <div>
+                          <h4 className="font-medium mb-2">Mapped Controls</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {control.mappedControls.map(mappedControl => (
+                              <Badge key={mappedControl} variant="outline">
+                                {mappedControl}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </DialogContent>
+                </Dialog>
+              </div>
+              <CardTitle className="text-lg">{control.title}</CardTitle>
+              <CardDescription className="text-sm">
+                {control.framework}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                {control.description}
+              </p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Mapped to:</span>
+                  <div className="flex gap-1">
+                    {control.mappedControls.slice(0, 3).map(mapped => (
+                      <Badge key={mapped} variant="outline" className="text-xs">
+                        {mapped}
+                      </Badge>
+                    ))}
+                    {control.mappedControls.length > 3 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{control.mappedControls.length - 3} more
+                      </Badge>
+                    )}
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </div>
+                <Badge variant={control.status === "Active" ? "default" : "secondary"}>
+                  {control.status}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
