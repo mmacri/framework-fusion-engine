@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import { Search, Filter, Download, Eye, ArrowUpDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Filter, Download, Eye, ArrowUpDown, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -104,13 +103,24 @@ const mockControls: Control[] = [
   }
 ];
 
-export function ControlLibrary() {
+interface ControlLibraryProps {
+  selectedFramework?: string | null;
+}
+
+export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFramework, setSelectedFramework] = useState<string>("all");
+  const [selectedFrameworkFilter, setSelectedFrameworkFilter] = useState<string>("all");
   const [selectedFamily, setSelectedFamily] = useState<string>("all");
   const [selectedPriority, setSelectedPriority] = useState<string>("all");
   const [sortField, setSortField] = useState<string>("controlId");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  // Handle framework selection from sidebar
+  useEffect(() => {
+    if (selectedFramework) {
+      setSelectedFrameworkFilter(selectedFramework);
+    }
+  }, [selectedFramework]);
 
   const frameworks = Array.from(new Set(mockControls.map(c => c.framework)));
   const families = Array.from(new Set(mockControls.map(c => c.family)));
@@ -121,7 +131,7 @@ export function ControlLibrary() {
       const matchesSearch = control.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            control.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            control.controlId.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFramework = selectedFramework === "all" || control.framework === selectedFramework;
+      const matchesFramework = selectedFrameworkFilter === "all" || control.framework === selectedFrameworkFilter;
       const matchesFamily = selectedFamily === "all" || control.family === selectedFamily;
       const matchesPriority = selectedPriority === "all" || control.priority === selectedPriority;
       
@@ -133,6 +143,10 @@ export function ControlLibrary() {
       const modifier = sortDirection === "asc" ? 1 : -1;
       return aVal < bVal ? -modifier : aVal > bVal ? modifier : 0;
     });
+
+  const clearFrameworkFilter = () => {
+    setSelectedFrameworkFilter("all");
+  };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -158,10 +172,29 @@ export function ControlLibrary() {
   return (
     <div className="p-6 space-y-6">
       <div className="border-b border-border pb-4">
-        <h1 className="text-3xl font-bold text-foreground">Control Library</h1>
-        <p className="text-muted-foreground mt-2">
-          Browse and manage compliance controls across all frameworks
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Control Library</h1>
+            <p className="text-muted-foreground mt-2">
+              Browse and manage compliance controls across all frameworks
+            </p>
+          </div>
+          {selectedFramework && (
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-sm px-3 py-1">
+                Filtered by: {selectedFramework}
+              </Badge>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearFrameworkFilter}
+                className="h-6 w-6 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Filters and Search */}
@@ -178,7 +211,7 @@ export function ControlLibrary() {
           </div>
         </div>
         
-        <Select value={selectedFramework} onValueChange={setSelectedFramework}>
+        <Select value={selectedFrameworkFilter} onValueChange={setSelectedFrameworkFilter}>
           <SelectTrigger>
             <SelectValue placeholder="Framework" />
           </SelectTrigger>
@@ -221,6 +254,11 @@ export function ControlLibrary() {
           <span className="text-sm text-muted-foreground">
             {filteredControls.length} controls found
           </span>
+          {selectedFramework && (
+            <span className="text-xs text-muted-foreground">
+              • Showing all {selectedFramework} controls
+            </span>
+          )}
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -236,7 +274,7 @@ export function ControlLibrary() {
         </div>
       </div>
 
-      {/* Controls Grid */}
+      {/* Controls Grid - Display all controls without pagination */}
       <div className="grid gap-4">
         {filteredControls.map((control) => (
           <Card key={control.id} className="hover:shadow-md transition-shadow">
@@ -257,7 +295,7 @@ export function ControlLibrary() {
                       <Eye className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-4xl">
+                  <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle className="flex items-center gap-3">
                         <Badge variant="outline" className={getFrameworkColor(control.framework)}>
@@ -281,17 +319,39 @@ export function ControlLibrary() {
                           <h4 className="font-medium mb-2">Description</h4>
                           <p className="text-sm text-muted-foreground">{control.description}</p>
                         </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <h4 className="font-medium mb-2">Framework</h4>
+                            <p className="text-sm text-muted-foreground">{control.framework}</p>
+                          </div>
+                          <div>
+                            <h4 className="font-medium mb-2">Family</h4>
+                            <p className="text-sm text-muted-foreground">{control.family}</p>
+                          </div>
+                          <div>
+                            <h4 className="font-medium mb-2">Priority</h4>
+                            <Badge className={getPriorityColor(control.priority)}>
+                              {control.priority}
+                            </Badge>
+                          </div>
+                          <div>
+                            <h4 className="font-medium mb-2">Status</h4>
+                            <Badge variant={control.status === "Active" ? "default" : "secondary"}>
+                              {control.status}
+                            </Badge>
+                          </div>
+                        </div>
                       </TabsContent>
                       <TabsContent value="implementation" className="space-y-4">
                         <div>
                           <h4 className="font-medium mb-2">Implementation Guidance</h4>
-                          <p className="text-sm text-muted-foreground">{control.implementationGuidance}</p>
+                          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{control.implementationGuidance}</p>
                         </div>
                       </TabsContent>
                       <TabsContent value="testing" className="space-y-4">
                         <div>
                           <h4 className="font-medium mb-2">Testing Procedures</h4>
-                          <p className="text-sm text-muted-foreground">{control.testingProcedures}</p>
+                          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{control.testingProcedures}</p>
                         </div>
                       </TabsContent>
                       <TabsContent value="mappings" className="space-y-4">
@@ -316,23 +376,18 @@ export function ControlLibrary() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+              <p className="text-sm text-muted-foreground mb-3">
                 {control.description}
               </p>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">Mapped to:</span>
-                  <div className="flex gap-1">
-                    {control.mappedControls.slice(0, 3).map(mapped => (
+                  <div className="flex gap-1 flex-wrap">
+                    {control.mappedControls.map(mapped => (
                       <Badge key={mapped} variant="outline" className="text-xs">
                         {mapped}
                       </Badge>
                     ))}
-                    {control.mappedControls.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{control.mappedControls.length - 3} more
-                      </Badge>
-                    )}
                   </div>
                 </div>
                 <Badge variant={control.status === "Active" ? "default" : "secondary"}>
@@ -343,6 +398,24 @@ export function ControlLibrary() {
           </Card>
         ))}
       </div>
+
+      {filteredControls.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No controls found matching your criteria.</p>
+          <Button 
+            variant="outline" 
+            className="mt-4" 
+            onClick={() => {
+              setSearchTerm("");
+              setSelectedFrameworkFilter("all");
+              setSelectedFamily("all");
+              setSelectedPriority("all");
+            }}
+          >
+            Clear all filters
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

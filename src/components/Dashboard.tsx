@@ -11,11 +11,23 @@ import { UserGuide } from "@/components/UserGuide";
 
 export function Dashboard() {
   const [activeView, setActiveView] = useState("dashboard");
+  const [selectedFramework, setSelectedFramework] = useState<string | null>(null);
+
+  const handleFrameworkClick = (frameworkName: string) => {
+    setSelectedFramework(frameworkName);
+  };
+
+  const handleViewChange = (view: string) => {
+    setActiveView(view);
+    if (view !== "controls") {
+      setSelectedFramework(null);
+    }
+  };
 
   const renderContent = () => {
     switch (activeView) {
       case "controls":
-        return <ControlLibrary />;
+        return <ControlLibrary selectedFramework={selectedFramework} />;
       case "mapping":
         return <FrameworkMapping />;
       case "gaps":
@@ -32,7 +44,11 @@ export function Dashboard() {
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full">
-        <Sidebar activeView={activeView} onViewChange={setActiveView} />
+        <Sidebar 
+          activeView={activeView} 
+          onViewChange={handleViewChange}
+          onFrameworkClick={handleFrameworkClick}
+        />
         <div className="flex-1 overflow-auto">
           {renderContent()}
         </div>

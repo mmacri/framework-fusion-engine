@@ -67,9 +67,15 @@ const frameworks = [
 interface SidebarProps {
   activeView?: string;
   onViewChange?: (view: string) => void;
+  onFrameworkClick?: (frameworkName: string) => void;
 }
 
-export function Sidebar({ activeView = "dashboard", onViewChange }: SidebarProps) {
+export function Sidebar({ activeView = "dashboard", onViewChange, onFrameworkClick }: SidebarProps) {
+  const handleFrameworkClick = (frameworkName: string) => {
+    onViewChange?.("controls");
+    onFrameworkClick?.(frameworkName);
+  };
+
   return (
     <SidebarContainer className="border-r border-border bg-card">
       <SidebarHeader className="border-b border-border p-6">
@@ -118,7 +124,10 @@ export function Sidebar({ activeView = "dashboard", onViewChange }: SidebarProps
             <SidebarMenu>
               {frameworks.map((framework) => (
                 <SidebarMenuItem key={framework.id}>
-                  <SidebarMenuButton className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground">
+                  <SidebarMenuButton 
+                    onClick={() => handleFrameworkClick(framework.name)}
+                    className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                  >
                     <span className="truncate">{framework.name}</span>
                     <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                       {framework.count}
