@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Search, Filter, Download, Eye, ArrowUpDown, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -22,85 +23,165 @@ interface Control {
   mappedControls: string[];
 }
 
+// Generate comprehensive mock data for all frameworks
+const generateNISTControls = (): Control[] => {
+  const nistFamilies = [
+    "Access Control", "Audit and Accountability", "Assessment, Authorization, and Monitoring",
+    "Configuration Management", "Contingency Planning", "Identification and Authentication",
+    "Incident Response", "Maintenance", "Media Protection", "Physical and Environmental Protection",
+    "Planning", "Personnel Security", "Risk Assessment", "System and Services Acquisition",
+    "System and Communications Protection", "System and Information Integrity"
+  ];
+  
+  const controls: Control[] = [];
+  
+  nistFamilies.forEach((family, familyIndex) => {
+    const familyCode = family.split(' ')[0].substring(0, 2).toUpperCase();
+    const controlsPerFamily = Math.floor(945 / nistFamilies.length) + (familyIndex < 945 % nistFamilies.length ? 1 : 0);
+    
+    for (let i = 1; i <= controlsPerFamily; i++) {
+      const controlId = `${familyCode}-${i}`;
+      const priorities = ["Critical", "High", "Medium", "Low"] as const;
+      const priority = priorities[Math.floor(Math.random() * priorities.length)];
+      
+      controls.push({
+        id: `nist-${familyIndex}-${i}`,
+        controlId,
+        framework: "NIST 800-53",
+        title: `${family} Control ${i}`,
+        description: `This control addresses ${family.toLowerCase()} requirements and establishes necessary procedures for maintaining security compliance.`,
+        family,
+        priority,
+        status: "Active",
+        implementationGuidance: `Implement comprehensive ${family.toLowerCase()} measures including policy development, technical controls, and regular monitoring procedures.`,
+        testingProcedures: `Verify ${family.toLowerCase()} implementation through documentation review, technical testing, and compliance validation.`,
+        mappedControls: []
+      });
+    }
+  });
+  
+  return controls;
+};
+
+const generatePCIControls = (): Control[] => {
+  const pciRequirements = [
+    "Install and maintain a firewall configuration",
+    "Do not use vendor-supplied defaults",
+    "Protect stored cardholder data",
+    "Encrypt transmission of cardholder data",
+    "Protect all systems against malware",
+    "Develop and maintain secure systems",
+    "Restrict access to cardholder data",
+    "Identify and authenticate access",
+    "Restrict physical access to cardholder data",
+    "Track and monitor all access",
+    "Regularly test security systems",
+    "Maintain a policy that addresses information security"
+  ];
+  
+  const controls: Control[] = [];
+  
+  pciRequirements.forEach((requirement, reqIndex) => {
+    const controlsPerReq = Math.floor(281 / pciRequirements.length) + (reqIndex < 281 % pciRequirements.length ? 1 : 0);
+    
+    for (let i = 1; i <= controlsPerReq; i++) {
+      const controlId = `${reqIndex + 1}.${i}`;
+      const priorities = ["Critical", "High", "Medium"] as const;
+      const priority = priorities[Math.floor(Math.random() * priorities.length)];
+      
+      controls.push({
+        id: `pci-${reqIndex}-${i}`,
+        controlId,
+        framework: "PCI-DSS",
+        title: `Requirement ${reqIndex + 1}.${i}`,
+        description: `${requirement} - detailed implementation requirement for PCI DSS compliance.`,
+        family: "Payment Card Security",
+        priority,
+        status: "Active",
+        implementationGuidance: `Implement ${requirement.toLowerCase()} through proper technical and administrative controls.`,
+        testingProcedures: `Test compliance with requirement through validation of implementation and effectiveness.`,
+        mappedControls: []
+      });
+    }
+  });
+  
+  return controls;
+};
+
+const generateHIPAAControls = (): Control[] => {
+  const hipaaCategories = [
+    "Administrative Safeguards", "Physical Safeguards", "Technical Safeguards"
+  ];
+  
+  const controls: Control[] = [];
+  
+  hipaaCategories.forEach((category, catIndex) => {
+    const controlsPerCategory = Math.floor(164 / hipaaCategories.length) + (catIndex < 164 % hipaaCategories.length ? 1 : 0);
+    
+    for (let i = 1; i <= controlsPerCategory; i++) {
+      const controlId = `164.${300 + catIndex * 10 + Math.floor(i / 10)}.${String.fromCharCode(97 + (i % 10))}(${i})`;
+      const priorities = ["High", "Medium", "Low"] as const;
+      const priority = priorities[Math.floor(Math.random() * priorities.length)];
+      
+      controls.push({
+        id: `hipaa-${catIndex}-${i}`,
+        controlId,
+        framework: "HIPAA",
+        title: `${category} ${i}`,
+        description: `HIPAA ${category.toLowerCase()} requirement for protecting electronic protected health information.`,
+        family: category,
+        priority,
+        status: "Active",
+        implementationGuidance: `Implement ${category.toLowerCase()} to ensure proper protection of ePHI in accordance with HIPAA requirements.`,
+        testingProcedures: `Verify implementation of ${category.toLowerCase()} through audit procedures and compliance testing.`,
+        mappedControls: []
+      });
+    }
+  });
+  
+  return controls;
+};
+
+const generateSOXControls = (): Control[] => {
+  const soxCategories = [
+    "Control Environment", "Risk Assessment", "Control Activities", "Information & Communication", "Monitoring"
+  ];
+  
+  const controls: Control[] = [];
+  
+  soxCategories.forEach((category, catIndex) => {
+    const controlsPerCategory = Math.floor(127 / soxCategories.length) + (catIndex < 127 % soxCategories.length ? 1 : 0);
+    
+    for (let i = 1; i <= controlsPerCategory; i++) {
+      const controlId = `CC${catIndex + 1}.${i}`;
+      const priorities = ["High", "Medium", "Low"] as const;
+      const priority = priorities[Math.floor(Math.random() * priorities.length)];
+      
+      controls.push({
+        id: `sox-${catIndex}-${i}`,
+        controlId,
+        framework: "SOX",
+        title: `${category} Control ${i}`,
+        description: `SOX-compliant ${category.toLowerCase()} control for financial reporting and internal controls.`,
+        family: category,
+        priority,
+        status: "Active",
+        implementationGuidance: `Establish ${category.toLowerCase()} controls to ensure accurate financial reporting and compliance with SOX requirements.`,
+        testingProcedures: `Test ${category.toLowerCase()} effectiveness through control testing and validation procedures.`,
+        mappedControls: []
+      });
+    }
+  });
+  
+  return controls;
+};
+
+// Combine all controls
 const mockControls: Control[] = [
-  {
-    id: "1",
-    controlId: "AC-1",
-    framework: "NIST 800-53",
-    title: "Access Control Policy and Procedures",
-    description: "The organization develops, documents, and disseminates access control policy and procedures.",
-    family: "Access Control",
-    priority: "Critical",
-    status: "Active",
-    implementationGuidance: "Establish formal access control policies that define roles, responsibilities, and procedures for managing user access to systems and data.",
-    testingProcedures: "Review documented access control policies and verify implementation through sampling of user accounts and access reviews.",
-    mappedControls: ["PCI 7.1.1", "HIPAA 164.312(a)(1)", "Adobe CCF-001"]
-  },
-  {
-    id: "2",
-    controlId: "7.1.1",
-    framework: "PCI-DSS",
-    title: "Access Control Systems",
-    description: "Limit access to computing resources and cardholder information by business need-to-know.",
-    family: "Access Control",
-    priority: "Critical",
-    status: "Active",
-    implementationGuidance: "Implement role-based access controls that restrict user access based on job responsibilities and business requirements.",
-    testingProcedures: "Examine user access lists and verify that access is limited to minimum necessary for job function.",
-    mappedControls: ["NIST AC-1", "Adobe CCF-001"]
-  },
-  {
-    id: "3",
-    controlId: "164.312(a)(1)",
-    framework: "HIPAA",
-    title: "Access Control",
-    description: "Assign a unique name and/or number for identifying and tracking user identity.",
-    family: "Access Control",
-    priority: "High",
-    status: "Active",
-    implementationGuidance: "Implement unique user identification systems to ensure accountability and traceability of system access.",
-    testingProcedures: "Review user account naming conventions and verify uniqueness across systems.",
-    mappedControls: ["NIST AC-1", "SOX CC6.1"]
-  },
-  {
-    id: "4",
-    controlId: "CC6.1",
-    framework: "SOX",
-    title: "Logical Access",
-    description: "The entity implements logical access security software, infrastructure, and architectures.",
-    family: "Access Control",
-    priority: "High",
-    status: "Active",
-    implementationGuidance: "Deploy and maintain logical access controls including authentication, authorization, and access monitoring systems.",
-    testingProcedures: "Test logical access controls and review access management processes and procedures.",
-    mappedControls: ["HIPAA 164.312(a)(1)"]
-  },
-  {
-    id: "5",
-    controlId: "CCF-001",
-    framework: "Adobe CCF",
-    title: "Identity and Access Management",
-    description: "Organization has implemented identity and access management controls to protect systems and data.",
-    family: "Access Control",
-    priority: "Critical",
-    status: "Active",
-    implementationGuidance: "Establish comprehensive IAM program including identity lifecycle management, access provisioning, and regular access reviews.",
-    testingProcedures: "Assess IAM implementation including user onboarding/offboarding processes and periodic access certifications.",
-    mappedControls: ["NIST AC-1", "PCI 7.1.1"]
-  },
-  {
-    id: "6",
-    controlId: "AU-1",
-    framework: "NIST 800-53",
-    title: "Audit and Accountability Policy",
-    description: "The organization develops, documents, and disseminates audit and accountability policy.",
-    family: "Audit and Accountability",
-    priority: "High",
-    status: "Active",
-    implementationGuidance: "Establish audit policies that define what events to log, retention requirements, and review procedures.",
-    testingProcedures: "Review audit policies and verify implementation through log analysis and audit trail testing.",
-    mappedControls: ["PCI 10.1", "SOX CC7.1"]
-  }
+  ...generateNISTControls(),
+  ...generatePCIControls(),
+  ...generateHIPAAControls(),
+  ...generateSOXControls()
 ];
 
 interface ControlLibraryProps {
@@ -164,7 +245,6 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
       case "PCI-DSS": return "bg-green-100 text-green-800";
       case "HIPAA": return "bg-purple-100 text-purple-800";
       case "SOX": return "bg-orange-100 text-orange-800";
-      case "Adobe CCF": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -274,7 +354,7 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
         </div>
       </div>
 
-      {/* Controls Grid - Display all controls without pagination */}
+      {/* Controls Grid - Display ALL controls without any limit */}
       <div className="grid gap-4">
         {filteredControls.map((control) => (
           <Card key={control.id} className="hover:shadow-md transition-shadow">
@@ -358,11 +438,15 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
                         <div>
                           <h4 className="font-medium mb-2">Mapped Controls</h4>
                           <div className="flex flex-wrap gap-2">
-                            {control.mappedControls.map(mappedControl => (
-                              <Badge key={mappedControl} variant="outline">
-                                {mappedControl}
-                              </Badge>
-                            ))}
+                            {control.mappedControls.length > 0 ? (
+                              control.mappedControls.map(mappedControl => (
+                                <Badge key={mappedControl} variant="outline">
+                                  {mappedControl}
+                                </Badge>
+                              ))
+                            ) : (
+                              <p className="text-sm text-muted-foreground">No mapped controls</p>
+                            )}
                           </div>
                         </div>
                       </TabsContent>
@@ -381,14 +465,10 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
               </p>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Mapped to:</span>
-                  <div className="flex gap-1 flex-wrap">
-                    {control.mappedControls.map(mapped => (
-                      <Badge key={mapped} variant="outline" className="text-xs">
-                        {mapped}
-                      </Badge>
-                    ))}
-                  </div>
+                  <span className="text-xs text-muted-foreground">Family:</span>
+                  <Badge variant="outline" className="text-xs">
+                    {control.family}
+                  </Badge>
                 </div>
                 <Badge variant={control.status === "Active" ? "default" : "secondary"}>
                   {control.status}

@@ -61,7 +61,6 @@ const frameworks = [
   { name: "PCI-DSS", id: "pci", count: 281 },
   { name: "HIPAA Security", id: "hipaa", count: 164 },
   { name: "SOX ITGC", id: "sox", count: 127 },
-  { name: "Adobe CCF", id: "adobe", count: 892 },
 ];
 
 interface SidebarProps {
