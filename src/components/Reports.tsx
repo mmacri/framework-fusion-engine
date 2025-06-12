@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,10 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Download, FileText, Table, BarChart3, Calendar, CheckCircle, Loader2 } from "lucide-react";
+import { Download, FileText, Table, BarChart3, Calendar, CheckCircle, Loader2, TrendingUp, Users, Shield } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { reportService } from "@/services/reportService";
+import { ReportPreview } from "@/components/Reports/ReportPreview";
 
 interface ReportTemplate {
   id: string;
@@ -19,52 +21,67 @@ interface ReportTemplate {
   frameworks: string[];
   lastGenerated?: string;
   downloadCount: number;
+  complexity: "basic" | "intermediate" | "advanced";
 }
 
 const reportTemplates: ReportTemplate[] = [
   {
     id: "1",
-    name: "NIST to PCI Mapping Report",
-    description: "Comprehensive mapping analysis between NIST 800-53 and PCI-DSS controls",
+    name: "NIST to PCI Comprehensive Mapping",
+    description: "Detailed cross-reference analysis between NIST 800-53 and PCI-DSS with gap identification and implementation guidance",
     type: "mapping",
     frameworks: ["NIST 800-53", "PCI-DSS"],
     lastGenerated: "2024-01-15",
-    downloadCount: 47
+    downloadCount: 47,
+    complexity: "advanced"
   },
   {
     id: "2",
-    name: "HIPAA Compliance Gap Analysis",
-    description: "Detailed gap analysis for HIPAA Security Rule compliance requirements",
+    name: "HIPAA Security Rule Gap Analysis",
+    description: "Comprehensive gap analysis for HIPAA Security Rule with detailed remediation recommendations and timeline",
     type: "gap",
     frameworks: ["HIPAA", "NIST 800-53"],
     lastGenerated: "2024-01-12",
-    downloadCount: 23
+    downloadCount: 23,
+    complexity: "intermediate"
   },
   {
     id: "3",
     name: "Multi-Framework Control Matrix",
-    description: "Cross-reference matrix showing control relationships across all frameworks",
+    description: "Executive-level cross-reference matrix showing control relationships and coverage across all major compliance frameworks",
     type: "compliance",
-    frameworks: ["NIST 800-53", "PCI-DSS", "HIPAA", "SOX", "Adobe CCF"],
+    frameworks: ["NIST 800-53", "PCI-DSS", "HIPAA", "SOX"],
     lastGenerated: "2024-01-10",
-    downloadCount: 156
+    downloadCount: 156,
+    complexity: "advanced"
   },
   {
     id: "4",
-    name: "SOX IT Controls Assessment",
-    description: "Assessment report focusing on SOX IT General Controls",
+    name: "SOX IT Controls Readiness Assessment",
+    description: "Focused assessment report for SOX IT General Controls with implementation status and audit readiness scoring",
     type: "compliance",
     frameworks: ["SOX", "NIST 800-53"],
     lastGenerated: "2024-01-08",
-    downloadCount: 34
+    downloadCount: 34,
+    complexity: "intermediate"
+  },
+  {
+    id: "5",
+    name: "Quick Compliance Overview",
+    description: "High-level summary report perfect for executive briefings and initial assessments",
+    type: "custom",
+    frameworks: ["NIST 800-53", "PCI-DSS"],
+    lastGenerated: "2024-01-14",
+    downloadCount: 89,
+    complexity: "basic"
   }
 ];
 
 const exportFormats = [
-  { value: "pdf", label: "PDF Report", icon: FileText },
-  { value: "excel", label: "Excel Spreadsheet", icon: Table },
-  { value: "csv", label: "CSV Data", icon: Table },
-  { value: "json", label: "JSON Data", icon: BarChart3 }
+  { value: "pdf", label: "PDF Report", icon: FileText, description: "Professional formatted report" },
+  { value: "excel", label: "Excel Spreadsheet", icon: Table, description: "Detailed data analysis" },
+  { value: "csv", label: "CSV Data", icon: Table, description: "Raw data export" },
+  { value: "json", label: "JSON Data", icon: BarChart3, description: "Structured data format" }
 ];
 
 export function Reports() {
@@ -79,7 +96,7 @@ export function Reports() {
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
-  const frameworks = ["NIST 800-53", "PCI-DSS", "HIPAA", "SOX", "Adobe CCF"];
+  const frameworks = ["NIST 800-53", "PCI-DSS", "HIPAA", "SOX"];
 
   const handleFrameworkToggle = (framework: string) => {
     setSelectedFrameworks(prev => 
@@ -99,6 +116,15 @@ export function Reports() {
     }
   };
 
+  const getComplexityColor = (complexity: string) => {
+    switch (complexity) {
+      case "basic": return "bg-green-100 text-green-800";
+      case "intermediate": return "bg-yellow-100 text-yellow-800";
+      case "advanced": return "bg-red-100 text-red-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
   const generateReport = async () => {
     if (selectedFrameworks.length === 0) {
       toast({
@@ -112,8 +138,8 @@ export function Reports() {
     setIsGenerating(true);
     try {
       await reportService.generateReport({
-        title: customTitle || "Compliance Report",
-        description: customDescription || "Generated compliance report",
+        title: customTitle || "Enhanced Compliance Report",
+        description: customDescription || "Comprehensive compliance analysis and mapping report",
         frameworks: selectedFrameworks,
         format: selectedFormat as 'pdf' | 'excel' | 'csv' | 'json',
         includeMetadata,
@@ -123,7 +149,7 @@ export function Reports() {
 
       toast({
         title: "Report generated successfully",
-        description: `Your ${selectedFormat.toUpperCase()} report has been downloaded.`,
+        description: `Your enhanced ${selectedFormat.toUpperCase()} report has been downloaded with detailed mappings and analysis.`,
       });
     } catch (error) {
       toast({
@@ -145,13 +171,13 @@ export function Reports() {
         frameworks: template.frameworks,
         format: 'pdf',
         includeMetadata: true,
-        includeRelationships: template.type === 'mapping',
+        includeRelationships: template.type === 'mapping' || template.type === 'compliance',
         includeGaps: template.type === 'gap'
       });
 
       toast({
         title: "Report generated successfully",
-        description: `${template.name} has been downloaded as PDF.`,
+        description: `${template.name} has been downloaded with comprehensive analysis and detailed mappings.`,
       });
     } catch (error) {
       toast({
@@ -167,17 +193,26 @@ export function Reports() {
   return (
     <div className="p-6 space-y-6">
       <div className="border-b border-border pb-4">
-        <h1 className="text-3xl font-bold text-foreground">Reports & Export</h1>
+        <h1 className="text-3xl font-bold text-foreground">Enhanced Reports & Analytics</h1>
         <p className="text-muted-foreground mt-2">
-          Generate comprehensive compliance reports and export data
+          Generate comprehensive compliance reports with detailed mappings, gap analysis, and executive insights
         </p>
       </div>
 
       <Tabs defaultValue="templates" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="templates">Report Templates</TabsTrigger>
-          <TabsTrigger value="custom">Custom Report</TabsTrigger>
-          <TabsTrigger value="scheduled">Scheduled Reports</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="templates" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Report Templates
+          </TabsTrigger>
+          <TabsTrigger value="custom" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Custom Report
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Analytics Dashboard
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="templates" className="space-y-4">
@@ -192,8 +227,13 @@ export function Reports() {
                         <Badge className={getTypeColor(template.type)}>
                           {template.type}
                         </Badge>
+                        <Badge className={getComplexityColor(template.complexity)}>
+                          {template.complexity}
+                        </Badge>
                       </div>
-                      <CardDescription>{template.description}</CardDescription>
+                      <CardDescription className="text-sm leading-relaxed">
+                        {template.description}
+                      </CardDescription>
                       <div className="flex flex-wrap gap-2">
                         {template.frameworks.map(framework => (
                           <Badge key={framework} variant="outline" className="text-xs">
@@ -228,7 +268,10 @@ export function Reports() {
                           <span>Last generated: {template.lastGenerated}</span>
                         </div>
                       )}
-                      <span>Downloaded {template.downloadCount} times</span>
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4" />
+                        <span>Downloaded {template.downloadCount} times</span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -242,25 +285,28 @@ export function Reports() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Report Configuration</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    Report Configuration
+                  </CardTitle>
                   <CardDescription>
-                    Customize your report settings and content
+                    Customize your report settings and content for comprehensive analysis
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">Report Title</label>
                     <Input
-                      placeholder="Enter custom report title"
+                      placeholder="Enter comprehensive report title"
                       value={customTitle}
                       onChange={(e) => setCustomTitle(e.target.value)}
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Description</label>
+                    <label className="text-sm font-medium mb-2 block">Description & Purpose</label>
                     <Textarea
-                      placeholder="Enter report description and purpose"
+                      placeholder="Describe the report scope, audience, and intended use case"
                       value={customDescription}
                       onChange={(e) => setCustomDescription(e.target.value)}
                       rows={3}
@@ -268,7 +314,7 @@ export function Reports() {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium mb-3 block">Include Frameworks</label>
+                    <label className="text-sm font-medium mb-3 block">Compliance Frameworks</label>
                     <div className="space-y-2">
                       {frameworks.map(framework => (
                         <div key={framework} className="flex items-center space-x-2">
@@ -283,7 +329,7 @@ export function Reports() {
                               }
                             }}
                           />
-                          <label htmlFor={framework} className="text-sm">
+                          <label htmlFor={framework} className="text-sm font-medium">
                             {framework}
                           </label>
                         </div>
@@ -293,54 +339,74 @@ export function Reports() {
 
                   <div>
                     <label className="text-sm font-medium mb-3 block">Export Format</label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2">
                       {exportFormats.map(format => (
                         <Button
                           key={format.value}
                           variant={selectedFormat === format.value ? "default" : "outline"}
                           size="sm"
                           onClick={() => setSelectedFormat(format.value)}
-                          className="justify-start"
+                          className="justify-start h-auto p-3"
                         >
-                          <format.icon className="h-4 w-4 mr-2" />
-                          {format.label}
+                          <div className="flex items-center gap-3">
+                            <format.icon className="h-4 w-4" />
+                            <div className="text-left">
+                              <div className="font-medium">{format.label}</div>
+                              <div className="text-xs text-muted-foreground">{format.description}</div>
+                            </div>
+                          </div>
                         </Button>
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium mb-3 block">Content Options</label>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium mb-3 block">Advanced Content Options</label>
+                    <div className="space-y-3">
+                      <div className="flex items-start space-x-2">
                         <Checkbox
                           id="metadata"
                           checked={includeMetadata}
                           onCheckedChange={(checked) => setIncludeMetadata(checked === true)}
                         />
-                        <label htmlFor="metadata" className="text-sm">
-                          Include control metadata
-                        </label>
+                        <div>
+                          <label htmlFor="metadata" className="text-sm font-medium">
+                            Include detailed control metadata
+                          </label>
+                          <p className="text-xs text-muted-foreground">
+                            Implementation guidance, enhancements, and related controls
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-start space-x-2">
                         <Checkbox
                           id="relationships"
                           checked={includeRelationships}
                           onCheckedChange={(checked) => setIncludeRelationships(checked === true)}
                         />
-                        <label htmlFor="relationships" className="text-sm">
-                          Include relationship mappings
-                        </label>
+                        <div>
+                          <label htmlFor="relationships" className="text-sm font-medium">
+                            Include relationship mappings & analysis
+                          </label>
+                          <p className="text-xs text-muted-foreground">
+                            Cross-framework mappings with confidence scores and gap analysis
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-start space-x-2">
                         <Checkbox
                           id="gaps"
                           checked={includeGaps}
                           onCheckedChange={(checked) => setIncludeGaps(checked === true)}
                         />
-                        <label htmlFor="gaps" className="text-sm">
-                          Include gap analysis
-                        </label>
+                        <div>
+                          <label htmlFor="gaps" className="text-sm font-medium">
+                            Include comprehensive gap analysis
+                          </label>
+                          <p className="text-xs text-muted-foreground">
+                            Detailed remediation recommendations and implementation priorities
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -349,90 +415,30 @@ export function Reports() {
             </div>
 
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Report Preview</CardTitle>
-                  <CardDescription>
-                    Preview of your custom report configuration
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-sm mb-1">Title</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {customTitle || "Custom Compliance Report"}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-sm mb-1">Description</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {customDescription || "No description provided"}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-sm mb-2">Included Frameworks</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedFrameworks.length > 0 ? (
-                        selectedFrameworks.map(framework => (
-                          <Badge key={framework} variant="outline" className="text-xs">
-                            {framework}
-                          </Badge>
-                        ))
-                      ) : (
-                        <span className="text-sm text-muted-foreground">No frameworks selected</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-sm mb-1">Export Format</h4>
-                    <Badge variant="secondary">
-                      {exportFormats.find(f => f.value === selectedFormat)?.label}
-                    </Badge>
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-sm mb-2">Content Sections</h4>
-                    <div className="space-y-1">
-                      {includeMetadata && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <div className="w-2 h-2 bg-green-500 rounded-full" />
-                          Control Metadata
-                        </div>
-                      )}
-                      {includeRelationships && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <div className="w-2 h-2 bg-green-500 rounded-full" />
-                          Relationship Mappings
-                        </div>
-                      )}
-                      {includeGaps && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <div className="w-2 h-2 bg-green-500 rounded-full" />
-                          Gap Analysis
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <ReportPreview
+                title={customTitle}
+                description={customDescription}
+                frameworks={selectedFrameworks}
+                includeMetadata={includeMetadata}
+                includeRelationships={includeRelationships}
+                includeGaps={includeGaps}
+                format={selectedFormat}
+              />
 
               <Button 
                 onClick={generateReport}
-                className="w-full"
+                className="w-full h-12"
                 disabled={selectedFrameworks.length === 0 || isGenerating}
               >
                 {isGenerating ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Generating...
+                    Generating Enhanced Report...
                   </>
                 ) : (
                   <>
                     <Download className="h-4 w-4 mr-2" />
-                    Generate Report
+                    Generate Enhanced Report
                   </>
                 )}
               </Button>
@@ -440,19 +446,25 @@ export function Reports() {
           </div>
         </TabsContent>
 
-        <TabsContent value="scheduled" className="space-y-4">
+        <TabsContent value="analytics" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Scheduled Reports</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Analytics Dashboard
+              </CardTitle>
               <CardDescription>
-                Automate report generation and delivery (Coming Soon)
+                Interactive compliance analytics and trend analysis (Coming Soon)
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-center h-32 bg-muted rounded-lg">
-                <p className="text-muted-foreground">
-                  Scheduled reporting functionality will be available in the next release
-                </p>
+              <div className="flex items-center justify-center h-64 bg-muted rounded-lg">
+                <div className="text-center space-y-2">
+                  <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto" />
+                  <p className="text-muted-foreground">
+                    Advanced analytics dashboard with interactive charts and trend analysis will be available in the next release
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
