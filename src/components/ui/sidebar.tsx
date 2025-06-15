@@ -1,6 +1,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { Menu } from "lucide-react"
 
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
@@ -74,14 +75,19 @@ const SidebarMenuItem = React.forwardRef<
 ))
 SidebarMenuItem.displayName = "SidebarMenuItem"
 
+interface SidebarMenuButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  isActive?: boolean;
+}
+
 const SidebarMenuButton = React.forwardRef<
   HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => (
+  SidebarMenuButtonProps
+>(({ className, isActive, ...props }, ref) => (
   <button
     ref={ref}
     className={cn(
       "w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors",
+      isActive && "bg-accent text-accent-foreground",
       className
     )}
     {...props}
@@ -125,6 +131,20 @@ const SidebarGroupContent = React.forwardRef<
 ))
 SidebarGroupContent.displayName = "SidebarGroupContent"
 
+const SidebarTrigger = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
+  <button
+    ref={ref}
+    className={cn("p-2 rounded-md hover:bg-accent hover:text-accent-foreground", className)}
+    {...props}
+  >
+    <Menu className="h-4 w-4" />
+  </button>
+))
+SidebarTrigger.displayName = "SidebarTrigger"
+
 export {
   Sidebar,
   SidebarProvider,
@@ -136,4 +156,5 @@ export {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
+  SidebarTrigger,
 }
