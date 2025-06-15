@@ -1,6 +1,7 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Play, Settings, HelpCircle, History } from "lucide-react";
+import { BookOpen, Play, Settings, HelpCircle, History, Users, Edit3 } from "lucide-react";
 
 export function UserGuide() {
   return (
@@ -8,14 +9,15 @@ export function UserGuide() {
       <div className="border-b border-border pb-4">
         <h1 className="text-3xl font-bold text-foreground">User Guide</h1>
         <p className="text-muted-foreground mt-2">
-          Learn how to use the Framework Fusion Engine effectively
+          Learn how to use the Framework Fusion Engine effectively and contribute to the community
         </p>
       </div>
 
       <Tabs defaultValue="getting-started" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="getting-started">Getting Started</TabsTrigger>
           <TabsTrigger value="features">Features</TabsTrigger>
+          <TabsTrigger value="community">Community</TabsTrigger>
           <TabsTrigger value="best-practices">Best Practices</TabsTrigger>
           <TabsTrigger value="faq">FAQ</TabsTrigger>
           <TabsTrigger value="change-history">Change History</TabsTrigger>
@@ -89,7 +91,76 @@ export function UserGuide() {
                 </p>
               </CardContent>
             </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Community Editing</CardTitle>
+                <CardDescription>Wikipedia-style collaborative editing</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Edit and improve control content with community review and approval processes.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Version History</CardTitle>
+                <CardDescription>Track all changes and improvements</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  View complete history of edits, discussions, and improvements for every control.
+                </p>
+              </CardContent>
+            </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="community" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Community Collaboration
+              </CardTitle>
+              <CardDescription>How to participate in the community-driven platform</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-medium flex items-center gap-2">
+                  <Edit3 className="h-4 w-4" />
+                  Editing Controls
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Click the "Edit" button on any control to propose improvements. Your changes will be reviewed by the community before approval.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-medium">Review Process</h4>
+                <p className="text-sm text-muted-foreground">
+                  All edits go through a peer review process. Community members can discuss, suggest improvements, and approve changes.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-medium">Contributing Guidelines</h4>
+                <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                  <li>• Provide clear, accurate information</li>
+                  <li>• Include references to official sources</li>
+                  <li>• Write clear edit summaries</li>
+                  <li>• Be respectful in discussions</li>
+                  <li>• Follow established formatting standards</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium">User Roles</h4>
+                <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                  <li>• <strong>Editor:</strong> Can propose changes and participate in discussions</li>
+                  <li>• <strong>Reviewer:</strong> Can approve or reject proposed changes</li>
+                  <li>• <strong>Admin:</strong> Can make immediate changes and moderate discussions</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="best-practices" className="space-y-4">
@@ -125,19 +196,25 @@ export function UserGuide() {
               <div>
                 <h4 className="font-medium">How often is the control library updated?</h4>
                 <p className="text-sm text-muted-foreground">
-                  The control library is updated quarterly to reflect the latest framework revisions and industry best practices.
+                  The control library is updated continuously by the community, with quarterly official reviews by administrators.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-medium">How do I become a reviewer?</h4>
+                <p className="text-sm text-muted-foreground">
+                  Active community members with demonstrated expertise can be nominated for reviewer status by existing reviewers.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-medium">What if my edit is rejected?</h4>
+                <p className="text-sm text-muted-foreground">
+                  You can discuss the feedback, make improvements, and resubmit. The community aims to help improve all contributions.
                 </p>
               </div>
               <div>
                 <h4 className="font-medium">Can I export my data?</h4>
                 <p className="text-sm text-muted-foreground">
                   Yes, you can export reports and data in various formats including PDF, CSV, and Excel.
-                </p>
-              </div>
-              <div>
-                <h4 className="font-medium">Is this tool suitable for small organizations?</h4>
-                <p className="text-sm text-muted-foreground">
-                  Absolutely! The platform scales from small businesses to large enterprises.
                 </p>
               </div>
             </CardContent>
