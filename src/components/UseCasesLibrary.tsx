@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Filter, BookOpen, Target, TrendingUp, Users, Shield, FileText, Clock, CheckCircle } from "lucide-react";
+import { Search, Filter, BookOpen, Target, TrendingUp, Users, Shield, FileText, Clock, CheckCircle, AlertTriangle } from "lucide-react";
 
 interface UseCase {
   id: string;
