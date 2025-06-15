@@ -1,4 +1,3 @@
-
 import { Control } from '../../types/report';
 
 export const hipaaControls: Control[] = [
@@ -97,5 +96,29 @@ export const hipaaControls: Control[] = [
     implementation: "Physical access controls including badges, locks, and surveillance",
     requirements: ["164.310(a)(2)"],
     relatedRequirements: ["164.310(b)", "164.310(c)"]
+  },
+  { 
+    id: "164.308(a)(7)", 
+    title: "Contingency Plan", 
+    category: "Administrative Safeguards", 
+    family: "Contingency Planning",
+    priority: "High",
+    status: "Active",
+    description: "Establish procedures for responding to an emergency or other occurrence",
+    implementation: "Comprehensive business continuity and disaster recovery plan for ePHI systems",
+    requirements: ["164.308(a)(7)(i)", "164.308(a)(7)(ii)"],
+    relatedRequirements: ["164.312(a)(1)", "164.312(b)"]
+  },
+  { 
+    id: "164.308(a)(8)", 
+    title: "Evaluation", 
+    category: "Administrative Safeguards", 
+    family: "Assessment",
+    priority: "Medium",
+    status: "Active",
+    description: "Conduct periodic technical and nontechnical evaluation of the effectiveness of security safeguards",
+    implementation: "Annual security risk assessment and safeguard evaluation",
+    requirements: [],
+    relatedRequirements: ["164.308(a)(1)", "164.312(b)"]
   }
 ];

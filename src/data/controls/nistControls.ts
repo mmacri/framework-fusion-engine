@@ -1,4 +1,3 @@
-
 import { Control } from '../../types/report';
 
 export const nistControls: Control[] = [
@@ -61,5 +60,41 @@ export const nistControls: Control[] = [
     implementation: "Comprehensive audit logging with centralized collection",
     controlEnhancements: ["AU-2(3)", "AU-2(4)"],
     relatedControls: ["AU-3", "AU-6", "AU-12"]
+  },
+  { 
+    id: "RA-9", 
+    title: "Criticality Analysis", 
+    category: "Risk Assessment", 
+    family: "RA",
+    priority: "Medium",
+    status: "Active",
+    description: "Identify critical system components and functions by performing a criticality analysis",
+    implementation: "Conduct formal criticality analysis for all system components",
+    controlEnhancements: ["RA-9(1)"],
+    relatedControls: ["RA-2", "RA-3", "CP-2"]
+  },
+  { 
+    id: "SR-11", 
+    title: "Component Authenticity", 
+    category: "Supply Chain Risk Management", 
+    family: "SR",
+    priority: "High",
+    status: "Active",
+    description: "Develop and implement anti-counterfeit policy and procedures",
+    implementation: "Verify authenticity of system components through trusted suppliers",
+    controlEnhancements: ["SR-11(1)", "SR-11(2)"],
+    relatedControls: ["SA-12", "SR-3", "SR-5"]
+  },
+  { 
+    id: "PM-31", 
+    title: "Continuous Monitoring Strategy", 
+    category: "Program Management", 
+    family: "PM",
+    priority: "High",
+    status: "Active",
+    description: "Develop and implement a continuous monitoring strategy",
+    implementation: "Automated monitoring with risk-based assessment frequencies",
+    controlEnhancements: [],
+    relatedControls: ["CA-7", "PM-9", "RA-5"]
   }
 ];
