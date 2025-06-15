@@ -8,9 +8,11 @@ import { GapAnalysis } from "@/components/GapAnalysis";
 import { Reports } from "@/components/Reports";
 import { DashboardOverview } from "@/components/DashboardOverview";
 import { UserGuide } from "@/components/UserGuide";
+import { EnhancedDashboard } from "@/components/EnhancedDashboard";
+import { UseCasesLibrary } from "@/components/UseCasesLibrary";
 
 export function Dashboard() {
-  const [activeView, setActiveView] = useState("dashboard");
+  const [activeView, setActiveView] = useState("enhanced-dashboard");
   const [selectedFramework, setSelectedFramework] = useState<string | null>(null);
 
   const handleFrameworkClick = (frameworkName: string) => {
@@ -26,6 +28,8 @@ export function Dashboard() {
 
   const renderContent = () => {
     switch (activeView) {
+      case "enhanced-dashboard":
+        return <EnhancedDashboard />;
       case "controls":
         return <ControlLibrary selectedFramework={selectedFramework} />;
       case "mapping":
@@ -34,10 +38,14 @@ export function Dashboard() {
         return <GapAnalysis />;
       case "reports":
         return <Reports />;
+      case "use-cases":
+        return <UseCasesLibrary />;
       case "guide":
         return <UserGuide />;
-      default:
+      case "dashboard":
         return <DashboardOverview />;
+      default:
+        return <EnhancedDashboard />;
     }
   };
 
