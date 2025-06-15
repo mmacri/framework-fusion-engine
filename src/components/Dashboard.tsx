@@ -10,9 +10,10 @@ import { DashboardOverview } from "@/components/DashboardOverview";
 import { UserGuide } from "@/components/UserGuide";
 import { EnhancedDashboard } from "@/components/EnhancedDashboard";
 import { UseCasesLibrary } from "@/components/UseCasesLibrary";
+import { PublicDashboard } from "@/components/PublicDashboard";
 
 export function Dashboard() {
-  const [activeView, setActiveView] = useState("enhanced-dashboard");
+  const [activeView, setActiveView] = useState("public-dashboard");
   const [selectedFramework, setSelectedFramework] = useState<string | null>(null);
 
   const handleFrameworkClick = (frameworkName: string) => {
@@ -28,6 +29,8 @@ export function Dashboard() {
 
   const renderContent = () => {
     switch (activeView) {
+      case "public-dashboard":
+        return <PublicDashboard />;
       case "enhanced-dashboard":
         return <EnhancedDashboard />;
       case "controls":
@@ -45,7 +48,7 @@ export function Dashboard() {
       case "dashboard":
         return <DashboardOverview />;
       default:
-        return <EnhancedDashboard />;
+        return <PublicDashboard />;
     }
   };
 
