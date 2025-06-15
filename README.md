@@ -146,5 +146,5 @@ If this project helps you, please consider giving it a star! It helps us underst
 ---
 
 **Made with ❤️ by the community, for the community**
-
+*macri**
 Ready to contribute? Check out our [contributing guide](CONTRIBUTING.md) and join us in making compliance management more accessible! 🚀
