@@ -1,73 +1,150 @@
-# Welcome to your Lovable project
 
-## Project info
+# Framework Fusion Engine 🛡️
 
-**URL**: https://lovable.dev/projects/a310d7e3-6d3e-4830-a359-e961acc82f36
+> A Wikipedia-style, community-driven compliance management platform that democratizes access to security frameworks and enables collaborative improvement of compliance processes.
 
-## How can I edit this code?
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue.svg)](https://www.typescriptlang.org/)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](CONTRIBUTING.md)
 
-There are several ways of editing your application.
+## ✨ Features
 
-**Use Lovable**
+- 🌐 **Wikipedia-style Collaboration**: Community-driven editing with version control and peer review
+- 📚 **Comprehensive Control Library**: 2,400+ security controls across major frameworks
+- 🔗 **Framework Mapping**: Visual relationships between NIST, PCI-DSS, HIPAA, SOX, and ISO 27001
+- 📊 **Gap Analysis**: Identify compliance gaps and track remediation progress
+- 📈 **Advanced Reporting**: Generate compliance reports and export functionality
+- 👥 **Community Dashboard**: Track contributions, reviews, and collaborative improvements
+- 🎨 **Modern UI**: Responsive design with dark/light mode support
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a310d7e3-6d3e-4830-a359-e961acc82f36) and start prompting.
+## 🚀 Quick Start
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
-**Use your preferred IDE**
+### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/framework-fusion-engine.git
+cd framework-fusion-engine
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Install dependencies
+npm install
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Visit `http://localhost:8080` to see the application running.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Production Build
 
-**Use GitHub Codespaces**
+```bash
+npm run build
+npm run preview
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🏗️ Project Structure
 
-## What technologies are used for this project?
+```
+src/
+├── components/           # React components
+│   ├── ui/              # Reusable UI components (shadcn/ui)
+│   ├── Community/       # Community features
+│   └── ControlLibrary/  # Control management
+├── data/                # Security control definitions
+├── hooks/               # Custom React hooks
+├── lib/                 # Utility functions
+├── pages/               # Route components
+├── services/            # Business logic
+└── types/               # TypeScript definitions
+```
 
-This project is built with:
+## 🎯 Supported Frameworks
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+| Framework | Controls | Status |
+|-----------|----------|---------|
+| NIST 800-53 | 1,200+ | ✅ Complete |
+| PCI-DSS | 300+ | ✅ Complete |
+| HIPAA | 200+ | ✅ Complete |
+| SOX | 150+ | ✅ Complete |
+| ISO 27001 | 114+ | ✅ Complete |
 
-## How can I deploy this project?
+## 🤝 Contributing
 
-Simply open [Lovable](https://lovable.dev/projects/a310d7e3-6d3e-4830-a359-e961acc82f36) and click on Share -> Publish.
+We welcome contributions from the community! Whether you're:
 
-## Can I connect a custom domain to my Lovable project?
+- 🔒 **Security professionals** adding controls and improving mappings
+- 💻 **Developers** enhancing features and fixing bugs
+- 📝 **Writers** improving documentation and user guides
+- 🧪 **Testers** finding issues and suggesting improvements
 
-Yes, you can!
+Please read our [Contributing Guide](CONTRIBUTING.md) to get started.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Quick Contribution Steps
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes
+4. Test thoroughly
+5. Commit: `git commit -m 'Add amazing feature'`
+6. Push: `git push origin feature/amazing-feature`
+7. Open a Pull Request
+
+## 📖 Documentation
+
+- [Contributing Guide](CONTRIBUTING.md)
+- [Architecture Overview](docs/ARCHITECTURE.md)
+- [Roadmap](ROADMAP.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+
+## 🛠️ Technology Stack
+
+- **Frontend**: React 18+, TypeScript, Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Build Tool**: Vite
+- **Icons**: Lucide React
+- **Charts**: Recharts
+- **Routing**: React Router
+
+## 📊 Roadmap
+
+See our [detailed roadmap](ROADMAP.md) for upcoming features:
+
+- 🔐 User authentication and profiles
+- 🤝 Real-time collaborative editing
+- 🔍 Advanced search and filtering
+- 📱 Mobile app
+- 🌍 Multi-language support
+- 🤖 AI-powered recommendations
+
+## 🌟 Community
+
+- **Discussions**: Share ideas and ask questions in GitHub Discussions
+- **Issues**: Report bugs or request features
+- **Contributions**: Check out "good first issue" labels for beginners
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [shadcn/ui](https://ui.shadcn.com/) components
+- Icons by [Lucide](https://lucide.dev/)
+- Inspired by Wikipedia's collaborative model
+- Security frameworks from NIST, PCI Security Standards Council, and other standards bodies
+
+## ⭐ Star History
+
+If this project helps you, please consider giving it a star! It helps us understand the project's impact and motivates continued development.
+
+---
+
+**Made with ❤️ by the community, for the community**
+
+Ready to contribute? Check out our [contributing guide](CONTRIBUTING.md) and join us in making compliance management more accessible! 🚀
