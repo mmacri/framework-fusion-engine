@@ -3,32 +3,27 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Framework Fusion Engine</title>
     <meta name="description" content="A collaborative platform for managing security controls across multiple compliance frameworks" />
-    <meta name="author" content="Framework Fusion Community" />
-
-    <meta property="og:title" content="Framework Fusion Engine" />
-    <meta property="og:description" content="A collaborative platform for managing security controls across multiple compliance frameworks" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://raw.githubusercontent.com/mmacri/framework-fusion-engine/main/public/placeholder.svg" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@framework_fusion" />
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/mmacri/framework-fusion-engine/main/public/placeholder.svg" />
     
-    <link rel="icon" href="./public/favicon.ico" />
-    <link rel="stylesheet" href="./styles/main.css" />
+    <!-- GitHub Pages SPA routing script -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
   </head>
-
   <body>
-    <div id="hero-section"></div>
-    <div id="navigation-section"></div>
-    <div id="stats-section"></div>
-    <div id="features-section"></div>
-    <div id="getting-started-section"></div>
-    <div id="footer-section"></div>
-
-    <script src="./scripts/main.js"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

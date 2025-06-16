@@ -29,16 +29,6 @@ jobs:
       env:
         NODE_ENV: production
 
-    - name: Prepare deployment directory
-      run: |
-        mkdir -p deploy
-        # Copy the built React app to dist folder within deploy
-        cp -r dist deploy/
-        # Copy static landing page as the main index
-        cp index.html deploy/
-        # Copy public assets
-        cp -r public deploy/ || true
-
     - name: Setup Pages
       uses: actions/configure-pages@v4
       if: github.ref == 'refs/heads/main'
@@ -47,7 +37,7 @@ jobs:
       uses: actions/upload-pages-artifact@v3
       if: github.ref == 'refs/heads/main'
       with:
-        path: './deploy'
+        path: './dist'
         
     - name: Deploy to GitHub Pages
       id: deployment
