@@ -1,24 +1,400 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>framework-fusion-engine</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <title>Framework Fusion Engine</title>
+    <meta name="description" content="A collaborative platform for managing security controls across multiple compliance frameworks" />
+    <meta name="author" content="Framework Fusion Community" />
 
-    <meta property="og:title" content="framework-fusion-engine" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="Framework Fusion Engine" />
+    <meta property="og:description" content="A collaborative platform for managing security controls across multiple compliance frameworks" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/mmacri/framework-fusion-engine/main/public/placeholder.svg" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:site" content="@framework_fusion" />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/mmacri/framework-fusion-engine/main/public/placeholder.svg" />
+    
+    <link rel="icon" href="./public/favicon.ico" />
+    
+    <style>
+      /* Include critical CSS inline for better performance */
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+      
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 0 0% 9%;
+        --primary: 217 91% 60%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 210 40% 96%;
+        --secondary-foreground: 0 0% 9%;
+        --muted: 210 40% 96%;
+        --muted-foreground: 215 16% 47%;
+        --border: 214 32% 91%;
+        --radius: 0.5rem;
+      }
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
+        line-height: 1.5;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      
+      .hero {
+        text-align: center;
+        padding: 6rem 0;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      }
+      
+      .hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+      }
+      
+      .hero p {
+        font-size: 1.25rem;
+        color: #64748b;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+      }
+      
+      .btn-primary {
+        background-color: #2563eb;
+        color: white;
+      }
+      
+      .btn-primary:hover {
+        background-color: #1d4ed8;
+      }
+      
+      .features {
+        padding: 4rem 0;
+        background-color: #f8fafc;
+      }
+      
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+      
+      .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      }
+      
+      .feature-card h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1rem;
+      }
+      
+      .feature-card p {
+        color: #64748b;
+      }
+      
+      .stats {
+        padding: 4rem 0;
+        background: white;
+      }
+      
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        text-align: center;
+      }
+      
+      .stat-card {
+        padding: 1.5rem;
+      }
+      
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2563eb;
+      }
+      
+      .stat-label {
+        color: #64748b;
+        margin-top: 0.5rem;
+      }
+      
+      .footer {
+        padding: 2rem 0;
+        background-color: #1e293b;
+        color: white;
+        text-align: center;
+      }
+      
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        background-color: #dbeafe;
+        color: #1d4ed8;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        margin: 0 0.25rem;
+      }
+      
+      .badges {
+        margin-bottom: 2rem;
+      }
+      
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        
+        .hero p {
+          font-size: 1rem;
+        }
+        
+        .container {
+          padding: 0 1rem;
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div class="hero">
+      <div class="container">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 2rem;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <h1>Framework Fusion Engine</h1>
+        </div>
+        
+        <div class="badges">
+          <span class="badge">🌐 Open Source</span>
+          <span class="badge">👥 Community-Driven</span>
+          <span class="badge">📚 Wikipedia-Style</span>
+        </div>
+        
+        <p>
+          A collaborative platform for managing security controls across multiple compliance frameworks. 
+          Join thousands of security professionals building the future of compliance management.
+        </p>
+        
+        <a href="#features" class="btn btn-primary">
+          Explore Platform
+          <svg style="margin-left: 0.5rem;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12,5 19,12 12,19"></polyline>
+          </svg>
+        </a>
+        
+        <p style="margin-top: 1rem; font-size: 0.875rem; color: #64748b;">
+          No registration required • Free and open source • Community maintained
+        </p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">2,400+</div>
+            <div class="stat-label">Security Controls</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">5</div>
+            <div class="stat-label">Frameworks</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">847</div>
+            <div class="stat-label">Contributors</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">1,200+</div>
+            <div class="stat-label">Control Mappings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="features" id="features">
+      <div class="container">
+        <h2 style="text-align: center; font-size: 2.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem;">
+          Platform Features
+        </h2>
+        <p style="text-align: center; color: #64748b; font-size: 1.125rem; max-width: 600px; margin: 0 auto;">
+          Comprehensive tools for compliance management and security control analysis
+        </p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <h3>🛡️ 2,400+ Security Controls</h3>
+            <p>Comprehensive library covering NIST, PCI-DSS, HIPAA, SOX, and ISO 27001 frameworks</p>
+          </div>
+          
+          <div class="feature-card">
+            <h3>👥 Community-Driven</h3>
+            <p>Wikipedia-style collaborative editing with expert reviews and community voting</p>
+          </div>
+          
+          <div class="feature-card">
+            <h3>🔍 Gap Analysis</h3>
+            <p>Identify coverage gaps and optimization opportunities in your compliance program</p>
+          </div>
+          
+          <div class="feature-card">
+            <h3>📄 Framework Mapping</h3>
+            <p>Visualize relationships and mappings between different compliance frameworks</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 4rem 0; background: white;">
+      <div class="container">
+        <h2 style="text-align: center; font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 2rem;">
+          Get Started in Minutes
+        </h2>
+        <p style="text-align: center; color: #64748b; margin-bottom: 3rem;">
+          Follow these simple steps to begin using the platform
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center;">
+          <div>
+            <div style="width: 3rem; height: 3rem; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 1rem;">1</div>
+            <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Browse Controls</h4>
+            <p style="color: #64748b; font-size: 0.875rem;">Explore our control library</p>
+          </div>
+          
+          <div>
+            <div style="width: 3rem; height: 3rem; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 1rem;">2</div>
+            <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">View Mappings</h4>
+            <p style="color: #64748b; font-size: 0.875rem;">See framework relationships</p>
+          </div>
+          
+          <div>
+            <div style="width: 3rem; height: 3rem; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 1rem;">3</div>
+            <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Analyze Gaps</h4>
+            <p style="color: #64748b; font-size: 0.875rem;">Identify coverage gaps</p>
+          </div>
+          
+          <div>
+            <div style="width: 3rem; height: 3rem; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 1rem;">4</div>
+            <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Contribute</h4>
+            <p style="color: #64748b; font-size: 0.875rem;">Join the community</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="container">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+            </svg>
+            <span style="font-size: 0.875rem;">Star us on GitHub</span>
+          </div>
+          <span style="color: #64748b;">•</span>
+          <span style="font-size: 0.875rem;">Join our community discussions</span>
+          <span style="color: #64748b;">•</span>
+          <span style="font-size: 0.875rem;">Contribute to the project</span>
+        </div>
+        <p style="color: #94a3b8; font-size: 0.875rem;">
+          © 2024 Framework Fusion Engine. Open source project licensed under MIT.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Simple smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+
+      // Add some basic interactivity
+      const statValues = document.querySelectorAll('.stat-value');
+      
+      const animateStats = () => {
+        statValues.forEach(stat => {
+          const finalValue = stat.textContent;
+          const numericValue = parseInt(finalValue.replace(/[^\d]/g, ''));
+          const suffix = finalValue.replace(/[\d]/g, '');
+          
+          let current = 0;
+          const increment = numericValue / 50;
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= numericValue) {
+              current = numericValue;
+              clearInterval(timer);
+            }
+            stat.textContent = Math.floor(current) + suffix;
+          }, 30);
+        });
+      };
+
+      // Trigger animation when stats section is visible
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateStats();
+            observer.unobserve(entry.target);
+          }
+        });
+      });
+
+      const statsSection = document.querySelector('.stats');
+      if (statsSection) {
+        observer.observe(statsSection);
+      }
+    </script>
   </body>
 </html>
