@@ -5,122 +5,137 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Building, Shield, FileText, Clock, Star, Download } from "lucide-react";
+import { BookOpen, Search, Building, Shield, FileText, Clock, Users, Target } from "lucide-react";
 
 export function UseCasesLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [selectedFramework, setSelectedFramework] = useState("all");
 
+  const industries = {
+    all: "All Industries",
+    healthcare: "Healthcare",
+    financial: "Financial Services", 
+    retail: "Retail/E-commerce",
+    manufacturing: "Manufacturing",
+    technology: "Technology",
+    government: "Government"
+  };
+
+  const frameworks = {
+    all: "All Frameworks",
+    nist: "NIST 800-53",
+    pci: "PCI-DSS",
+    hipaa: "HIPAA",
+    sox: "SOX",
+    iso27001: "ISO 27001"
+  };
+
   const useCases = [
     {
-      id: "uc-001",
-      title: "Healthcare HIPAA Compliance Implementation",
-      description: "Complete implementation of HIPAA Security Rule controls for a mid-size healthcare provider",
-      industry: "Healthcare",
-      frameworks: ["HIPAA Security", "NIST 800-53"],
-      difficulty: "Advanced",
-      duration: "12-16 weeks",
-      rating: 4.8,
-      downloads: 1247,
-      content: {
-        overview: "This use case covers the complete implementation of HIPAA Security Rule requirements for a 500-bed hospital system.",
-        challenges: ["Legacy system integration", "Staff training", "Risk assessment"],
-        solutions: ["Phased implementation approach", "Comprehensive training program", "Regular risk assessments"],
-        outcomes: ["100% HIPAA compliance", "Reduced security incidents by 75%", "Improved audit readiness"]
-      }
+      title: "Healthcare HIPAA Compliance Assessment",
+      industry: "healthcare",
+      framework: "hipaa",
+      description: "Complete HIPAA Security Rule compliance assessment for a mid-size hospital system",
+      objectives: ["Assess current HIPAA compliance posture", "Identify critical security gaps", "Develop remediation roadmap"],
+      timeline: "4-6 weeks",
+      complexity: "Medium",
+      outcome: "92% compliance improvement, reduced audit findings by 85%",
+      tags: ["PHI Protection", "Risk Assessment", "Administrative Safeguards"]
     },
     {
-      id: "uc-002", 
-      title: "PCI-DSS Compliance for E-commerce Platform",
-      description: "Payment card security implementation for online retail platform processing 100K+ transactions monthly",
-      industry: "Retail",
-      frameworks: ["PCI-DSS", "NIST 800-53"],
-      difficulty: "Intermediate",
-      duration: "8-12 weeks",
-      rating: 4.6,
-      downloads: 892,
-      content: {
-        overview: "Implementation of PCI-DSS requirements for a growing e-commerce platform.",
-        challenges: ["Cardholder data encryption", "Network segmentation", "Vulnerability management"],
-        solutions: ["End-to-end encryption", "DMZ implementation", "Automated scanning"],
-        outcomes: ["PCI-DSS Level 1 compliance", "Zero data breaches", "Customer trust improvement"]
-      }
+      title: "Financial Services PCI-DSS Implementation", 
+      industry: "financial",
+      framework: "pci",
+      description: "PCI-DSS compliance program implementation for online payment processor",
+      objectives: ["Achieve PCI-DSS Level 1 compliance", "Implement security controls", "Establish ongoing monitoring"],
+      timeline: "8-12 weeks", 
+      complexity: "High",
+      outcome: "Successfully passed QSA assessment, zero critical findings",
+      tags: ["Card Data Protection", "Network Security", "Access Control"]
     },
     {
-      id: "uc-003",
-      title: "SOX ITGC Implementation for Financial Services",
-      description: "IT General Controls implementation for publicly traded financial services company",
-      industry: "Financial Services",
-      frameworks: ["SOX ITGC", "NIST 800-53"],
-      difficulty: "Advanced",
-      duration: "16-20 weeks",
-      rating: 4.9,
-      downloads: 654,
-      content: {
-        overview: "Comprehensive SOX ITGC program for a regional bank with $5B in assets.",
-        challenges: ["Change management controls", "Access management", "Data integrity"],
-        solutions: ["Automated change controls", "Role-based access", "Data validation controls"],
-        outcomes: ["Clean SOX audit", "Improved operational efficiency", "Enhanced controls"]
-      }
+      title: "Manufacturing ISO 27001 Certification",
+      industry: "manufacturing", 
+      framework: "iso27001",
+      description: "ISO 27001 information security management system implementation",
+      objectives: ["Establish ISMS framework", "Implement security controls", "Achieve ISO 27001 certification"],
+      timeline: "12-16 weeks",
+      complexity: "High", 
+      outcome: "ISO 27001 certification achieved, 40% reduction in security incidents",
+      tags: ["ISMS", "Risk Management", "Continuous Improvement"]
     },
     {
-      id: "uc-004",
-      title: "Multi-Framework Cloud Security Implementation",
-      description: "Implementing security controls across multiple frameworks for cloud-first organization",
-      industry: "Technology",
-      frameworks: ["NIST 800-53", "Adobe CCF", "ISO 27001"],
-      difficulty: "Expert",
-      duration: "20-24 weeks",
-      rating: 4.7,
-      downloads: 423,
-      content: {
-        overview: "Cloud security implementation covering multiple compliance frameworks.",
-        challenges: ["Multi-cloud environment", "DevSecOps integration", "Continuous compliance"],
-        solutions: ["Unified security platform", "Automated compliance checks", "Security as code"],
-        outcomes: ["Multi-framework compliance", "50% faster deployments", "Continuous monitoring"]
-      }
+      title: "E-commerce Multi-Framework Assessment",
+      industry: "retail",
+      framework: "nist",
+      description: "Comprehensive security assessment across NIST and PCI-DSS for e-commerce platform",
+      objectives: ["Multi-framework gap analysis", "Unified control implementation", "Streamlined compliance"],
+      timeline: "6-8 weeks",
+      complexity: "Medium",
+      outcome: "75% reduction in compliance overhead, unified security program",
+      tags: ["Multi-Framework", "E-commerce", "Customer Data"]
+    },
+    {
+      title: "Startup Security Program Establishment",
+      industry: "technology",
+      framework: "nist", 
+      description: "Building security program from scratch for rapidly growing SaaS startup",
+      objectives: ["Establish baseline security", "Implement scalable controls", "Prepare for compliance"],
+      timeline: "3-4 weeks",
+      complexity: "Low",
+      outcome: "Security program established, ready for SOC 2 Type II",
+      tags: ["Startup", "Scalability", "Cloud Security"]
+    },
+    {
+      title: "Government Agency NIST Modernization",
+      industry: "government", 
+      framework: "nist",
+      description: "Modernizing legacy NIST 800-53 implementation for federal agency",
+      objectives: ["Update control implementations", "Improve automation", "Enhance monitoring"],
+      timeline: "16-20 weeks",
+      complexity: "High",
+      outcome: "90% automation achieved, 60% faster incident response",
+      tags: ["Legacy Modernization", "Automation", "Federal Compliance"]
     }
   ];
-
-  const industries = ["Healthcare", "Financial Services", "Retail", "Technology", "Government"];
-  const frameworks = ["NIST 800-53", "PCI-DSS", "HIPAA Security", "SOX ITGC", "Adobe CCF", "ISO 27001"];
 
   const filteredUseCases = useCases.filter(useCase => {
     const matchesSearch = !searchTerm || 
       useCase.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      useCase.description.toLowerCase().includes(searchTerm.toLowerCase());
+      useCase.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      useCase.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     
     const matchesIndustry = selectedIndustry === "all" || useCase.industry === selectedIndustry;
-    const matchesFramework = selectedFramework === "all" || useCase.frameworks.includes(selectedFramework);
+    const matchesFramework = selectedFramework === "all" || useCase.framework === selectedFramework;
     
     return matchesSearch && matchesIndustry && matchesFramework;
   });
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Beginner': return "bg-green-100 text-green-800";
-      case 'Intermediate': return "bg-yellow-100 text-yellow-800";
-      case 'Advanced': return "bg-orange-100 text-orange-800";
-      case 'Expert': return "bg-red-100 text-red-800";
+  const getComplexityColor = (complexity: string) => {
+    switch (complexity) {
+      case "Low": return "bg-green-100 text-green-800";
+      case "Medium": return "bg-yellow-100 text-yellow-800"; 
+      case "High": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="space-y-4">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Use Cases Library
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Learn from real-world implementation scenarios across industries and frameworks. 
-            Get practical guidance for your compliance journey.
+            Real-world compliance implementation examples and success stories across industries
           </p>
         </div>
 
-        <div className="flex gap-4 items-center flex-wrap bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
+        {/* Filters */}
+        <div className="flex gap-4 items-center flex-wrap bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg">
           <div className="relative flex-1 min-w-[300px]">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input 
@@ -133,110 +148,129 @@ export function UseCasesLibrary() {
           
           <Select value={selectedIndustry} onValueChange={setSelectedIndustry}>
             <SelectTrigger className="w-48 bg-white">
-              <SelectValue placeholder="All Industries" />
+              <SelectValue placeholder="Industry" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Industries</SelectItem>
-              {industries.map(industry => (
-                <SelectItem key={industry} value={industry}>{industry}</SelectItem>
+              {Object.entries(industries).map(([key, name]) => (
+                <SelectItem key={key} value={key}>{name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           <Select value={selectedFramework} onValueChange={setSelectedFramework}>
             <SelectTrigger className="w-48 bg-white">
-              <SelectValue placeholder="All Frameworks" />
+              <SelectValue placeholder="Framework" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Frameworks</SelectItem>
-              {frameworks.map(framework => (
-                <SelectItem key={framework} value={framework}>{framework}</SelectItem>
+              {Object.entries(frameworks).map(([key, name]) => (
+                <SelectItem key={key} value={key}>{name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <div className="grid gap-6">
-        {filteredUseCases.map((useCase) => (
-          <Card key={useCase.id} className="hover:shadow-lg transition-all duration-200">
+      {/* Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-primary">{filteredUseCases.length}</div>
+            <div className="text-sm text-muted-foreground">Use Cases</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-green-600">
+              {Object.keys(industries).length - 1}
+            </div>
+            <div className="text-sm text-muted-foreground">Industries</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-blue-600">
+              {Object.keys(frameworks).length - 1}
+            </div>
+            <div className="text-sm text-muted-foreground">Frameworks</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-purple-600">85%</div>
+            <div className="text-sm text-muted-foreground">Avg Success Rate</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Use Cases */}
+      <div className="space-y-6">
+        {filteredUseCases.map((useCase, index) => (
+          <Card key={index} className="hover:shadow-lg transition-all duration-200">
             <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-3">
-                  <CardTitle className="text-xl">{useCase.title}</CardTitle>
-                  <CardDescription>{useCase.description}</CardDescription>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <Building className="h-3 w-3" />
-                      {useCase.industry}
-                    </Badge>
-                    <Badge className={getDifficultyColor(useCase.difficulty)}>
-                      {useCase.difficulty}
-                    </Badge>
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {useCase.duration}
-                    </Badge>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-1">
-                    {useCase.frameworks.map((framework, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {framework}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Building className="h-6 w-6 text-blue-600" />
+                  <div>
+                    <CardTitle className="text-xl">{useCase.title}</CardTitle>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge variant="outline">
+                        {industries[useCase.industry as keyof typeof industries]}
                       </Badge>
-                    ))}
+                      <Badge variant="outline">
+                        {frameworks[useCase.framework as keyof typeof frameworks]}
+                      </Badge>
+                      <Badge className={getComplexityColor(useCase.complexity)}>
+                        {useCase.complexity} Complexity
+                      </Badge>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="text-right space-y-2">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                    <span className="font-medium">{useCase.rating}</span>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {useCase.downloads} downloads
+                <div className="text-right">
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    {useCase.timeline}
                   </div>
                 </div>
               </div>
+              <CardDescription className="text-base">{useCase.description}</CardDescription>
             </CardHeader>
             
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                <div>
-                  <h4 className="font-medium mb-2">Key Challenges</h4>
-                  <ul className="space-y-1 text-muted-foreground">
-                    {useCase.content.challenges.slice(0, 2).map((challenge, index) => (
-                      <li key={index}>• {challenge}</li>
-                    ))}
-                  </ul>
+              <div>
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Objectives
+                </h4>
+                <ul className="space-y-1">
+                  {useCase.objectives.map((objective, objIndex) => (
+                    <li key={objIndex} className="text-sm text-muted-foreground flex items-center gap-2">
+                      <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
+                      {objective}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                <h4 className="font-medium text-green-800 mb-1 flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  Outcome
+                </h4>
+                <p className="text-sm text-green-700">{useCase.outcome}</p>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                  {useCase.tags.map((tag, tagIndex) => (
+                    <Badge key={tagIndex} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
                 </div>
-                <div>
-                  <h4 className="font-medium mb-2">Solutions</h4>
-                  <ul className="space-y-1 text-muted-foreground">
-                    {useCase.content.solutions.slice(0, 2).map((solution, index) => (
-                      <li key={index}>• {solution}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">Outcomes</h4>
-                  <ul className="space-y-1 text-muted-foreground">
-                    {useCase.content.outcomes.slice(0, 2).map((outcome, index) => (
-                      <li key={index}>• {outcome}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Button size="sm" className="w-full">
-                    <FileText className="h-4 w-4 mr-2" />
-                    View Details
-                  </Button>
-                  <Button size="sm" variant="outline" className="w-full">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
-                </div>
+                <Button variant="outline" size="sm">
+                  <FileText className="h-4 w-4 mr-2" />
+                  View Details
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -244,16 +278,31 @@ export function UseCasesLibrary() {
       </div>
 
       {filteredUseCases.length === 0 && (
-        <Card className="text-center py-8">
+        <Card className="text-center py-12">
           <CardContent>
-            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Use Cases Found</h3>
-            <p className="text-muted-foreground">
-              Try adjusting your search criteria or filters to find relevant use cases.
-            </p>
+            <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">No use cases found</h3>
+            <p className="text-muted-foreground">Try adjusting your search criteria or filters</p>
           </CardContent>
         </Card>
       )}
+
+      {/* Call to Action */}
+      <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50 to-purple-50">
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4">
+            <Users className="h-12 w-12 text-blue-600 mx-auto" />
+            <h3 className="text-lg font-semibold">Share Your Success Story</h3>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Help the community by sharing your compliance implementation experience and lessons learned.
+            </p>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Submit Use Case
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

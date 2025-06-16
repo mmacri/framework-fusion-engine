@@ -4,114 +4,97 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertTriangle, CheckCircle, XCircle, TrendingUp, Download, Search } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { BarChart3, AlertTriangle, CheckCircle, Target, TrendingUp } from "lucide-react";
 
 export function GapAnalysis() {
-  const [sourceFramework, setSourceFramework] = useState("nist");
-  const [targetFramework, setTargetFramework] = useState("pci-dss");
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [selectedFramework, setSelectedFramework] = useState("nist");
+  const [selectedOrg, setSelectedOrg] = useState("healthcare");
 
-  const frameworks = [
-    { id: "nist", name: "NIST Cybersecurity Framework" },
-    { id: "pci-dss", name: "PCI-DSS" },
-    { id: "sox", name: "SOX Controls" },
-    { id: "hipaa", name: "HIPAA Security Rule" },
-    { id: "iso27001", name: "ISO 27001" }
-  ];
-
-  const handleAnalyze = () => {
-    setIsAnalyzing(true);
-    // Simulate analysis
-    setTimeout(() => {
-      setIsAnalyzing(false);
-    }, 2000);
+  const frameworks = {
+    nist: "NIST 800-53",
+    pci: "PCI-DSS", 
+    hipaa: "HIPAA Security",
+    sox: "SOX ITGC",
+    iso27001: "ISO 27001"
   };
 
-  // Mock gap analysis data based on selected frameworks
-  const getGapAnalysisResults = () => {
-    const baseResults = {
-      covered: 78,
-      partiallyCovered: 15,
-      notCovered: 7,
-      totalControls: 100,
-      coveragePercentage: 78
-    };
+  const organizationTypes = {
+    healthcare: "Healthcare Organization",
+    financial: "Financial Services",
+    retail: "Retail/E-commerce",
+    manufacturing: "Manufacturing",
+    technology: "Technology Company"
+  };
 
-    // Adjust results based on framework selection
-    if (sourceFramework === "nist" && targetFramework === "pci-dss") {
-      return {
-        ...baseResults,
-        covered: 85,
-        partiallyCovered: 10,
-        notCovered: 5,
-        coveragePercentage: 85
-      };
+  const mockGapData = {
+    nist: {
+      healthcare: {
+        totalControls: 945,
+        implemented: 623,
+        partiallyImplemented: 189,
+        notImplemented: 133,
+        coverage: 86,
+        criticalGaps: 12,
+        highRiskGaps: 23
+      }
+    },
+    pci: {
+      healthcare: {
+        totalControls: 281,
+        implemented: 201,
+        partiallyImplemented: 48,
+        notImplemented: 32,
+        coverage: 89,
+        criticalGaps: 5,
+        highRiskGaps: 12
+      }
     }
-
-    return baseResults;
   };
 
-  const gapAnalysisResults = getGapAnalysisResults();
+  const currentData = mockGapData[selectedFramework as keyof typeof mockGapData]?.[selectedOrg as keyof typeof mockGapData.nist] || mockGapData.nist.healthcare;
 
-  const gaps = [
+  const gapDetails = [
     {
-      id: "GAP-001",
-      title: "Incident Response Documentation",
-      severity: "High",
-      description: "Missing formal incident response procedures documentation between frameworks",
-      recommendation: "Develop comprehensive incident response plan with defined roles and procedures that satisfy both framework requirements",
-      affectedControls: [`${sourceFramework.toUpperCase()} IR-1`, `${targetFramework.toUpperCase()} 12.10`],
-      estimatedEffort: "2-4 weeks"
+      control: "AC-2 Account Management",
+      status: "Not Implemented",
+      risk: "Critical",
+      description: "Automated account management processes are missing",
+      recommendation: "Implement automated user provisioning and deprovisioning"
     },
     {
-      id: "GAP-002", 
-      title: "Access Review Automation",
-      severity: "Medium",
-      description: "Manual access reviews are not aligned between framework requirements",
-      recommendation: "Implement automated access review system with quarterly reviews that meets both standards",
-      affectedControls: [`${sourceFramework.toUpperCase()} AC-2`, `${targetFramework.toUpperCase()} ITGC-01`],
-      estimatedEffort: "1-2 weeks"
+      control: "SC-7 Boundary Protection",
+      status: "Partially Implemented", 
+      risk: "High",
+      description: "Network segmentation exists but lacks monitoring",
+      recommendation: "Deploy network monitoring and intrusion detection"
     },
     {
-      id: "GAP-003",
-      title: "Encryption Key Management",
-      severity: "Critical",
-      description: "Key management processes differ significantly between frameworks",
-      recommendation: "Establish unified key management infrastructure with proper lifecycle management",
-      affectedControls: [`${sourceFramework.toUpperCase()} SC-12`, `${targetFramework.toUpperCase()} 3.5`],
-      estimatedEffort: "4-8 weeks"
+      control: "AU-12 Audit Generation",
+      status: "Not Implemented",
+      risk: "High", 
+      description: "Comprehensive audit logging is not configured",
+      recommendation: "Implement centralized logging and SIEM solution"
     }
   ];
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'Critical': return "bg-red-100 text-red-800 border-red-200";
-      case 'High': return "bg-orange-100 text-orange-800 border-orange-200";
-      case 'Medium': return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case 'Low': return "bg-green-100 text-green-800 border-green-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+  const getRiskColor = (risk: string) => {
+    switch (risk) {
+      case "Critical": return "bg-red-100 text-red-800";
+      case "High": return "bg-orange-100 text-orange-800";
+      case "Medium": return "bg-yellow-100 text-yellow-800";
+      case "Low": return "bg-green-100 text-green-800";
+      default: return "bg-gray-100 text-gray-800";
     }
   };
 
-  const handleExportReport = () => {
-    // Simulate report export
-    const reportData = {
-      sourceFramework: frameworks.find(f => f.id === sourceFramework)?.name,
-      targetFramework: frameworks.find(f => f.id === targetFramework)?.name,
-      results: gapAnalysisResults,
-      gaps: gaps,
-      generatedAt: new Date().toISOString()
-    };
-
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `gap-analysis-${sourceFramework}-vs-${targetFramework}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Implemented": return "bg-green-100 text-green-800";
+      case "Partially Implemented": return "bg-yellow-100 text-yellow-800";
+      case "Not Implemented": return "bg-red-100 text-red-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
   };
 
   return (
@@ -119,207 +102,170 @@ export function GapAnalysis() {
       {/* Header */}
       <div className="space-y-4">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Gap Analysis
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Identify coverage gaps and optimization opportunities in your compliance program. 
-            Compare frameworks and discover missing controls.
+            Identify coverage gaps and optimization opportunities in your compliance program
           </p>
         </div>
 
-        {/* Framework Selection */}
-        <div className="flex gap-4 items-center justify-center bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg">
-          <Select value={sourceFramework} onValueChange={setSourceFramework}>
+        {/* Filters */}
+        <div className="flex gap-4 items-center justify-center flex-wrap bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg">
+          <Select value={selectedFramework} onValueChange={setSelectedFramework}>
             <SelectTrigger className="w-64 bg-white">
-              <SelectValue placeholder="Select Source Framework" />
+              <SelectValue placeholder="Select Framework" />
             </SelectTrigger>
             <SelectContent>
-              {frameworks.map(framework => (
-                <SelectItem key={framework.id} value={framework.id}>{framework.name}</SelectItem>
+              {Object.entries(frameworks).map(([key, name]) => (
+                <SelectItem key={key} value={key}>{name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
-          <div className="text-muted-foreground">vs</div>
-
-          <Select value={targetFramework} onValueChange={setTargetFramework}>
+          <Select value={selectedOrg} onValueChange={setSelectedOrg}>
             <SelectTrigger className="w-64 bg-white">
-              <SelectValue placeholder="Select Target Framework" />
+              <SelectValue placeholder="Organization Type" />
             </SelectTrigger>
             <SelectContent>
-              {frameworks.map(framework => (
-                <SelectItem key={framework.id} value={framework.id}>{framework.name}</SelectItem>
+              {Object.entries(organizationTypes).map(([key, name]) => (
+                <SelectItem key={key} value={key}>{name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
-          <Button 
-            className="bg-orange-600 hover:bg-orange-700"
-            onClick={handleAnalyze}
-            disabled={isAnalyzing}
-          >
-            <Search className="h-4 w-4 mr-2" />
-            {isAnalyzing ? "Analyzing..." : "Analyze"}
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Run Analysis
           </Button>
         </div>
       </div>
 
-      {/* Coverage Overview */}
+      {/* Overview Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="border-l-4 border-l-green-500">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <Target className="h-8 w-8 text-blue-600" />
+              <div>
+                <div className="text-2xl font-bold">{currentData.coverage}%</div>
+                <div className="text-sm text-muted-foreground">Overall Coverage</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <CheckCircle className="h-8 w-8 text-green-600" />
               <div>
-                <div className="text-2xl font-bold text-green-600">{gapAnalysisResults.covered}</div>
-                <div className="text-sm text-muted-foreground">Fully Covered</div>
+                <div className="text-2xl font-bold text-green-600">{currentData.implemented}</div>
+                <div className="text-sm text-muted-foreground">Implemented</div>
               </div>
             </div>
           </CardContent>
         </Card>
-        
-        <Card className="border-l-4 border-l-yellow-500">
+        <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="h-8 w-8 text-yellow-600" />
+              <AlertTriangle className="h-8 w-8 text-red-600" />
               <div>
-                <div className="text-2xl font-bold text-yellow-600">{gapAnalysisResults.partiallyCovered}</div>
-                <div className="text-sm text-muted-foreground">Partially Covered</div>
+                <div className="text-2xl font-bold text-red-600">{currentData.criticalGaps}</div>
+                <div className="text-sm text-muted-foreground">Critical Gaps</div>
               </div>
             </div>
           </CardContent>
         </Card>
-        
-        <Card className="border-l-4 border-l-red-500">
+        <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <XCircle className="h-8 w-8 text-red-600" />
+              <TrendingUp className="h-8 w-8 text-orange-600" />
               <div>
-                <div className="text-2xl font-bold text-red-600">{gapAnalysisResults.notCovered}</div>
-                <div className="text-sm text-muted-foreground">Not Covered</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="border-l-4 border-l-blue-500">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <TrendingUp className="h-8 w-8 text-blue-600" />
-              <div>
-                <div className="text-2xl font-bold text-blue-600">{gapAnalysisResults.coveragePercentage}%</div>
-                <div className="text-sm text-muted-foreground">Coverage</div>
+                <div className="text-2xl font-bold text-orange-600">{currentData.highRiskGaps}</div>
+                <div className="text-sm text-muted-foreground">High Risk Gaps</div>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Coverage Progress */}
+      {/* Coverage Breakdown */}
       <Card>
         <CardHeader>
-          <CardTitle>Coverage Progress</CardTitle>
+          <CardTitle>Implementation Status</CardTitle>
           <CardDescription>
-            Coverage analysis between {frameworks.find(f => f.id === sourceFramework)?.name} and {frameworks.find(f => f.id === targetFramework)?.name}
+            Breakdown of control implementation across {frameworks[selectedFramework as keyof typeof frameworks]}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Overall Coverage</span>
-              <span className="text-sm text-muted-foreground">{gapAnalysisResults.coveragePercentage}%</span>
+        <CardContent className="space-y-4">
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span>Implemented</span>
+              <span>{currentData.implemented}/{currentData.totalControls}</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div 
-                className="bg-gradient-to-r from-green-600 to-blue-600 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${gapAnalysisResults.coveragePercentage}%` }}
-              ></div>
+            <Progress value={(currentData.implemented / currentData.totalControls) * 100} className="h-2" />
+          </div>
+          
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span>Partially Implemented</span>
+              <span>{currentData.partiallyImplemented}/{currentData.totalControls}</span>
             </div>
-            <div className="grid grid-cols-3 gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span>Covered ({gapAnalysisResults.covered})</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <span>Partial ({gapAnalysisResults.partiallyCovered})</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <span>Missing ({gapAnalysisResults.notCovered})</span>
-              </div>
+            <Progress value={(currentData.partiallyImplemented / currentData.totalControls) * 100} className="h-2" />
+          </div>
+          
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span>Not Implemented</span>
+              <span>{currentData.notImplemented}/{currentData.totalControls}</span>
             </div>
+            <Progress value={(currentData.notImplemented / currentData.totalControls) * 100} className="h-2" />
           </div>
         </CardContent>
       </Card>
 
-      {/* Identified Gaps */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Identified Gaps</h2>
-          <Button variant="outline" onClick={handleExportReport}>
-            <Download className="h-4 w-4 mr-2" />
-            Export Gap Report
-          </Button>
-        </div>
-        
-        {gaps.map((gap) => (
-          <Card key={gap.id} className="hover:shadow-lg transition-all duration-200">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <CardTitle className="text-lg">{gap.title}</CardTitle>
-                    <Badge className={getSeverityColor(gap.severity)} variant="outline">
-                      {gap.severity}
-                    </Badge>
-                  </div>
-                  <CardDescription>{gap.description}</CardDescription>
-                </div>
-                <Badge variant="outline" className="font-mono">{gap.id}</Badge>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <h4 className="font-medium text-blue-800 mb-1">Recommendation</h4>
-                <p className="text-sm text-blue-700">{gap.recommendation}</p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-medium mb-2">Affected Controls</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {gap.affectedControls.map((control, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {control}
-                      </Badge>
-                    ))}
+      {/* Critical Gaps */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Priority Gaps</CardTitle>
+          <CardDescription>
+            Controls requiring immediate attention based on risk assessment
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {gapDetails.map((gap, index) => (
+              <div key={index} className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium">{gap.control}</h4>
+                  <div className="flex gap-2">
+                    <Badge className={getRiskColor(gap.risk)}>{gap.risk} Risk</Badge>
+                    <Badge className={getStatusColor(gap.status)}>{gap.status}</Badge>
                   </div>
                 </div>
-                <div>
-                  <h4 className="font-medium mb-2">Estimated Effort</h4>
-                  <Badge variant="outline">{gap.estimatedEffort}</Badge>
+                <p className="text-sm text-muted-foreground">{gap.description}</p>
+                <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                  <h5 className="font-medium text-blue-800 text-sm mb-1">Recommendation</h5>
+                  <p className="text-sm text-blue-700">{gap.recommendation}</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Recommendations */}
-      <Card className="border-l-4 border-l-orange-500 bg-gradient-to-r from-orange-50 to-red-50">
+      {/* Action Items */}
+      <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50 to-purple-50">
         <CardContent className="pt-6">
           <div className="text-center space-y-4">
-            <TrendingUp className="h-12 w-12 text-orange-600 mx-auto" />
-            <h3 className="text-lg font-semibold">Prioritize Your Improvements</h3>
+            <Target className="h-12 w-12 text-blue-600 mx-auto" />
+            <h3 className="text-lg font-semibold">Generate Remediation Plan</h3>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Focus on critical and high-severity gaps first to maximize your compliance coverage and reduce risk.
+              Create a prioritized action plan to address identified gaps and improve your compliance posture.
             </p>
-            <Button className="bg-orange-600 hover:bg-orange-700" onClick={handleExportReport}>
-              <Download className="h-4 w-4 mr-2" />
-              Download Action Plan
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Generate Plan
             </Button>
           </div>
         </CardContent>

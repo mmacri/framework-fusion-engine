@@ -4,130 +4,176 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { mockControlsData } from "@/data/reportMockData";
-import { Download, FileText, Calendar, Settings, BarChart3, Shield, FileSpreadsheet } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Download, FileText, BarChart3, Shield, Calendar, Filter } from "lucide-react";
 
 export function Reports() {
   const [selectedFramework, setSelectedFramework] = useState("all");
-  const [reportType, setReportType] = useState("all");
+  const [selectedFormat, setSelectedFormat] = useState("pdf");
+  const [includeGaps, setIncludeGaps] = useState(true);
+  const [includeMappings, setIncludeMappings] = useState(true);
+  const [includeImplementation, setIncludeImplementation] = useState(false);
 
-  const frameworks = Object.keys(mockControlsData);
+  const frameworks = {
+    all: "All Frameworks",
+    nist: "NIST 800-53",
+    pci: "PCI-DSS",
+    hipaa: "HIPAA Security", 
+    sox: "SOX ITGC",
+    iso27001: "ISO 27001"
+  };
 
   const reportTemplates = [
     {
       id: "compliance-summary",
       title: "Compliance Summary Report",
       description: "High-level overview of compliance status across all frameworks",
-      icon: BarChart3,
-      format: ["PDF", "Excel"],
-      estimatedSize: "2-5 pages",
-      color: "from-blue-50 to-blue-100 border-blue-200",
-      iconColor: "text-blue-600"
-    },
-    {
-      id: "control-detail",
-      title: "Detailed Control Assessment",
-      description: "Comprehensive analysis of individual controls and their implementation status",
       icon: Shield,
-      format: ["PDF", "Word"],
-      estimatedSize: "15-25 pages",
-      color: "from-green-50 to-green-100 border-green-200",
-      iconColor: "text-green-600"
+      estimatedTime: "2-3 minutes",
+      formats: ["PDF", "Excel", "Word"]
     },
     {
       id: "gap-analysis",
-      title: "Gap Analysis Report",
-      description: "Identifies missing controls and areas for improvement",
-      icon: FileText,
-      format: ["PDF", "Excel"],
-      estimatedSize: "8-12 pages",
-      color: "from-orange-50 to-orange-100 border-orange-200",
-      iconColor: "text-orange-600"
+      title: "Gap Analysis Report", 
+      description: "Detailed analysis of control gaps and remediation recommendations",
+      icon: BarChart3,
+      estimatedTime: "5-7 minutes",
+      formats: ["PDF", "Excel"]
     },
     {
-      id: "mapping-matrix",
-      title: "Framework Mapping Matrix",
-      description: "Cross-reference matrix showing relationships between frameworks",
-      icon: FileSpreadsheet,
-      format: ["Excel", "CSV"],
-      estimatedSize: "1-3 sheets",
-      color: "from-purple-50 to-purple-100 border-purple-200",
-      iconColor: "text-purple-600"
+      id: "control-mappings",
+      title: "Framework Mapping Report",
+      description: "Cross-framework control mappings and relationships",
+      icon: FileText,
+      estimatedTime: "3-4 minutes", 
+      formats: ["PDF", "Excel", "CSV"]
+    },
+    {
+      id: "implementation-guide",
+      title: "Implementation Guide",
+      description: "Step-by-step implementation guidance for selected controls",
+      icon: FileText,
+      estimatedTime: "10-15 minutes",
+      formats: ["PDF", "Word"]
     }
   ];
 
   const recentReports = [
     {
-      name: "Q4 2024 Compliance Summary",
-      framework: "NIST 800-53",
-      type: "Compliance Summary",
-      generated: "2024-12-15",
-      size: "2.4 MB",
-      format: "PDF"
-    },
-    {
-      name: "PCI-DSS Gap Analysis",
-      framework: "PCI-DSS",
+      name: "NIST Compliance Assessment - Q4 2024",
       type: "Gap Analysis",
-      generated: "2024-12-10",
-      size: "1.8 MB",
-      format: "Excel"
+      created: "2024-12-15",
+      format: "PDF",
+      size: "2.4 MB"
     },
     {
-      name: "HIPAA Control Assessment",
-      framework: "HIPAA Security",
-      type: "Control Detail",
-      generated: "2024-12-08",
-      size: "3.2 MB",
-      format: "PDF"
+      name: "PCI-DSS Control Mappings",
+      type: "Framework Mapping", 
+      created: "2024-12-10",
+      format: "Excel",
+      size: "1.8 MB"
+    },
+    {
+      name: "Healthcare Compliance Summary",
+      type: "Compliance Summary",
+      created: "2024-12-05", 
+      format: "PDF",
+      size: "3.1 MB"
     }
   ];
+
+  const handleGenerateReport = (templateId: string) => {
+    console.log(`Generating report: ${templateId}`);
+    // In a real implementation, this would trigger report generation
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="space-y-4">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Reports & Export
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Generate comprehensive compliance reports and export data for stakeholders. 
-            Choose from various templates and formats.
+            Generate comprehensive reports for compliance documentation and auditing
           </p>
         </div>
 
-        {/* Quick Generate */}
-        <div className="flex gap-4 items-center justify-center bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
-          <Select value={selectedFramework} onValueChange={setSelectedFramework}>
-            <SelectTrigger className="w-64 bg-white">
-              <SelectValue placeholder="Select Framework" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Frameworks</SelectItem>
-              {frameworks.map(framework => (
-                <SelectItem key={framework} value={framework}>{framework}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {/* Report Configuration */}
+        <Card className="bg-gradient-to-r from-blue-50 to-purple-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="h-5 w-5" />
+              Report Configuration
+            </CardTitle>
+            <CardDescription>
+              Customize your report settings and content
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Framework</label>
+                <Select value={selectedFramework} onValueChange={setSelectedFramework}>
+                  <SelectTrigger className="bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(frameworks).map(([key, name]) => (
+                      <SelectItem key={key} value={key}>{name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-2 block">Export Format</label>
+                <Select value={selectedFormat} onValueChange={setSelectedFormat}>
+                  <SelectTrigger className="bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pdf">PDF</SelectItem>
+                    <SelectItem value="excel">Excel</SelectItem>
+                    <SelectItem value="word">Word</SelectItem>
+                    <SelectItem value="csv">CSV</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-          <Select value={reportType} onValueChange={setReportType}>
-            <SelectTrigger className="w-64 bg-white">
-              <SelectValue placeholder="Report Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              {reportTemplates.map(template => (
-                <SelectItem key={template.id} value={template.id}>{template.title}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Button className="bg-green-600 hover:bg-green-700">
-            <Download className="h-4 w-4 mr-2" />
-            Generate Report
-          </Button>
-        </div>
+            <div>
+              <label className="text-sm font-medium mb-3 block">Include Sections</label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="gaps" 
+                    checked={includeGaps} 
+                    onCheckedChange={setIncludeGaps}
+                  />
+                  <label htmlFor="gaps" className="text-sm">Gap Analysis</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="mappings" 
+                    checked={includeMappings} 
+                    onCheckedChange={setIncludeMappings}
+                  />
+                  <label htmlFor="mappings" className="text-sm">Control Mappings</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="implementation" 
+                    checked={includeImplementation} 
+                    onCheckedChange={setIncludeImplementation}
+                  />
+                  <label htmlFor="implementation" className="text-sm">Implementation Guidance</label>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Report Templates */}
@@ -135,38 +181,37 @@ export function Reports() {
         <h2 className="text-xl font-semibold">Report Templates</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {reportTemplates.map((template) => (
-            <Card key={template.id} className={`bg-gradient-to-br ${template.color} hover:shadow-lg transition-shadow cursor-pointer`}>
+            <Card key={template.id} className="hover:shadow-lg transition-all duration-200">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <template.icon className={`h-6 w-6 ${template.iconColor}`} />
-                  {template.title}
-                </CardTitle>
-                <CardDescription>{template.description}</CardDescription>
+                <div className="flex items-center gap-3">
+                  <template.icon className="h-8 w-8 text-blue-600" />
+                  <div>
+                    <CardTitle className="text-lg">{template.title}</CardTitle>
+                    <CardDescription>{template.description}</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">Formats:</span>
-                    <div className="flex gap-1 mt-1">
-                      {template.format.map(format => (
-                        <Badge key={format} variant="secondary" className="text-xs">{format}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="font-medium">Size:</span>
-                    <div className="text-muted-foreground mt-1">{template.estimatedSize}</div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    <Calendar className="h-4 w-4 inline mr-1" />
+                    Est. {template.estimatedTime}
+                  </span>
+                  <div className="flex gap-1">
+                    {template.formats.map((format) => (
+                      <Badge key={format} variant="outline" className="text-xs">
+                        {format}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button size="sm" className="flex-1">
-                    <Download className="h-4 w-4 mr-2" />
-                    Generate
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </div>
+                <Button 
+                  onClick={() => handleGenerateReport(template.id)}
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Generate Report
+                </Button>
               </CardContent>
             </Card>
           ))}
@@ -174,70 +219,55 @@ export function Reports() {
       </div>
 
       {/* Recent Reports */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Recent Reports</h2>
-          <Button variant="outline">
-            <Calendar className="h-4 w-4 mr-2" />
-            View All
-          </Button>
-        </div>
-        
-        <Card>
-          <CardContent className="p-0">
-            <div className="divide-y">
-              {recentReports.map((report, index) => (
-                <div key={index} className="p-4 hover:bg-accent transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-8 w-8 text-muted-foreground" />
-                      <div>
-                        <h4 className="font-medium">{report.name}</h4>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>{report.framework}</span>
-                          <span>•</span>
-                          <span>{report.type}</span>
-                          <span>•</span>
-                          <span>{report.generated}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-right text-sm">
-                        <div className="font-medium">{report.size}</div>
-                        <Badge variant="outline" className="text-xs">{report.format}</Badge>
-                      </div>
-                      <Button size="sm" variant="outline">
-                        <Download className="h-4 w-4" />
-                      </Button>
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Reports</CardTitle>
+          <CardDescription>
+            Previously generated reports available for download
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {recentReports.map((report, index) => (
+              <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors">
+                <div className="flex items-center gap-3">
+                  <FileText className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <h4 className="font-medium">{report.name}</h4>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Badge variant="outline">{report.type}</Badge>
+                      <span>•</span>
+                      <span>{report.created}</span>
+                      <span>•</span>
+                      <span>{report.format}</span>
+                      <span>•</span>
+                      <span>{report.size}</span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Export Options */}
-      <Card className="border-l-4 border-l-green-500 bg-gradient-to-r from-green-50 to-blue-50">
+      {/* Export Actions */}
+      <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50 to-purple-50">
         <CardContent className="pt-6">
           <div className="text-center space-y-4">
-            <Download className="h-12 w-12 text-green-600 mx-auto" />
-            <h3 className="text-lg font-semibold">Custom Export Options</h3>
+            <BarChart3 className="h-12 w-12 text-blue-600 mx-auto" />
+            <h3 className="text-lg font-semibold">Bulk Export</h3>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Need a specific format or custom report? Configure advanced export options to meet your requirements.
+              Export all data for backup or migration purposes. Includes controls, mappings, and analysis results.
             </p>
-            <div className="flex gap-4 justify-center">
-              <Button className="bg-green-600 hover:bg-green-700">
-                <Settings className="h-4 w-4 mr-2" />
-                Custom Export
-              </Button>
-              <Button variant="outline">
-                <FileText className="h-4 w-4 mr-2" />
-                API Access
-              </Button>
-            </div>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Download className="h-4 w-4 mr-2" />
+              Export All Data
+            </Button>
           </div>
         </CardContent>
       </Card>

@@ -1,333 +1,284 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Edit3, Plus, ThumbsUp, ThumbsDown, MessageSquare, Clock, CheckCircle, XCircle, Users, TrendingUp } from "lucide-react";
-import { CommunityEdit } from "@/types/community";
-import { EditProposalCard } from "./EditProposalCard";
-import { ProposeEditDialog } from "./ProposeEditDialog";
-import { EditDetailDialog } from "./EditDetailDialog";
-import { toast } from "@/hooks/use-toast";
-import { AdminApprovalPanel } from "./AdminApprovalPanel";
+import { Edit3, Plus, Search, Filter, ThumbsUp, ThumbsDown, MessageSquare } from "lucide-react";
 
 export function CommunityEditsDashboard() {
-  const [edits, setEdits] = useState<CommunityEdit[]>([]);
-  const [filter, setFilter] = useState<string>("all");
+  const [showNewEdit, setShowNewEdit] = useState(false);
+  const [editType, setEditType] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [userVotes, setUserVotes] = useState<Record<string, 'approve' | 'reject'>>({});
 
-  const filteredEdits = edits.filter(edit => {
-    const matchesFilter = filter === "all" || edit.status === filter;
-    const matchesSearch = edit.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         edit.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  const handleVote = (editId: string, vote: 'approve' | 'reject') => {
-    if (userVotes[editId]) {
-      toast({
-        title: "Already voted",
-        description: "You have already voted on this proposal.",
-        variant: "destructive",
-      });
-      return;
+  const pendingEdits = [
+    {
+      id: 1,
+      type: "Control Update",
+      title: "Enhance NIST AC-2 Implementation Guidance", 
+      author: "security_expert_123",
+      created: "2024-12-15",
+      votes: { up: 12, down: 2 },
+      status: "Under Review",
+      description: "Adding more specific guidance for automated account management processes"
+    },
+    {
+      id: 2,
+      type: "New Mapping",
+      title: "PCI-DSS 8.2 to NIST AC-7 Mapping",
+      author: "compliance_guru", 
+      created: "2024-12-14",
+      votes: { up: 8, down: 1 },
+      status: "Pending Approval",
+      description: "Proposed mapping between PCI-DSS account lockout and NIST unsuccessful logon attempts"
+    },
+    {
+      id: 3,
+      type: "Control Update",
+      title: "Update HIPAA 164.312(a)(1) Examples",
+      author: "healthcare_specialist",
+      created: "2024-12-13", 
+      votes: { up: 15, down: 0 },
+      status: "Approved",
+      description: "Adding real-world implementation examples for unique user identification"
     }
-
-    setEdits(prev => prev.map(edit => {
-      if (edit.id === editId) {
-        const newVotes = { ...edit.votes };
-        newVotes[vote]++;
-        
-        let newStatus = edit.status;
-        if (newVotes.approve >= 10 && newVotes.reject <= 3) {
-          newStatus = 'approved';
-          toast({
-            title: "Proposal approved!",
-            description: "This proposal has been automatically approved by the community.",
-          });
-        } else if (newVotes.reject >= 5) {
-          newStatus = 'rejected';
-          toast({
-            title: "Proposal rejected",
-            description: "This proposal has been rejected by the community.",
-            variant: "destructive",
-          });
-        }
-        
-        return { ...edit, votes: newVotes, status: newStatus };
-      }
-      return edit;
-    }));
-
-    setUserVotes(prev => ({ ...prev, [editId]: vote }));
-    
-    toast({
-      title: "Vote recorded",
-      description: `Your ${vote} vote has been recorded.`,
-    });
-  };
-
-  const handleAdminApprove = (editId: string) => {
-    setEdits(prev => prev.map(edit => {
-      if (edit.id === editId) {
-        return { ...edit, status: 'approved' as const };
-      }
-      return edit;
-    }));
-  };
-
-  const handleAdminReject = (editId: string) => {
-    setEdits(prev => prev.map(edit => {
-      if (edit.id === editId) {
-        return { ...edit, status: 'rejected' as const };
-      }
-      return edit;
-    }));
-  };
-
-  const handleSubmitEdit = (editData: any) => {
-    setEdits(prev => [editData, ...prev]);
-  };
-
-  const handleAddComment = (editId: string, comment: string) => {
-    const newComment = {
-      id: `comment-${Date.now()}`,
-      userId: "current_user",
-      content: comment,
-      timestamp: new Date().toISOString(),
-      type: "comment" as const
-    };
-
-    setEdits(prev => prev.map(edit => {
-      if (edit.id === editId) {
-        return { ...edit, comments: [...edit.comments, newComment] };
-      }
-      return edit;
-    }));
-
-    toast({
-      title: "Comment added",
-      description: "Your comment has been added to the discussion.",
-    });
-  };
+  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      case 'under_review': return 'bg-yellow-100 text-yellow-800';
-      case 'pending': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "Approved": return "bg-green-100 text-green-800";
+      case "Under Review": return "bg-yellow-100 text-yellow-800";
+      case "Pending Approval": return "bg-blue-100 text-blue-800";
+      case "Rejected": return "bg-red-100 text-red-800";
+      default: return "bg-gray-100 text-gray-800";
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'approved': return <CheckCircle className="h-4 w-4" />;
-      case 'rejected': return <XCircle className="h-4 w-4" />;
-      case 'under_review': return <Clock className="h-4 w-4" />;
-      case 'pending': return <Edit3 className="h-4 w-4" />;
-      default: return <Edit3 className="h-4 w-4" />;
-    }
-  };
-
-  const stats = {
-    total: edits.length,
-    pending: edits.filter(e => e.status === 'pending').length,
-    approved: edits.filter(e => e.status === 'approved').length,
-    rejected: edits.filter(e => e.status === 'rejected').length
+  const handleSubmitEdit = () => {
+    console.log("Submitting edit proposal");
+    setShowNewEdit(false);
+    // In a real implementation, this would submit to the backend
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Community Proposals</h1>
-          <p className="text-muted-foreground">Propose and vote on improvements to controls and mappings</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="space-y-4">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Propose Edits
+          </h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Contribute to the community by proposing improvements to controls, mappings, and implementation guidance
+          </p>
         </div>
-        <ProposeEditDialog onSubmitEdit={handleSubmitEdit}>
-          <Button>
+
+        <div className="flex gap-4 items-center justify-center">
+          <Button 
+            onClick={() => setShowNewEdit(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
             <Plus className="h-4 w-4 mr-2" />
-            Propose Edit
+            Propose New Edit
           </Button>
-        </ProposeEditDialog>
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* New Edit Form */}
+      {showNewEdit && (
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <TrendingUp className="h-8 w-8 text-blue-600" />
+          <CardHeader>
+            <CardTitle>Propose New Edit</CardTitle>
+            <CardDescription>Submit your contribution to the community for review</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <div className="text-2xl font-bold">{stats.total}</div>
-                <div className="text-sm text-muted-foreground">Total Proposals</div>
+                <label className="text-sm font-medium mb-2 block">Edit Type</label>
+                <Select value={editType} onValueChange={setEditType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select edit type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="control-update">Control Update</SelectItem>
+                    <SelectItem value="new-mapping">New Mapping</SelectItem>
+                    <SelectItem value="mapping-update">Mapping Update</SelectItem>
+                    <SelectItem value="implementation-guide">Implementation Guide</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Framework</label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select framework" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="nist">NIST 800-53</SelectItem>
+                    <SelectItem value="pci">PCI-DSS</SelectItem>
+                    <SelectItem value="hipaa">HIPAA Security</SelectItem>
+                    <SelectItem value="sox">SOX ITGC</SelectItem>
+                    <SelectItem value="iso27001">ISO 27001</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <Clock className="h-8 w-8 text-yellow-600" />
-              <div>
-                <div className="text-2xl font-bold">{stats.pending}</div>
-                <div className="text-sm text-muted-foreground">Pending Review</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <CheckCircle className="h-8 w-8 text-green-600" />
-              <div>
-                <div className="text-2xl font-bold">{stats.approved}</div>
-                <div className="text-sm text-muted-foreground">Approved</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <XCircle className="h-8 w-8 text-red-600" />
-              <div>
-                <div className="text-2xl font-bold">{stats.rejected}</div>
-                <div className="text-sm text-muted-foreground">Rejected</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
-      <div className="flex gap-4">
-        <Input
-          placeholder="Search proposals..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-48">
-            <SelectValue />
+            <div>
+              <label className="text-sm font-medium mb-2 block">Title</label>
+              <Input placeholder="Brief description of your proposed edit" />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">Description</label>
+              <Textarea 
+                placeholder="Detailed explanation of the proposed changes and rationale"
+                rows={4}
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">Proposed Changes</label>
+              <Textarea 
+                placeholder="Specific text or content changes you're proposing"
+                rows={6}
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button onClick={handleSubmitEdit} className="bg-blue-600 hover:bg-blue-700">
+                <Edit3 className="h-4 w-4 mr-2" />
+                Submit for Review
+              </Button>
+              <Button variant="outline" onClick={() => setShowNewEdit(false)}>
+                Cancel
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Filters */}
+      <div className="flex gap-4 items-center flex-wrap bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg">
+        <div className="relative flex-1 min-w-[300px]">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Search pending edits..." 
+            className="pl-10 bg-white"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        <Select>
+          <SelectTrigger className="w-48 bg-white">
+            <SelectValue placeholder="Edit Type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Proposals</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="under_review">Under Review</SelectItem>
-            <SelectItem value="approved">Approved</SelectItem>
-            <SelectItem value="rejected">Rejected</SelectItem>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="control-update">Control Updates</SelectItem>
+            <SelectItem value="new-mapping">New Mappings</SelectItem>
+            <SelectItem value="mapping-update">Mapping Updates</SelectItem>
           </SelectContent>
         </Select>
+
+        <Select>
+          <SelectTrigger className="w-48 bg-white">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="pending">Pending Review</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="under-review">Under Review</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Button variant="outline" className="bg-white">
+          <Filter className="h-4 w-4 mr-2" />
+          Clear Filters
+        </Button>
       </div>
 
-      <Tabs defaultValue="proposals" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="proposals">Proposals</TabsTrigger>
-          <TabsTrigger value="voting">Voting Guidelines</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="proposals" className="space-y-4">
-          {filteredEdits.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <Edit3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No proposals yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Be the first to propose an improvement to the community library!
-                </p>
-                <ProposeEditDialog onSubmitEdit={handleSubmitEdit}>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create First Proposal
-                  </Button>
-                </ProposeEditDialog>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredEdits.map((edit) => (
-              <EditDetailDialog 
-                key={edit.id} 
-                edit={edit} 
-                onAddComment={handleAddComment}
-              >
-                <div>
-                  <EditProposalCard 
-                    edit={edit} 
-                    onVote={handleVote}
-                    getStatusColor={getStatusColor}
-                    getStatusIcon={getStatusIcon}
-                    userVoted={userVotes[edit.id]}
-                  />
-                </div>
-              </EditDetailDialog>
-            ))
-          )}
-        </TabsContent>
-
-        <TabsContent value="voting">
-          <Card>
+      {/* Pending Edits */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Community Edit Proposals</h2>
+        
+        {pendingEdits.map((edit) => (
+          <Card key={edit.id} className="hover:shadow-lg transition-all duration-200">
             <CardHeader>
-              <CardTitle>Voting Guidelines</CardTitle>
-              <CardDescription>How the community review process works</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-medium mb-3">Approval Criteria</h4>
-                  <ul className="text-sm space-y-2 text-muted-foreground">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      Minimum 10 approval votes
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-blue-600" />
-                      At least 2 expert reviewer approvals
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <XCircle className="h-4 w-4 text-red-600" />
-                      Maximum 3 rejection votes
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-yellow-600" />
-                      7-day review period
-                    </li>
-                  </ul>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Edit3 className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <CardTitle className="text-lg">{edit.title}</CardTitle>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="outline">{edit.type}</Badge>
+                      <Badge className={getStatusColor(edit.status)}>{edit.status}</Badge>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-medium mb-3">Voting Rights</h4>
-                  <ul className="text-sm space-y-2 text-muted-foreground">
-                    <li>• All registered users can vote</li>
-                    <li>• Expert reviewers have enhanced weight</li>
-                    <li>• Reputation affects vote influence</li>
-                    <li>• One vote per user per proposal</li>
-                    <li>• Anonymous voting to prevent bias</li>
-                  </ul>
+                <div className="text-right text-sm text-muted-foreground">
+                  <p>by {edit.author}</p>
+                  <p>{edit.created}</p>
                 </div>
               </div>
-              
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <h4 className="font-medium mb-2">Quality Standards</h4>
-                <p className="text-sm text-muted-foreground">
-                  All proposals must include clear rationale, supporting evidence, and follow established
-                  framework guidelines. Proposals that improve security posture, compliance accuracy,
-                  or usability are prioritized for approval.
-                </p>
+              <CardDescription>{edit.description}</CardDescription>
+            </CardHeader>
+            
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700">
+                      <ThumbsUp className="h-4 w-4 mr-1" />
+                      {edit.votes.up}
+                    </Button>
+                    <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                      <ThumbsDown className="h-4 w-4 mr-1" />
+                      {edit.votes.down}
+                    </Button>
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Comments
+                  </Button>
+                </div>
+                <Button variant="outline" size="sm">
+                  View Details
+                </Button>
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        ))}
+      </div>
 
-      <AdminApprovalPanel
-        edits={edits}
-        onApproveEdit={handleAdminApprove}
-        onRejectEdit={handleAdminReject}
-      />
+      {/* Guidelines */}
+      <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50 to-purple-50">
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-3">Contribution Guidelines</h3>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li className="flex items-center gap-2">
+              <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
+              Ensure all proposed changes are accurate and well-researched
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
+              Provide clear rationale and supporting documentation
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
+              Follow the community's formatting and style guidelines
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
+              Be respectful and constructive in all interactions
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
     </div>
   );
 }

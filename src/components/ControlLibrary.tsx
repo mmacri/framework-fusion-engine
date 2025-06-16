@@ -1,130 +1,79 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { mockControlsData, Control } from "@/data/reportMockData";
-import { Search, Filter, Shield, Eye, Edit } from "lucide-react";
+import { Search, Shield, Filter, BookOpen } from "lucide-react";
 
 interface ControlLibraryProps {
-  selectedFramework?: string | null;
+  selectedFramework: string | null;
 }
 
 export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPriority, setSelectedPriority] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedControlFramework, setSelectedControlFramework] = useState(selectedFramework || "all");
 
-  const frameworks = Object.keys(mockControlsData);
-  
-  // Get all controls from selected framework or all frameworks
-  const getAllControls = () => {
-    if (selectedControlFramework && selectedControlFramework !== "all") {
-      return mockControlsData[selectedControlFramework] || [];
-    }
-    return Object.values(mockControlsData).flat();
+  const frameworks = {
+    nist: "NIST 800-53",
+    pci: "PCI-DSS",
+    hipaa: "HIPAA Security",
+    sox: "SOX ITGC",
+    iso27001: "ISO 27001"
   };
 
-  const allControls = getAllControls();
+  const mockControls = [
+    {
+      id: "AC-1",
+      title: "Access Control Policy and Procedures",
+      framework: "NIST 800-53",
+      category: "Access Control",
+      description: "The organization develops, documents, and disseminates access control policy and procedures.",
+      implementation: "Establish comprehensive access control policies and procedures.",
+      priority: "High"
+    },
+    {
+      id: "PCI-7.1",
+      title: "Restrict Access to System Components",
+      framework: "PCI-DSS",
+      category: "Access Control",
+      description: "Limit access to system components and cardholder data by business need-to-know.",
+      implementation: "Implement role-based access controls and regular access reviews.",
+      priority: "Critical"
+    },
+    {
+      id: "164.308(a)(1)",
+      title: "Security Officer",
+      framework: "HIPAA Security",
+      category: "Administrative",
+      description: "Assign responsibility for the development and implementation of security policies.",
+      implementation: "Designate a security officer responsible for HIPAA compliance.",
+      priority: "High"
+    }
+  ];
 
-  // Get unique categories and priorities
-  const categories = [...new Set(allControls.map(control => control.category))];
-  const priorities = ['Critical', 'High', 'Medium', 'Low'];
-
-  // Filter controls
-  const filteredControls = allControls.filter(control => {
+  const filteredControls = mockControls.filter(control => {
     const matchesSearch = !searchTerm || 
       control.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      control.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      control.id.toLowerCase().includes(searchTerm.toLowerCase());
+      control.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      control.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesPriority = selectedPriority === "all" || control.priority === selectedPriority;
     const matchesCategory = selectedCategory === "all" || control.category === selectedCategory;
+    const matchesFramework = !selectedFramework || control.framework.toLowerCase().includes(selectedFramework);
     
-    return matchesSearch && matchesPriority && matchesCategory;
+    return matchesSearch && matchesCategory && matchesFramework;
   });
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'Critical': return "bg-red-100 text-red-800";
-      case 'High': return "bg-orange-100 text-orange-800";
-      case 'Medium': return "bg-yellow-100 text-yellow-800";
-      case 'Low': return "bg-green-100 text-green-800";
+      case "Critical": return "bg-red-100 text-red-800";
+      case "High": return "bg-orange-100 text-orange-800";
+      case "Medium": return "bg-yellow-100 text-yellow-800";
+      case "Low": return "bg-green-100 text-green-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active': return "bg-green-100 text-green-800";
-      case 'Draft': return "bg-yellow-100 text-yellow-800";
-      case 'Deprecated': return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const ControlDetailDialog = ({ control }: { control: Control }) => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Eye className="h-4 w-4 mr-1" />
-          View Details
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            {control.id}: {control.title}
-          </DialogTitle>
-          <DialogDescription>{control.description}</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium mb-2">Category</h4>
-              <Badge variant="outline">{control.category}</Badge>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Family</h4>
-              <Badge variant="outline">{control.family}</Badge>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Priority</h4>
-              <Badge className={getPriorityColor(control.priority)}>{control.priority}</Badge>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Status</h4>
-              <Badge className={getStatusColor(control.status)}>{control.status}</Badge>
-            </div>
-          </div>
-          
-          <div>
-            <h4 className="font-medium mb-2">Implementation</h4>
-            <p className="text-sm text-muted-foreground bg-accent p-3 rounded-lg">
-              {control.implementation}
-            </p>
-          </div>
-
-          {control.mappings && control.mappings.length > 0 && (
-            <div>
-              <h4 className="font-medium mb-2">Related Controls</h4>
-              <div className="flex flex-wrap gap-1">
-                {control.mappings.map((mapping, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs">
-                    {mapping}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
 
   return (
     <div className="space-y-6">
@@ -132,12 +81,16 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
       <div className="space-y-4">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Control Library
+            Security Controls Library
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore and manage security controls across multiple compliance frameworks. 
-            Search, filter, and contribute to our comprehensive control database.
+            Browse and search security controls across multiple compliance frameworks
           </p>
+          {selectedFramework && (
+            <Badge variant="outline" className="text-lg px-4 py-2">
+              {frameworks[selectedFramework as keyof typeof frameworks] || selectedFramework}
+            </Badge>
+          )}
         </div>
 
         {/* Filters */}
@@ -152,39 +105,15 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
             />
           </div>
           
-          <Select value={selectedControlFramework} onValueChange={setSelectedControlFramework}>
-            <SelectTrigger className="w-48 bg-white">
-              <SelectValue placeholder="All Frameworks" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Frameworks</SelectItem>
-              {frameworks.map(framework => (
-                <SelectItem key={framework} value={framework}>{framework}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-48 bg-white">
-              <SelectValue placeholder="All Categories" />
+              <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories.map(category => (
-                <SelectItem key={category} value={category}>{category}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={selectedPriority} onValueChange={setSelectedPriority}>
-            <SelectTrigger className="w-48 bg-white">
-              <SelectValue placeholder="All Priorities" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Priorities</SelectItem>
-              {priorities.map(priority => (
-                <SelectItem key={priority} value={priority}>{priority}</SelectItem>
-              ))}
+              <SelectItem value="Access Control">Access Control</SelectItem>
+              <SelectItem value="Administrative">Administrative</SelectItem>
+              <SelectItem value="Technical">Technical</SelectItem>
             </SelectContent>
           </Select>
 
@@ -194,8 +123,6 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
             onClick={() => {
               setSearchTerm("");
               setSelectedCategory("all");
-              setSelectedPriority("all");
-              setSelectedControlFramework("all");
             }}
           >
             <Filter className="h-4 w-4 mr-2" />
@@ -204,63 +131,74 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
         </div>
       </div>
 
-      {/* Controls Count */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">
-          Controls ({filteredControls.length})
-        </h2>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Edit className="h-4 w-4 mr-2" />
-            Contribute
-          </Button>
-        </div>
+      {/* Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-primary">{filteredControls.length}</div>
+            <div className="text-sm text-muted-foreground">Controls Found</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-green-600">
+              {filteredControls.filter(c => c.priority === "Critical" || c.priority === "High").length}
+            </div>
+            <div className="text-sm text-muted-foreground">High Priority</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-blue-600">5</div>
+            <div className="text-sm text-muted-foreground">Frameworks</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-purple-600">12</div>
+            <div className="text-sm text-muted-foreground">Categories</div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Controls Grid */}
-      <div className="grid gap-4">
-        {filteredControls.map((control) => (
-          <Card key={control.id} className="hover:shadow-lg transition-all duration-200">
+      {/* Controls List */}
+      <div className="space-y-4">
+        {filteredControls.map((control, index) => (
+          <Card key={index} className="hover:shadow-lg transition-all duration-200">
             <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                  <CardTitle className="text-lg">
-                    {control.id}: {control.title}
-                  </CardTitle>
-                  <CardDescription>{control.description}</CardDescription>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Shield className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <CardTitle className="text-lg">{control.id} - {control.title}</CardTitle>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="outline">{control.framework}</Badge>
+                      <Badge variant="secondary">{control.category}</Badge>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Badge className={getPriorityColor(control.priority)}>
-                    {control.priority}
-                  </Badge>
-                  <Badge className={getStatusColor(control.status)} variant="outline">
-                    {control.status}
-                  </Badge>
-                </div>
+                <Badge className={getPriorityColor(control.priority)}>
+                  {control.priority}
+                </Badge>
               </div>
-              
-              <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="secondary">{control.category}</Badge>
-                <Badge variant="outline">{control.family}</Badge>
-                {control.mappings?.slice(0, 2).map((mapping, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {mapping}
-                  </Badge>
-                ))}
-                {control.mappings && control.mappings.length > 2 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{control.mappings.length - 2} more
-                  </Badge>
-                )}
-              </div>
+              <CardDescription>{control.description}</CardDescription>
             </CardHeader>
             
             <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  Implementation guidance available
+              <div className="space-y-3">
+                <div>
+                  <h4 className="font-medium text-sm mb-1">Implementation Guidance</h4>
+                  <p className="text-sm text-muted-foreground">{control.implementation}</p>
                 </div>
-                <ControlDetailDialog control={control} />
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    View Details
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    View Mappings
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -268,13 +206,11 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
       </div>
 
       {filteredControls.length === 0 && (
-        <Card className="text-center py-8">
+        <Card className="text-center py-12">
           <CardContent>
-            <Shield className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Controls Found</h3>
-            <p className="text-muted-foreground">
-              Try adjusting your search criteria or filters to find the controls you're looking for.
-            </p>
+            <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">No controls found</h3>
+            <p className="text-muted-foreground">Try adjusting your search criteria or filters</p>
           </CardContent>
         </Card>
       )}
