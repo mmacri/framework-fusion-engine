@@ -19,7 +19,8 @@ import {
   BarChart3, 
   Search,
   Download,
-  HelpCircle 
+  HelpCircle,
+  Edit3
 } from "lucide-react";
 
 interface AppNavigationProps {
@@ -32,8 +33,12 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
     { id: "overview", label: "Overview", icon: Home },
     { id: "controls", label: "Controls", icon: Shield },
     { id: "mapping", label: "Mapping", icon: FileText },
-    { id: "gaps", label: "Analysis", icon: Search },
-    { id: "community", label: "Community", icon: Users }
+    { id: "gaps", label: "Analysis", icon: Search }
+  ];
+
+  const communityItems = [
+    { id: "community", label: "Community Home", icon: Users },
+    { id: "community-edits", label: "Propose Edits", icon: Edit3 }
   ];
 
   const resourceItems = [
@@ -73,6 +78,31 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
                 </NavigationMenuItem>
               ))}
 
+              {/* Community Dropdown */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="h-9">
+                  <Users className="h-4 w-4 mr-2" />
+                  Community
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="grid w-[300px] gap-3 p-4">
+                    {communityItems.map((item) => (
+                      <NavigationMenuLink key={item.id} asChild>
+                        <Button
+                          variant={activeView === item.id ? "default" : "ghost"}
+                          size="sm"
+                          onClick={() => onViewChange(item.id)}
+                          className="w-full justify-start gap-2"
+                        >
+                          <item.icon className="h-4 w-4" />
+                          {item.label}
+                        </Button>
+                      </NavigationMenuLink>
+                    ))}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
               {/* Resources Dropdown */}
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="h-9">Resources</NavigationMenuTrigger>
@@ -81,7 +111,7 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
                     {resourceItems.map((item) => (
                       <NavigationMenuLink key={item.id} asChild>
                         <Button
-                          variant="ghost"
+                          variant={activeView === item.id ? "default" : "ghost"}
                           size="sm"
                           onClick={() => onViewChange(item.id)}
                           className="w-full justify-start gap-2"

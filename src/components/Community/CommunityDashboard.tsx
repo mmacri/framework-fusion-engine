@@ -2,9 +2,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, MessageSquare, Edit3, ThumbsUp, TrendingUp, Star, GitBranch } from "lucide-react";
+import { Users, MessageSquare, Edit3, ThumbsUp, TrendingUp, Star, GitBranch, ArrowRight } from "lucide-react";
 
-export function CommunityDashboard() {
+interface CommunityDashboardProps {
+  onNavigateToEdits?: () => void;
+}
+
+export function CommunityDashboard({ onNavigateToEdits }: CommunityDashboardProps) {
   const communityStats = [
     { label: "Active Contributors", value: "847", icon: Users, color: "text-blue-600" },
     { label: "Total Edits", value: "2,134", icon: Edit3, color: "text-green-600" },
@@ -149,7 +153,10 @@ export function CommunityDashboard() {
               <p className="text-muted-foreground">
                 Help improve control descriptions and implementation guidance
               </p>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={onNavigateToEdits}
+              >
                 <Edit3 className="h-4 w-4 mr-2" />
                 Start Contributing
               </Button>

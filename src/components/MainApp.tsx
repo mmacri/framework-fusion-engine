@@ -9,6 +9,7 @@ import { DashboardOverview } from "./DashboardOverview";
 import { UserGuide } from "./UserGuide";
 import { UseCasesLibrary } from "./UseCasesLibrary";
 import { CommunityDashboard } from "./Community/CommunityDashboard";
+import { CommunityEditsDashboard } from "./Community/CommunityEditsDashboard";
 
 export function MainApp() {
   const [activeView, setActiveView] = useState("overview");
@@ -33,6 +34,8 @@ export function MainApp() {
         return <Reports />;
       case "community":
         return <CommunityDashboard />;
+      case "community-edits":
+        return <CommunityEditsDashboard />;
       case "use-cases":
         return <UseCasesLibrary />;
       case "guide":
