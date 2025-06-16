@@ -44,7 +44,7 @@ export function EditProposalCard({ edit, onVote, getStatusColor, getStatusIcon, 
     }
   };
 
-  const isVotingDisabled = edit.status === 'approved' || edit.status === 'rejected' || userVoted;
+  const isVotingDisabled = edit.status === 'approved' || edit.status === 'rejected' || Boolean(userVoted);
   const approvalProgress = (edit.votes.approve / 10) * 100; // 10 votes needed for approval
 
   return (
