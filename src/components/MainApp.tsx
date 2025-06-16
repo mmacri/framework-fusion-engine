@@ -20,6 +20,10 @@ export function MainApp() {
     setActiveView("controls");
   };
 
+  const handleNavigateToEdits = () => {
+    setActiveView("community-edits");
+  };
+
   const renderActiveComponent = () => {
     switch (activeView) {
       case "overview":
@@ -33,7 +37,7 @@ export function MainApp() {
       case "reports":
         return <Reports />;
       case "community":
-        return <CommunityDashboard />;
+        return <CommunityDashboard onNavigateToEdits={handleNavigateToEdits} />;
       case "community-edits":
         return <CommunityEditsDashboard />;
       case "use-cases":

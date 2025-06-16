@@ -4,52 +4,84 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { mockControlsData } from "@/data/reportMockData";
 import { AlertTriangle, CheckCircle, XCircle, TrendingUp, Download, Search } from "lucide-react";
 
 export function GapAnalysis() {
-  const [sourceFramework, setSourceFramework] = useState("all");
-  const [targetFramework, setTargetFramework] = useState("all");
+  const [sourceFramework, setSourceFramework] = useState("nist");
+  const [targetFramework, setTargetFramework] = useState("pci-dss");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const frameworks = Object.keys(mockControlsData);
+  const frameworks = [
+    { id: "nist", name: "NIST Cybersecurity Framework" },
+    { id: "pci-dss", name: "PCI-DSS" },
+    { id: "sox", name: "SOX Controls" },
+    { id: "hipaa", name: "HIPAA Security Rule" },
+    { id: "iso27001", name: "ISO 27001" }
+  ];
 
-  // Mock gap analysis data
-  const gapAnalysisResults = {
-    covered: 78,
-    partiallyCovered: 15,
-    notCovered: 7,
-    totalControls: 100,
-    coveragePercentage: 78,
-    gaps: [
-      {
-        id: "GAP-001",
-        title: "Incident Response Documentation",
-        severity: "High",
-        description: "Missing formal incident response procedures documentation",
-        recommendation: "Develop comprehensive incident response plan with defined roles and procedures",
-        affectedControls: ["NIST IR-1", "PCI-DSS 12.10"],
-        estimatedEffort: "2-4 weeks"
-      },
-      {
-        id: "GAP-002", 
-        title: "Access Review Automation",
-        severity: "Medium",
-        description: "Manual access reviews are not performed regularly",
-        recommendation: "Implement automated access review system with quarterly reviews",
-        affectedControls: ["NIST AC-2", "SOX ITGC-01"],
-        estimatedEffort: "1-2 weeks"
-      },
-      {
-        id: "GAP-003",
-        title: "Encryption Key Management",
-        severity: "Critical",
-        description: "No formal key management process for encryption keys",
-        recommendation: "Establish key management infrastructure with proper lifecycle management",
-        affectedControls: ["NIST SC-12", "PCI-DSS 3.5"],
-        estimatedEffort: "4-8 weeks"
-      }
-    ]
+  const handleAnalyze = () => {
+    setIsAnalyzing(true);
+    // Simulate analysis
+    setTimeout(() => {
+      setIsAnalyzing(false);
+    }, 2000);
   };
+
+  // Mock gap analysis data based on selected frameworks
+  const getGapAnalysisResults = () => {
+    const baseResults = {
+      covered: 78,
+      partiallyCovered: 15,
+      notCovered: 7,
+      totalControls: 100,
+      coveragePercentage: 78
+    };
+
+    // Adjust results based on framework selection
+    if (sourceFramework === "nist" && targetFramework === "pci-dss") {
+      return {
+        ...baseResults,
+        covered: 85,
+        partiallyCovered: 10,
+        notCovered: 5,
+        coveragePercentage: 85
+      };
+    }
+
+    return baseResults;
+  };
+
+  const gapAnalysisResults = getGapAnalysisResults();
+
+  const gaps = [
+    {
+      id: "GAP-001",
+      title: "Incident Response Documentation",
+      severity: "High",
+      description: "Missing formal incident response procedures documentation between frameworks",
+      recommendation: "Develop comprehensive incident response plan with defined roles and procedures that satisfy both framework requirements",
+      affectedControls: [`${sourceFramework.toUpperCase()} IR-1`, `${targetFramework.toUpperCase()} 12.10`],
+      estimatedEffort: "2-4 weeks"
+    },
+    {
+      id: "GAP-002", 
+      title: "Access Review Automation",
+      severity: "Medium",
+      description: "Manual access reviews are not aligned between framework requirements",
+      recommendation: "Implement automated access review system with quarterly reviews that meets both standards",
+      affectedControls: [`${sourceFramework.toUpperCase()} AC-2`, `${targetFramework.toUpperCase()} ITGC-01`],
+      estimatedEffort: "1-2 weeks"
+    },
+    {
+      id: "GAP-003",
+      title: "Encryption Key Management",
+      severity: "Critical",
+      description: "Key management processes differ significantly between frameworks",
+      recommendation: "Establish unified key management infrastructure with proper lifecycle management",
+      affectedControls: [`${sourceFramework.toUpperCase()} SC-12`, `${targetFramework.toUpperCase()} 3.5`],
+      estimatedEffort: "4-8 weeks"
+    }
+  ];
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -59,6 +91,27 @@ export function GapAnalysis() {
       case 'Low': return "bg-green-100 text-green-800 border-green-200";
       default: return "bg-gray-100 text-gray-800 border-gray-200";
     }
+  };
+
+  const handleExportReport = () => {
+    // Simulate report export
+    const reportData = {
+      sourceFramework: frameworks.find(f => f.id === sourceFramework)?.name,
+      targetFramework: frameworks.find(f => f.id === targetFramework)?.name,
+      results: gapAnalysisResults,
+      gaps: gaps,
+      generatedAt: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gap-analysis-${sourceFramework}-vs-${targetFramework}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -82,9 +135,8 @@ export function GapAnalysis() {
               <SelectValue placeholder="Select Source Framework" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Frameworks</SelectItem>
               {frameworks.map(framework => (
-                <SelectItem key={framework} value={framework}>{framework}</SelectItem>
+                <SelectItem key={framework.id} value={framework.id}>{framework.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -96,16 +148,19 @@ export function GapAnalysis() {
               <SelectValue placeholder="Select Target Framework" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Frameworks</SelectItem>
               {frameworks.map(framework => (
-                <SelectItem key={framework} value={framework}>{framework}</SelectItem>
+                <SelectItem key={framework.id} value={framework.id}>{framework.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
-          <Button className="bg-orange-600 hover:bg-orange-700">
+          <Button 
+            className="bg-orange-600 hover:bg-orange-700"
+            onClick={handleAnalyze}
+            disabled={isAnalyzing}
+          >
             <Search className="h-4 w-4 mr-2" />
-            Analyze
+            {isAnalyzing ? "Analyzing..." : "Analyze"}
           </Button>
         </div>
       </div>
@@ -165,7 +220,9 @@ export function GapAnalysis() {
       <Card>
         <CardHeader>
           <CardTitle>Coverage Progress</CardTitle>
-          <CardDescription>Overall compliance coverage across selected frameworks</CardDescription>
+          <CardDescription>
+            Coverage analysis between {frameworks.find(f => f.id === sourceFramework)?.name} and {frameworks.find(f => f.id === targetFramework)?.name}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -201,13 +258,13 @@ export function GapAnalysis() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Identified Gaps</h2>
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleExportReport}>
             <Download className="h-4 w-4 mr-2" />
             Export Gap Report
           </Button>
         </div>
         
-        {gapAnalysisResults.gaps.map((gap) => (
+        {gaps.map((gap) => (
           <Card key={gap.id} className="hover:shadow-lg transition-all duration-200">
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -260,7 +317,7 @@ export function GapAnalysis() {
             <p className="text-muted-foreground max-w-md mx-auto">
               Focus on critical and high-severity gaps first to maximize your compliance coverage and reduce risk.
             </p>
-            <Button className="bg-orange-600 hover:bg-orange-700">
+            <Button className="bg-orange-600 hover:bg-orange-700" onClick={handleExportReport}>
               <Download className="h-4 w-4 mr-2" />
               Download Action Plan
             </Button>

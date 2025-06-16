@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,6 +45,17 @@ export function CommunityDashboard({ onNavigateToEdits }: CommunityDashboardProp
     { name: "Jennifer Park", contributions: 156, reputation: 892, avatar: "JP" },
     { name: "Robert Kim", contributions: 134, reputation: 756, avatar: "RK" }
   ];
+
+  const handleStartContributing = () => {
+    if (onNavigateToEdits) {
+      onNavigateToEdits();
+    }
+  };
+
+  const handleViewDiscussions = () => {
+    // Simulate opening discussions - in a real app this would navigate to discussions page
+    alert("Discussions feature coming soon! Join our community forum to participate in ongoing discussions about compliance frameworks and security controls.");
+  };
 
   return (
     <div className="space-y-6">
@@ -155,7 +165,7 @@ export function CommunityDashboard({ onNavigateToEdits }: CommunityDashboardProp
               </p>
               <Button 
                 className="bg-blue-600 hover:bg-blue-700"
-                onClick={onNavigateToEdits}
+                onClick={handleStartContributing}
               >
                 <Edit3 className="h-4 w-4 mr-2" />
                 Start Contributing
@@ -172,7 +182,10 @@ export function CommunityDashboard({ onNavigateToEdits }: CommunityDashboardProp
               <p className="text-muted-foreground">
                 Share knowledge and learn from compliance experts
               </p>
-              <Button className="bg-green-600 hover:bg-green-700">
+              <Button 
+                className="bg-green-600 hover:bg-green-700"
+                onClick={handleViewDiscussions}
+              >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 View Discussions
               </Button>
