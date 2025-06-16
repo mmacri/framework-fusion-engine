@@ -10,9 +10,17 @@ import { DiscussionBoard } from "./DiscussionBoard";
 
 interface CommunityDashboardProps {
   onNavigateToEdits?: () => void;
+  onDiscussionsUpdate?: (discussions: Array<{
+    id: string;
+    title: string;
+    author: string;
+    replies: number;
+    lastActivity: string;
+    category: string;
+  }>) => void;
 }
 
-export function CommunityDashboard({ onNavigateToEdits }: CommunityDashboardProps) {
+export function CommunityDashboard({ onNavigateToEdits, onDiscussionsUpdate }: CommunityDashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
 
   // Real stats that will be updated based on actual data
@@ -164,7 +172,7 @@ export function CommunityDashboard({ onNavigateToEdits }: CommunityDashboardProp
         </TabsContent>
 
         <TabsContent value="discussions">
-          <DiscussionBoard />
+          <DiscussionBoard onDiscussionsUpdate={onDiscussionsUpdate} />
         </TabsContent>
 
         <TabsContent value="edits">
