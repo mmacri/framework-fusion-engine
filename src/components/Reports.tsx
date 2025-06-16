@@ -150,7 +150,7 @@ export function Reports() {
                   <Checkbox 
                     id="gaps" 
                     checked={includeGaps} 
-                    onCheckedChange={setIncludeGaps}
+                    onCheckedChange={(checked) => setIncludeGaps(checked === true)}
                   />
                   <label htmlFor="gaps" className="text-sm">Gap Analysis</label>
                 </div>
@@ -158,7 +158,7 @@ export function Reports() {
                   <Checkbox 
                     id="mappings" 
                     checked={includeMappings} 
-                    onCheckedChange={setIncludeMappings}
+                    onCheckedChange={(checked) => setIncludeMappings(checked === true)}
                   />
                   <label htmlFor="mappings" className="text-sm">Control Mappings</label>
                 </div>
@@ -166,7 +166,7 @@ export function Reports() {
                   <Checkbox 
                     id="implementation" 
                     checked={includeImplementation} 
-                    onCheckedChange={setIncludeImplementation}
+                    onCheckedChange={(checked) => setIncludeImplementation(checked === true)}
                   />
                   <label htmlFor="implementation" className="text-sm">Implementation Guidance</label>
                 </div>
