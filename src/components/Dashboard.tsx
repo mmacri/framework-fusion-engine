@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppNavigation } from "@/components/AppNavigation";
 import { DashboardOverview } from "@/components/DashboardOverview";
 import { ControlLibrary } from "@/components/ControlLibrary";
@@ -15,6 +15,10 @@ import { RouteHandler } from "@/components/RouteHandler";
 export function Dashboard() {
   const [activeView, setActiveView] = useState("overview");
   const [selectedFramework, setSelectedFramework] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log('Dashboard mounted, activeView:', activeView);
+  }, []);
 
   const handleViewChange = (view: string) => {
     console.log('Dashboard view changed to:', view);
@@ -33,6 +37,7 @@ export function Dashboard() {
   };
 
   const renderActiveView = () => {
+    console.log('Rendering view:', activeView);
     switch (activeView) {
       case "overview":
         return <DashboardOverview onFrameworkSelect={handleFrameworkSelect} />;
