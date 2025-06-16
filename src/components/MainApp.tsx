@@ -11,18 +11,7 @@ import { UseCasesLibrary } from "./UseCasesLibrary";
 import { CommunityDashboard } from "./Community/CommunityDashboard";
 import { CommunityEditsDashboard } from "./Community/CommunityEditsDashboard";
 
-interface MainAppProps {
-  onDiscussionsUpdate?: (discussions: Array<{
-    id: string;
-    title: string;
-    author: string;
-    replies: number;
-    lastActivity: string;
-    category: string;
-  }>) => void;
-}
-
-export function MainApp({ onDiscussionsUpdate }: MainAppProps) {
+export function MainApp() {
   const [activeView, setActiveView] = useState("overview");
   const [selectedFramework, setSelectedFramework] = useState<string | null>(null);
 
@@ -48,7 +37,7 @@ export function MainApp({ onDiscussionsUpdate }: MainAppProps) {
       case "reports":
         return <Reports />;
       case "community":
-        return <CommunityDashboard onNavigateToEdits={handleNavigateToEdits} onDiscussionsUpdate={onDiscussionsUpdate} />;
+        return <CommunityDashboard onNavigateToEdits={handleNavigateToEdits} />;
       case "community-edits":
         return <CommunityEditsDashboard />;
       case "use-cases":

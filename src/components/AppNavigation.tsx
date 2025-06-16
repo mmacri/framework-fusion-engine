@@ -48,17 +48,15 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
   ];
 
   return (
-    <div className="nav-clean sticky top-0 z-50">
+    <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Shield className="h-6 w-6 text-primary" />
-            </div>
+            <Shield className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-lg font-semibold text-foreground">Framework Fusion</h1>
-              <Badge variant="secondary" className="text-xs font-medium">Community Edition</Badge>
+              <h1 className="text-lg font-semibold">Framework Fusion</h1>
+              <Badge variant="secondary" className="text-xs">Community Edition</Badge>
             </div>
           </div>
 
@@ -72,7 +70,7 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
                     variant={activeView === item.id ? "default" : "ghost"}
                     size="sm"
                     onClick={() => onViewChange(item.id)}
-                    className="flex items-center gap-2 font-medium"
+                    className="flex items-center gap-2"
                   >
                     <item.icon className="h-4 w-4" />
                     {item.label}
@@ -82,19 +80,19 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
 
               {/* Community Dropdown */}
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="h-9 font-medium">
+                <NavigationMenuTrigger className="h-9">
                   <Users className="h-4 w-4 mr-2" />
                   Community
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="grid w-[300px] gap-3 p-4 bg-background border border-border rounded-lg shadow-clean-lg">
+                  <div className="grid w-[300px] gap-3 p-4">
                     {communityItems.map((item) => (
                       <NavigationMenuLink key={item.id} asChild>
                         <Button
                           variant={activeView === item.id ? "default" : "ghost"}
                           size="sm"
                           onClick={() => onViewChange(item.id)}
-                          className="w-full justify-start gap-2 font-medium"
+                          className="w-full justify-start gap-2"
                         >
                           <item.icon className="h-4 w-4" />
                           {item.label}
@@ -107,16 +105,16 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
 
               {/* Resources Dropdown */}
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="h-9 font-medium">Resources</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="h-9">Resources</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="grid w-[300px] gap-3 p-4 bg-background border border-border rounded-lg shadow-clean-lg">
+                  <div className="grid w-[300px] gap-3 p-4">
                     {resourceItems.map((item) => (
                       <NavigationMenuLink key={item.id} asChild>
                         <Button
                           variant={activeView === item.id ? "default" : "ghost"}
                           size="sm"
                           onClick={() => onViewChange(item.id)}
-                          className="w-full justify-start gap-2 font-medium"
+                          className="w-full justify-start gap-2"
                         >
                           <item.icon className="h-4 w-4" />
                           {item.label}

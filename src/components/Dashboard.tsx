@@ -5,22 +5,14 @@ import { MainApp } from "./MainApp";
 
 export function Dashboard() {
   const [showLanding, setShowLanding] = useState(true);
-  const [discussions, setDiscussions] = useState<Array<{
-    id: string;
-    title: string;
-    author: string;
-    replies: number;
-    lastActivity: string;
-    category: string;
-  }>>([]);
 
   const handleEnterApp = () => {
     setShowLanding(false);
   };
 
   if (showLanding) {
-    return <LandingPage onEnterApp={handleEnterApp} discussions={discussions} />;
+    return <LandingPage onEnterApp={handleEnterApp} />;
   }
 
-  return <MainApp onDiscussionsUpdate={setDiscussions} />;
+  return <MainApp />;
 }

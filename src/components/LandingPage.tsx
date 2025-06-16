@@ -3,21 +3,13 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Users, BookOpen, GitBranch, ArrowRight, Star, Globe, Search, FileText, BarChart3, CheckCircle, MessageSquare, Calendar, TrendingUp } from "lucide-react";
+import { Shield, Users, BookOpen, GitBranch, ArrowRight, Star, Globe, Search, FileText, BarChart3, CheckCircle } from "lucide-react";
 
 interface LandingPageProps {
   onEnterApp: () => void;
-  discussions: Array<{
-    id: string;
-    title: string;
-    author: string;
-    replies: number;
-    lastActivity: string;
-    category: string;
-  }>;
 }
 
-export function LandingPage({ onEnterApp, discussions }: LandingPageProps) {
+export function LandingPage({ onEnterApp }: LandingPageProps) {
   const features = [
     {
       icon: Shield,
@@ -42,132 +34,81 @@ export function LandingPage({ onEnterApp, discussions }: LandingPageProps) {
   ];
 
   const quickStats = [
-    { label: "Security Controls", value: "2,400+", icon: Shield },
-    { label: "Frameworks", value: "5", icon: FileText },
-    { label: "Contributors", value: "847", icon: Users },
-    { label: "Control Mappings", value: "1,200+", icon: BarChart3 }
+    { label: "Security Controls", value: "2,400+" },
+    { label: "Frameworks", value: "5" },
+    { label: "Contributors", value: "847" },
+    { label: "Control Mappings", value: "1,200+" }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Hero Section */}
-      <div className="container mx-auto px-6 section-spacing">
-        <div className="text-center space-y-8 mb-20">
-          <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="p-3 bg-blue-50 rounded-xl border border-blue-100">
-                <Shield className="h-10 w-10 text-blue-600" />
-              </div>
-              <h1 className="text-balance bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+      <div className="container mx-auto px-6 py-12">
+        <div className="text-center space-y-8 mb-16">
+          <div className="space-y-4">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Shield className="h-12 w-12 text-primary" />
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Framework Fusion Engine
               </h1>
             </div>
             
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 border-slate-200">
-                <Globe className="h-4 w-4" />
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Globe className="h-3 w-3" />
                 Open Source
               </Badge>
-              <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 border-slate-200">
-                <Users className="h-4 w-4" />
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Users className="h-3 w-3" />
                 Community-Driven
               </Badge>
-              <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 border-slate-200">
-                <GitBranch className="h-4 w-4" />
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <GitBranch className="h-3 w-3" />
                 Wikipedia-Style
               </Badge>
             </div>
             
-            <p className="text-xl text-slate-600 max-w-4xl mx-auto text-balance">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               A collaborative platform for managing security controls across multiple compliance frameworks. 
               Join thousands of security professionals building the future of compliance management.
             </p>
           </div>
 
-          <div className="space-y-6">
-            <Button size="lg" onClick={onEnterApp} className="text-lg px-8 py-4 h-auto bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
+          <div className="space-y-4">
+            <Button size="lg" onClick={onEnterApp} className="text-lg px-8 py-6">
               Enter Platform
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               No registration required • Free and open source • Community maintained
             </p>
           </div>
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
           {quickStats.map((stat, index) => (
-            <Card key={index} className="text-center border-slate-200 shadow-sm hover:shadow-md transition-shadow bg-white">
-              <CardContent className="pt-8 pb-6">
-                <div className="flex flex-col items-center space-y-3">
-                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-                    <stat.icon className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div className="text-3xl font-bold text-slate-900">{stat.value}</div>
-                  <div className="text-sm text-slate-600 font-medium">{stat.label}</div>
-                </div>
+            <Card key={index} className="text-center">
+              <CardContent className="pt-6">
+                <div className="text-3xl font-bold text-primary mb-1">{stat.value}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Community Discussions */}
-        {discussions && discussions.length > 0 && (
-          <div className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-balance mb-4 text-slate-900">Active Community Discussions</h2>
-              <p className="text-slate-600 max-w-2xl mx-auto">
-                Join the conversation with security professionals worldwide
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {discussions.slice(0, 6).map((discussion) => (
-                <Card key={discussion.id} className="border-slate-200 shadow-sm hover:shadow-md transition-shadow bg-white">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <Badge variant="outline" className="text-xs font-medium border-blue-200 text-blue-700">
-                        {discussion.category}
-                      </Badge>
-                      <div className="flex items-center gap-1 text-xs text-slate-500">
-                        <Calendar className="h-3 w-3" />
-                        {discussion.lastActivity}
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <CardTitle className="text-base mb-2 line-clamp-2 text-slate-900">
-                      {discussion.title}
-                    </CardTitle>
-                    <div className="flex items-center justify-between text-sm text-slate-600">
-                      <span>by {discussion.author}</span>
-                      <div className="flex items-center gap-1">
-                        <MessageSquare className="h-4 w-4" />
-                        {discussion.replies}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
           {features.map((feature, index) => (
-            <Card key={index} className="border-slate-200 shadow-sm hover:shadow-md transition-shadow bg-white">
-              <CardHeader className="pb-4">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-                    <feature.icon className="h-6 w-6 text-blue-600" />
+            <Card key={index} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <feature.icon className="h-6 w-6 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-xl mb-3 text-slate-900">{feature.title}</CardTitle>
-                    <CardDescription className="text-slate-600 leading-relaxed">
-                      {feature.description}
-                    </CardDescription>
+                  <div>
+                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    <CardDescription className="mt-2">{feature.description}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -176,34 +117,25 @@ export function LandingPage({ onEnterApp, discussions }: LandingPageProps) {
         </div>
 
         {/* Getting Started Steps */}
-        <Card className="border-slate-200 shadow-sm mb-20 bg-white">
-          <CardHeader className="text-center pb-8">
-            <CardTitle className="text-3xl mb-4 text-slate-900">Get Started in Minutes</CardTitle>
-            <CardDescription className="text-lg text-slate-600">
-              Follow these simple steps to begin using the platform
-            </CardDescription>
+        <Card className="mb-16">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Get Started in Minutes</CardTitle>
+            <CardDescription>Follow these simple steps to begin using the platform</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
-                { step: "1", title: "Browse Controls", desc: "Explore our comprehensive control library", icon: Search },
-                { step: "2", title: "View Mappings", desc: "See framework relationships", icon: FileText },
-                { step: "3", title: "Analyze Gaps", desc: "Identify coverage gaps", icon: BarChart3 },
-                { step: "4", title: "Contribute", desc: "Join the community", icon: Users }
+                { step: "1", title: "Browse Controls", desc: "Explore our control library" },
+                { step: "2", title: "View Mappings", desc: "See framework relationships" },
+                { step: "3", title: "Analyze Gaps", desc: "Identify coverage gaps" },
+                { step: "4", title: "Contribute", desc: "Join the community" }
               ].map((item, index) => (
-                <div key={index} className="text-center space-y-4">
-                  <div className="relative">
-                    <div className="w-16 h-16 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl mx-auto shadow-sm">
-                      {item.step}
-                    </div>
-                    <div className="mt-3 p-2 bg-slate-50 rounded-lg border border-slate-200">
-                      <item.icon className="h-5 w-5 text-slate-600 mx-auto" />
-                    </div>
+                <div key={index} className="text-center space-y-2">
+                  <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold mx-auto">
+                    {item.step}
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-lg mb-2 text-slate-900">{item.title}</h4>
-                    <p className="text-sm text-slate-600">{item.desc}</p>
-                  </div>
+                  <h4 className="font-medium">{item.title}</h4>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -211,20 +143,18 @@ export function LandingPage({ onEnterApp, discussions }: LandingPageProps) {
         </Card>
 
         {/* Community Section */}
-        <div className="text-center py-12 border-t border-slate-200">
-          <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-slate-600">
-            <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-blue-500" />
-              <span>Star us on GitHub</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              <span>Join community discussions</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              <span>Contribute to the project</span>
-            </div>
+        <div className="flex items-center justify-center gap-8 pt-8 border-t">
+          <div className="flex items-center gap-2">
+            <Star className="h-5 w-5 text-yellow-500" />
+            <span className="text-sm text-muted-foreground">Star us on GitHub</span>
+          </div>
+          <div className="text-sm text-muted-foreground">•</div>
+          <div className="text-sm text-muted-foreground">
+            Join our community discussions
+          </div>
+          <div className="text-sm text-muted-foreground">•</div>
+          <div className="text-sm text-muted-foreground">
+            Contribute to the project
           </div>
         </div>
       </div>
