@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { EditProposalCard } from "./EditProposalCard";
 import { ProposeEditDialog } from "./ProposeEditDialog";
 import { EditDetailDialog } from "./EditDetailDialog";
 import { toast } from "@/hooks/use-toast";
+import { AdminApprovalPanel } from "./AdminApprovalPanel";
 
 const initialMockEdits: CommunityEdit[] = [
   {
@@ -136,6 +136,24 @@ export function CommunityEditsDashboard() {
       title: "Vote recorded",
       description: `Your ${vote} vote has been recorded.`,
     });
+  };
+
+  const handleAdminApprove = (editId: string) => {
+    setEdits(prev => prev.map(edit => {
+      if (edit.id === editId) {
+        return { ...edit, status: 'approved' as const };
+      }
+      return edit;
+    }));
+  };
+
+  const handleAdminReject = (editId: string) => {
+    setEdits(prev => prev.map(edit => {
+      if (edit.id === editId) {
+        return { ...edit, status: 'rejected' as const };
+      }
+      return edit;
+    }));
   };
 
   const handleSubmitEdit = (editData: any) => {
@@ -362,6 +380,13 @@ export function CommunityEditsDashboard() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Admin Panel */}
+      <AdminApprovalPanel
+        edits={edits}
+        onApproveEdit={handleAdminApprove}
+        onRejectEdit={handleAdminReject}
+      />
     </div>
   );
 }

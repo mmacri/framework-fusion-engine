@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ interface ProposeEditDialogProps {
 
 export function ProposeEditDialog({ children, onSubmitEdit }: ProposeEditDialogProps) {
   const [open, setOpen] = useState(false);
+  const [proposerName, setProposerName] = useState("");
   const [editType, setEditType] = useState<string>("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -34,7 +34,7 @@ export function ProposeEditDialog({ children, onSubmitEdit }: ProposeEditDialogP
         type: editType as 'control_update' | 'new_control' | 'mapping_update' | 'new_mapping',
         title,
         description,
-        proposedBy: "current_user", // In real app, would get from auth
+        proposedBy: proposerName || "Anonymous",
         proposedAt: new Date().toISOString(),
         status: 'pending' as const,
         votes: { approve: 0, reject: 0, userVotes: {} },
@@ -52,6 +52,7 @@ export function ProposeEditDialog({ children, onSubmitEdit }: ProposeEditDialogP
       onSubmitEdit(editData);
       
       // Reset form
+      setProposerName("");
       setEditType("");
       setTitle("");
       setDescription("");
@@ -104,6 +105,16 @@ export function ProposeEditDialog({ children, onSubmitEdit }: ProposeEditDialogP
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="proposer-name">Your Name</Label>
+            <Input
+              id="proposer-name"
+              value={proposerName}
+              onChange={(e) => setProposerName(e.target.value)}
+              placeholder="Enter your name (optional)"
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="edit-type">Edit Type</Label>
             <Select value={editType} onValueChange={setEditType} required>
