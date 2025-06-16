@@ -1,0 +1,12 @@
+
+blank_issues_enabled: false
+contact_links:
+  - name: 🤔 Questions & Discussions
+    url: https://github.com/yourusername/framework-fusion-engine/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 💬 Discord Community
+    url: https://discord.gg/your-discord-link
+    about: Join our Discord community for real-time discussions
+  - name: 📚 Documentation
+    url: https://your-docs-site.com
+    about: Check our comprehensive documentation and guides
