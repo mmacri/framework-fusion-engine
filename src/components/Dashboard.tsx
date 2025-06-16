@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Shield, BarChart3, FileText, BookOpen, Users, Settings, Home, GitBranch } from "lucide-react";
@@ -11,6 +10,7 @@ import { UserGuide } from "./UserGuide";
 import { EnhancedDashboard } from "./EnhancedDashboard";
 import { UseCasesLibrary } from "./UseCasesLibrary";
 import { CommunityDashboard } from "./Community/CommunityDashboard";
+import { Button } from "@/components/ui/button";
 
 const menuItems = [
   { title: "Overview", icon: Home, component: "overview" },
@@ -26,6 +26,11 @@ const menuItems = [
 
 export function Dashboard() {
   const [activeComponent, setActiveComponent] = useState("overview");
+  const [showWelcome, setShowWelcome] = useState(true);
+
+  const handleGetStarted = () => {
+    setShowWelcome(false);
+  };
 
   const renderActiveComponent = () => {
     switch (activeComponent) {
@@ -51,6 +56,32 @@ export function Dashboard() {
         return <DashboardOverview />;
     }
   };
+
+  // Show welcome screen first
+  if (showWelcome) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
+        <div className="max-w-6xl mx-auto py-12">
+          <div className="text-center space-y-8">
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Shield className="h-12 w-12 text-primary" />
+                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Framework Fusion Engine
+                </h1>
+              </div>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                A collaborative platform for managing security controls across multiple compliance frameworks.
+              </p>
+            </div>
+            <Button size="lg" onClick={handleGetStarted} className="text-lg px-8 py-6">
+              Get Started
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <SidebarProvider>
