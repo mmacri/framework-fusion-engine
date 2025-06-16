@@ -17,6 +17,7 @@ const App = () => {
   console.log('Environment:', import.meta.env.MODE);
   console.log('Production:', import.meta.env.PROD);
   console.log('Base URL:', import.meta.env.BASE_URL);
+  console.log('Current location:', window.location.href);
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -26,7 +27,6 @@ const App = () => {
         <BrowserRouter basename={basename}>
           <Routes>
             <Route path="/" element={<Index />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

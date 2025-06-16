@@ -19,10 +19,10 @@ function createNavigationSection() {
               Core Platform
             </h3>
             <div class="nav-links">
-              <a href="./dist/index.html" class="btn btn-nav">Dashboard Overview</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls')">Security Controls Library</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'mapping')">Framework Mapping</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'gaps')">Gap Analysis</a>
+              <a href="./index.html" class="btn btn-nav">Dashboard Overview</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls')">Security Controls Library</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'mapping')">Framework Mapping</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'gaps')">Gap Analysis</a>
             </div>
           </div>
 
@@ -36,8 +36,8 @@ function createNavigationSection() {
               Community
             </h3>
             <div class="nav-links">
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'community')">Community Dashboard</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'community-edits')">Propose Edits</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'community')">Community Dashboard</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'community-edits')">Propose Edits</a>
             </div>
           </div>
 
@@ -49,9 +49,9 @@ function createNavigationSection() {
               Resources
             </h3>
             <div class="nav-links">
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'use-cases')">Use Cases Library</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'reports')">Reports & Export</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'guide')">User Guide</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'use-cases')">Use Cases Library</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'reports')">Reports & Export</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'guide')">User Guide</a>
             </div>
           </div>
 
@@ -63,11 +63,11 @@ function createNavigationSection() {
               Frameworks
             </h3>
             <div class="nav-links">
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'nist')">NIST Cybersecurity</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'pci')">PCI-DSS</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'hipaa')">HIPAA</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'sox')">SOX</a>
-              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'iso27001')">ISO 27001</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'nist')">NIST Cybersecurity</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'pci')">PCI-DSS</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'hipaa')">HIPAA</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'sox')">SOX</a>
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'iso27001')">ISO 27001</a>
             </div>
           </div>
         </div>

@@ -19,15 +19,17 @@ export default defineConfig(({ command, mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: command === 'build' ? '/framework-fusion-engine/' : '/',
+  base: mode === 'production' ? '/framework-fusion-engine/' : '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
+    copyPublicDir: true,
     rollupOptions: {
       output: {
         manualChunks: undefined,
       },
     },
   },
+  publicDir: 'public',
 }));
