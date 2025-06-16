@@ -26,10 +26,16 @@ export function Dashboard() {
     setSelectedFramework(framework);
   };
 
+  const handleFrameworkSelect = (framework: string) => {
+    console.log('Framework selected from overview:', framework);
+    setSelectedFramework(framework);
+    setActiveView("controls");
+  };
+
   const renderActiveView = () => {
     switch (activeView) {
       case "overview":
-        return <DashboardOverview />;
+        return <DashboardOverview onFrameworkSelect={handleFrameworkSelect} />;
       case "controls":
         return <ControlLibrary selectedFramework={selectedFramework} />;
       case "mapping":
@@ -47,7 +53,7 @@ export function Dashboard() {
       case "guide":
         return <UserGuide />;
       default:
-        return <DashboardOverview />;
+        return <DashboardOverview onFrameworkSelect={handleFrameworkSelect} />;
     }
   };
 
