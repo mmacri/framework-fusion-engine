@@ -89,6 +89,7 @@
         transition: all 0.2s;
         cursor: pointer;
         border: none;
+        margin: 0 0.5rem;
       }
       
       .btn-primary {
@@ -98,6 +99,17 @@
       
       .btn-primary:hover {
         background-color: #1d4ed8;
+      }
+      
+      .btn-secondary {
+        background-color: white;
+        color: #2563eb;
+        border: 2px solid #2563eb;
+      }
+      
+      .btn-secondary:hover {
+        background-color: #2563eb;
+        color: white;
       }
       
       .features {
@@ -192,6 +204,12 @@
         .container {
           padding: 0 1rem;
         }
+        
+        .btn {
+          display: block;
+          margin: 0.5rem auto;
+          width: fit-content;
+        }
       }
     </style>
   </head>
@@ -217,13 +235,19 @@
           Join thousands of security professionals building the future of compliance management.
         </p>
         
-        <a href="#features" class="btn btn-primary">
-          Explore Platform
-          <svg style="margin-left: 0.5rem;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12,5 19,12 12,19"></polyline>
-          </svg>
-        </a>
+        <!-- Updated buttons with proper navigation -->
+        <div style="margin: 2rem 0;">
+          <a href="./dist/index.html" class="btn btn-primary">
+            Launch Application
+            <svg style="margin-left: 0.5rem;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12,5 19,12 12,19"></polyline>
+            </svg>
+          </a>
+          <a href="#features" class="btn btn-secondary">
+            Learn More
+          </a>
+        </div>
         
         <p style="margin-top: 1rem; font-size: 0.875rem; color: #64748b;">
           No registration required • Free and open source • Community maintained
@@ -320,6 +344,16 @@
             <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Contribute</h4>
             <p style="color: #64748b; font-size: 0.875rem;">Join the community</p>
           </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+          <a href="./dist/index.html" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2.5rem;">
+            Start Using Framework Fusion
+            <svg style="margin-left: 0.5rem;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12,5 19,12 12,19"></polyline>
+            </svg>
+          </a>
         </div>
       </div>
     </div>
