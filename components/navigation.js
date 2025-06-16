@@ -19,10 +19,10 @@ function createNavigationSection() {
               Core Platform
             </h3>
             <div class="nav-links">
-              <a href="./dist/index.html#overview" class="btn btn-nav">Dashboard Overview</a>
-              <a href="./dist/index.html#controls" class="btn btn-nav">Security Controls Library</a>
-              <a href="./dist/index.html#mapping" class="btn btn-nav">Framework Mapping</a>
-              <a href="./dist/index.html#gaps" class="btn btn-nav">Gap Analysis</a>
+              <a href="./dist/index.html" class="btn btn-nav">Dashboard Overview</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls')">Security Controls Library</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'mapping')">Framework Mapping</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'gaps')">Gap Analysis</a>
             </div>
           </div>
 
@@ -36,8 +36,8 @@ function createNavigationSection() {
               Community
             </h3>
             <div class="nav-links">
-              <a href="./dist/index.html#community" class="btn btn-nav">Community Dashboard</a>
-              <a href="./dist/index.html#community-edits" class="btn btn-nav">Propose Edits</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'community')">Community Dashboard</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'community-edits')">Propose Edits</a>
             </div>
           </div>
 
@@ -49,9 +49,9 @@ function createNavigationSection() {
               Resources
             </h3>
             <div class="nav-links">
-              <a href="./dist/index.html#use-cases" class="btn btn-nav">Use Cases Library</a>
-              <a href="./dist/index.html#reports" class="btn btn-nav">Reports & Export</a>
-              <a href="./dist/index.html#guide" class="btn btn-nav">User Guide</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'use-cases')">Use Cases Library</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'reports')">Reports & Export</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'guide')">User Guide</a>
             </div>
           </div>
 
@@ -63,11 +63,11 @@ function createNavigationSection() {
               Frameworks
             </h3>
             <div class="nav-links">
-              <a href="./dist/index.html#controls?framework=nist" class="btn btn-nav">NIST Cybersecurity</a>
-              <a href="./dist/index.html#controls?framework=pci" class="btn btn-nav">PCI-DSS</a>
-              <a href="./dist/index.html#controls?framework=hipaa" class="btn btn-nav">HIPAA</a>
-              <a href="./dist/index.html#controls?framework=sox" class="btn btn-nav">SOX</a>
-              <a href="./dist/index.html#controls?framework=iso27001" class="btn btn-nav">ISO 27001</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'nist')">NIST Cybersecurity</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'pci')">PCI-DSS</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'hipaa')">HIPAA</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'sox')">SOX</a>
+              <a href="./dist/index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'iso27001')">ISO 27001</a>
             </div>
           </div>
         </div>
