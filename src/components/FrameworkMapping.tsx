@@ -5,51 +5,42 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Search, GitBranch, ArrowRight, Network, Eye } from "lucide-react";
+import { mockControlsData, mockRelationships } from "@/data/reportMockData";
+import { GitBranch, Search, Link, ArrowRight, Filter } from "lucide-react";
 
 export function FrameworkMapping() {
   const [sourceFramework, setSourceFramework] = useState("");
   const [targetFramework, setTargetFramework] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const frameworks = ["NIST 800-53", "PCI-DSS", "HIPAA Security", "SOX ITGC", "Adobe CCF"];
-  
-  const mappings = [
-    {
-      source: { framework: "NIST 800-53", control: "AC-2", title: "Account Management" },
-      target: { framework: "PCI-DSS", control: "REQ-8.1", title: "User Authentication" },
-      relationship: "Direct Mapping",
-      confidence: "High",
-      notes: "Both controls address user account lifecycle management"
-    },
-    {
-      source: { framework: "NIST 800-53", control: "SC-7", title: "Boundary Protection" },
-      target: { framework: "PCI-DSS", control: "REQ-1", title: "Network Security Controls" },
-      relationship: "Partial Mapping",
-      confidence: "Medium",
-      notes: "NIST SC-7 is broader but covers similar network protection concepts"
-    },
-    {
-      source: { framework: "SOX ITGC", control: "ITGC-01", title: "User Access Management" },
-      target: { framework: "HIPAA Security", control: "164.312(a)(1)", title: "Access Control" },
-      relationship: "Conceptual Mapping",
-      confidence: "Medium",
-      notes: "Both address access control but in different regulatory contexts"
-    }
-  ];
+  const frameworks = Object.keys(mockControlsData);
 
-  const filteredMappings = mappings.filter(mapping => {
+  const filteredRelationships = mockRelationships.filter(rel => {
     const matchesSearch = !searchTerm || 
-      mapping.source.control.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mapping.target.control.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mapping.source.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mapping.target.title.toLowerCase().includes(searchTerm.toLowerCase());
+      rel.source.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rel.target.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rel.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesSource = !sourceFramework || mapping.source.framework === sourceFramework;
-    const matchesTarget = !targetFramework || mapping.target.framework === targetFramework;
+    const matchesSource = !sourceFramework || rel.source.includes(sourceFramework);
+    const matchesTarget = !targetFramework || rel.target.includes(targetFramework);
     
     return matchesSearch && matchesSource && matchesTarget;
   });
+
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence >= 90) return "bg-green-100 text-green-800";
+    if (confidence >= 70) return "bg-yellow-100 text-yellow-800";
+    return "bg-red-100 text-red-800";
+  };
+
+  const getMappingTypeColor = (type: string) => {
+    switch (type) {
+      case 'Equivalent': return "bg-blue-100 text-blue-800";
+      case 'Supplemental': return "bg-purple-100 text-purple-800";
+      case 'Supporting': return "bg-orange-100 text-orange-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -61,7 +52,7 @@ export function FrameworkMapping() {
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Explore relationships and mappings between different compliance frameworks. 
-            Understand how controls align across standards.
+            Understand how controls relate across standards.
           </p>
         </div>
 
@@ -102,124 +93,115 @@ export function FrameworkMapping() {
           </Select>
 
           <Button variant="outline" className="bg-white">
-            <Network className="h-4 w-4 mr-2" />
-            Visualize
+            <Filter className="h-4 w-4 mr-2" />
+            Clear Filters
           </Button>
         </div>
       </div>
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <GitBranch className="h-5 w-5 text-blue-600" />
-              <div>
-                <div className="text-2xl font-bold text-blue-700">1,203</div>
-                <div className="text-sm text-blue-600">Total Mappings</div>
-              </div>
-            </div>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-primary">{mockRelationships.length}</div>
+            <div className="text-sm text-muted-foreground">Total Mappings</div>
           </CardContent>
         </Card>
-        
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <Eye className="h-5 w-5 text-green-600" />
-              <div>
-                <div className="text-2xl font-bold text-green-700">847</div>
-                <div className="text-sm text-green-600">Direct Mappings</div>
-              </div>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-green-600">
+              {mockRelationships.filter(r => r.confidence >= 90).length}
             </div>
+            <div className="text-sm text-muted-foreground">High Confidence</div>
           </CardContent>
         </Card>
-        
-        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <Network className="h-5 w-5 text-orange-600" />
-              <div>
-                <div className="text-2xl font-bold text-orange-700">283</div>
-                <div className="text-sm text-orange-600">Partial Mappings</div>
-              </div>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-blue-600">
+              {mockRelationships.filter(r => r.mappingType === 'Equivalent').length}
             </div>
+            <div className="text-sm text-muted-foreground">Direct Mappings</div>
           </CardContent>
         </Card>
-        
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <ArrowRight className="h-5 w-5 text-purple-600" />
-              <div>
-                <div className="text-2xl font-bold text-purple-700">73</div>
-                <div className="text-sm text-purple-600">Conceptual</div>
-              </div>
-            </div>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="text-2xl font-bold text-purple-600">{frameworks.length}</div>
+            <div className="text-sm text-muted-foreground">Frameworks</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Mappings */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Control Mappings ({filteredMappings.length})</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">
+            Control Mappings ({filteredRelationships.length})
+          </h2>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm">
+              <GitBranch className="h-4 w-4 mr-2" />
+              View Network
+            </Button>
+            <Button variant="outline" size="sm">
+              Export Mappings
+            </Button>
+          </div>
+        </div>
         
-        {filteredMappings.map((mapping, index) => (
-          <Card key={index} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4 flex-1">
-                  {/* Source */}
-                  <div className="bg-blue-50 p-3 rounded-lg flex-1">
-                    <Badge variant="outline" className="mb-2 text-xs">{mapping.source.framework}</Badge>
-                    <h4 className="font-medium text-blue-900">{mapping.source.control}</h4>
-                    <p className="text-sm text-blue-700">{mapping.source.title}</p>
-                  </div>
-                  
-                  {/* Arrow */}
-                  <div className="flex flex-col items-center gap-1">
-                    <ArrowRight className="h-6 w-6 text-muted-foreground" />
-                    <Badge 
-                      variant={
-                        mapping.relationship === 'Direct Mapping' ? 'default' :
-                        mapping.relationship === 'Partial Mapping' ? 'secondary' : 'outline'
-                      }
-                      className="text-xs"
-                    >
-                      {mapping.relationship}
-                    </Badge>
-                  </div>
-                  
-                  {/* Target */}
-                  <div className="bg-green-50 p-3 rounded-lg flex-1">
-                    <Badge variant="outline" className="mb-2 text-xs">{mapping.target.framework}</Badge>
-                    <h4 className="font-medium text-green-900">{mapping.target.control}</h4>
-                    <p className="text-sm text-green-700">{mapping.target.title}</p>
-                  </div>
-                </div>
-                
-                <div className="ml-4 text-center">
-                  <Badge 
-                    variant={mapping.confidence === 'High' ? 'default' : 'secondary'}
-                    className="mb-2"
-                  >
-                    {mapping.confidence} Confidence
+        {filteredRelationships.map((relationship, index) => (
+          <Card key={index} className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className="font-mono">
+                    {relationship.source}
                   </Badge>
-                  <Button variant="outline" size="sm">
-                    <Eye className="h-4 w-4 mr-1" />
-                    Details
-                  </Button>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  <Badge variant="outline" className="font-mono">
+                    {relationship.target}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge className={getConfidenceColor(relationship.confidence)}>
+                    {relationship.confidence}% confidence
+                  </Badge>
+                  <Badge className={getMappingTypeColor(relationship.mappingType)}>
+                    {relationship.mappingType}
+                  </Badge>
                 </div>
               </div>
-              
-              {mapping.notes && (
-                <div className="bg-muted p-3 rounded-md">
-                  <p className="text-sm text-muted-foreground">{mapping.notes}</p>
+              <CardTitle className="text-lg">{relationship.relationship}</CardTitle>
+              <CardDescription>{relationship.description}</CardDescription>
+            </CardHeader>
+            
+            {relationship.gapAnalysis && (
+              <CardContent>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <h4 className="font-medium text-yellow-800 mb-1">Gap Analysis</h4>
+                  <p className="text-sm text-yellow-700">{relationship.gapAnalysis}</p>
                 </div>
-              )}
-            </CardContent>
+              </CardContent>
+            )}
           </Card>
         ))}
       </div>
+
+      {/* Call to Action */}
+      <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50 to-purple-50">
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4">
+            <Link className="h-12 w-12 text-blue-600 mx-auto" />
+            <h3 className="text-lg font-semibold">Contribute to Mappings</h3>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Help improve framework mappings by suggesting new relationships or validating existing ones.
+            </p>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Link className="h-4 w-4 mr-2" />
+              Suggest Mapping
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
