@@ -7,38 +7,72 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "@/hooks/use-toast";
 
 interface ProposeEditDialogProps {
   children: React.ReactNode;
+  onSubmitEdit: (editData: any) => void;
 }
 
-export function ProposeEditDialog({ children }: ProposeEditDialogProps) {
+export function ProposeEditDialog({ children, onSubmitEdit }: ProposeEditDialogProps) {
   const [open, setOpen] = useState(false);
   const [editType, setEditType] = useState<string>("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [rationale, setRationale] = useState("");
+  const [framework, setFramework] = useState("");
+  const [controlId, setControlId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // In a real implementation, this would submit to an API
-    console.log({
-      type: editType,
-      title,
-      description,
-      rationale
-    });
-    
-    // Reset form and close dialog
-    setEditType("");
-    setTitle("");
-    setDescription("");
-    setRationale("");
-    setOpen(false);
-    
-    // Show success message (in real app, would use toast)
-    alert("Your edit proposal has been submitted for review!");
+    try {
+      const editData = {
+        id: `edit-${Date.now()}`,
+        type: editType as 'control_update' | 'new_control' | 'mapping_update' | 'new_mapping',
+        title,
+        description,
+        proposedBy: "current_user", // In real app, would get from auth
+        proposedAt: new Date().toISOString(),
+        status: 'pending' as const,
+        votes: { approve: 0, reject: 0, userVotes: {} },
+        proposedData: {
+          title: editType === 'new_control' ? title : `Updated ${controlId}`,
+          description,
+          framework,
+          controlId: editType.includes('control') ? controlId : undefined,
+          rationale
+        },
+        comments: [],
+        reviewers: []
+      };
+
+      onSubmitEdit(editData);
+      
+      // Reset form
+      setEditType("");
+      setTitle("");
+      setDescription("");
+      setRationale("");
+      setFramework("");
+      setControlId("");
+      setOpen(false);
+      
+      toast({
+        title: "Edit proposal submitted!",
+        description: "Your proposal has been submitted for community review.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit proposal. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const editTypes = [
@@ -46,6 +80,14 @@ export function ProposeEditDialog({ children }: ProposeEditDialogProps) {
     { value: "new_control", label: "Propose New Control" },
     { value: "mapping_update", label: "Update Control Mapping" },
     { value: "new_mapping", label: "Propose New Mapping" }
+  ];
+
+  const frameworks = [
+    { value: "nist", label: "NIST Cybersecurity Framework" },
+    { value: "iso27001", label: "ISO 27001" },
+    { value: "pci", label: "PCI DSS" },
+    { value: "sox", label: "SOX" },
+    { value: "hipaa", label: "HIPAA" }
   ];
 
   return (
@@ -77,6 +119,37 @@ export function ProposeEditDialog({ children }: ProposeEditDialogProps) {
               </SelectContent>
             </Select>
           </div>
+
+          {editType && (
+            <div className="space-y-2">
+              <Label htmlFor="framework">Framework</Label>
+              <Select value={framework} onValueChange={setFramework} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select framework" />
+                </SelectTrigger>
+                <SelectContent>
+                  {frameworks.map((fw) => (
+                    <SelectItem key={fw.value} value={fw.value}>
+                      {fw.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {editType === 'control_update' && (
+            <div className="space-y-2">
+              <Label htmlFor="control-id">Control ID</Label>
+              <Input
+                id="control-id"
+                value={controlId}
+                onChange={(e) => setControlId(e.target.value)}
+                placeholder="e.g., AC-2, PR.AC-1"
+                required
+              />
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
@@ -155,8 +228,11 @@ export function ProposeEditDialog({ children }: ProposeEditDialogProps) {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!editType || !title || !description || !rationale}>
-              Submit Proposal
+            <Button 
+              type="submit" 
+              disabled={!editType || !title || !description || !rationale || !framework || isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit Proposal"}
             </Button>
           </div>
         </form>
