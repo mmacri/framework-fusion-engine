@@ -7,8 +7,18 @@ export interface Control {
   family: string;
   priority: 'Critical' | 'High' | 'Medium' | 'Low';
   status: 'Active' | 'Draft' | 'Deprecated';
-  implementation?: string;
+  implementation: string;
   mappings?: string[];
+}
+
+export interface ControlRelationship {
+  source: string;
+  target: string;
+  relationship: string;
+  confidence: number;
+  description: string;
+  mappingType: string;
+  gapAnalysis?: string;
 }
 
 export const mockControlsData: Record<string, Control[]> = {
@@ -144,3 +154,42 @@ export const mockControlsData: Record<string, Control[]> = {
     }
   ]
 };
+
+export const mockRelationships: ControlRelationship[] = [
+  {
+    source: "NIST AC-2",
+    target: "PCI-DSS 8.1",
+    relationship: "Direct Mapping",
+    confidence: 95,
+    description: "Both controls address user account management with similar requirements for provisioning, modification, and termination.",
+    mappingType: "Equivalent",
+    gapAnalysis: "No significant gaps identified. Both frameworks require formal account management processes."
+  },
+  {
+    source: "NIST AC-1",
+    target: "HIPAA 164.308(a)(1)",
+    relationship: "Partial Overlap",
+    confidence: 80,
+    description: "Both address policy and procedure requirements but HIPAA has specific healthcare focus.",
+    mappingType: "Supplemental",
+    gapAnalysis: "HIPAA requires additional healthcare-specific considerations not covered by NIST."
+  },
+  {
+    source: "PCI-DSS REQ-7",
+    target: "SOX ITGC-01",
+    relationship: "Indirect Support",
+    confidence: 70,
+    description: "Both address access control but with different compliance objectives.",
+    mappingType: "Supporting",
+    gapAnalysis: "SOX focuses on financial controls while PCI focuses on payment card security."
+  },
+  {
+    source: "NIST SC-7",
+    target: "PCI-DSS REQ-1",
+    relationship: "Direct Mapping",
+    confidence: 90,
+    description: "Both controls address boundary protection and network security controls.",
+    mappingType: "Equivalent",
+    gapAnalysis: "PCI has more specific requirements for cardholder data environment protection."
+  }
+];
