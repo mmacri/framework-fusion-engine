@@ -1,28 +1,24 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ThumbsUp, ThumbsDown, MessageSquare, User, Clock } from "lucide-react";
+import { ThumbsUp, ThumbsDown, MessageSquare, Clock, User } from "lucide-react";
 import { CommunityEdit } from "@/types/community";
-import { EditDetailDialog } from "./EditDetailDialog";
 
 interface EditProposalCardProps {
   edit: CommunityEdit;
   onVote: (editId: string, vote: 'approve' | 'reject') => void;
   getStatusColor: (status: string) => string;
-  getStatusIcon: (status: string) => JSX.Element;
+  getStatusIcon: (status: string) => React.ReactNode;
 }
 
 export function EditProposalCard({ edit, onVote, getStatusColor, getStatusIcon }: EditProposalCardProps) {
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case 'control_update': return 'Control Update';
-      case 'new_control': return 'New Control';
-      case 'mapping_update': return 'Mapping Update';
-      case 'new_mapping': return 'New Mapping';
-      default: return type;
-    }
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   const getTypeColor = (type: string) => {
@@ -35,94 +31,115 @@ export function EditProposalCard({ edit, onVote, getStatusColor, getStatusIcon }
     }
   };
 
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'control_update': return 'Control Update';
+      case 'new_control': return 'New Control';
+      case 'mapping_update': return 'Mapping Update';
+      case 'new_mapping': return 'New Mapping';
+      default: return type;
+    }
+  };
+
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardHeader className="pb-3">
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Badge className={getTypeColor(edit.type)} variant="secondary">
+              <Badge className={getTypeColor(edit.type)}>
                 {getTypeLabel(edit.type)}
               </Badge>
-              <Badge className={getStatusColor(edit.status)} variant="secondary">
+              <Badge variant="outline" className={getStatusColor(edit.status)}>
                 {getStatusIcon(edit.status)}
                 <span className="ml-1 capitalize">{edit.status.replace('_', ' ')}</span>
               </Badge>
             </div>
             <CardTitle className="text-lg">{edit.title}</CardTitle>
-            <p className="text-sm text-muted-foreground">{edit.description}</p>
+            <CardDescription>{edit.description}</CardDescription>
           </div>
         </div>
         
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              <User className="h-4 w-4" />
-              <span>{edit.proposedBy}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              <span>{new Date(edit.proposedAt).toLocaleDateString()}</span>
-            </div>
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <User className="h-4 w-4" />
+            {edit.proposedBy}
           </div>
-          <div className="flex items-center gap-2">
-            {edit.reviewers.map((reviewer, index) => (
-              <Avatar key={index} className="h-6 w-6">
-                <AvatarFallback className="text-xs">
-                  {reviewer.substring(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-            ))}
+          <div className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            {formatDate(edit.proposedAt)}
           </div>
         </div>
       </CardHeader>
       
       <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              <ThumbsUp className="h-4 w-4 text-green-600" />
-              <span className="font-medium">{edit.votes.approve}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <ThumbsDown className="h-4 w-4 text-red-600" />
-              <span className="font-medium">{edit.votes.reject}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MessageSquare className="h-4 w-4 text-blue-600" />
-              <span className="font-medium">{edit.comments.length}</span>
-            </div>
-          </div>
-          
-          <div className="flex gap-2">
-            {edit.status === 'pending' && (
-              <>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onVote(edit.id, 'approve')}
-                  className="text-green-600 hover:text-green-700"
-                >
-                  <ThumbsUp className="h-4 w-4 mr-1" />
-                  Approve
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onVote(edit.id, 'reject')}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <ThumbsDown className="h-4 w-4 mr-1" />
-                  Reject
-                </Button>
-              </>
+        <div className="space-y-4">
+          {/* Proposed Changes Preview */}
+          <div className="bg-accent p-3 rounded-lg">
+            <h4 className="font-medium mb-2">Proposed Changes</h4>
+            {edit.proposedData.title && (
+              <div className="text-sm">
+                <span className="font-medium">Title: </span>
+                {edit.proposedData.title}
+              </div>
             )}
-            <EditDetailDialog edit={edit}>
-              <Button variant="outline" size="sm">
+            {edit.proposedData.description && (
+              <div className="text-sm mt-1">
+                <span className="font-medium">Description: </span>
+                {edit.proposedData.description.substring(0, 100)}...
+              </div>
+            )}
+          </div>
+
+          {/* Voting and Actions */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onVote(edit.id, 'approve')}
+                  className="flex items-center gap-1"
+                >
+                  <ThumbsUp className="h-4 w-4" />
+                  {edit.votes.approve}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onVote(edit.id, 'reject')}
+                  className="flex items-center gap-1"
+                >
+                  <ThumbsDown className="h-4 w-4" />
+                  {edit.votes.reject}
+                </Button>
+              </div>
+              
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <MessageSquare className="h-4 w-4" />
+                {edit.comments.length} comments
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline">
                 View Details
               </Button>
-            </EditDetailDialog>
+              {edit.status === 'pending' && (
+                <Button size="sm">
+                  Review
+                </Button>
+              )}
+            </div>
           </div>
+
+          {/* Reviewers */}
+          {edit.reviewers.length > 0 && (
+            <div className="text-sm">
+              <span className="font-medium">Reviewers: </span>
+              {edit.reviewers.join(', ')}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

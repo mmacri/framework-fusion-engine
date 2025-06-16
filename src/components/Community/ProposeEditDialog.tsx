@@ -3,67 +3,68 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Edit3, Plus, FileText } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ProposeEditDialogProps {
   children: React.ReactNode;
 }
 
 export function ProposeEditDialog({ children }: ProposeEditDialogProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [editType, setEditType] = useState<string>("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [justification, setJustification] = useState("");
+  const [rationale, setRationale] = useState("");
 
-  const handleSubmit = () => {
-    // In real implementation, this would submit to your backend
-    console.log("Submitting edit proposal:", {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // In a real implementation, this would submit to an API
+    console.log({
       type: editType,
       title,
       description,
-      justification
+      rationale
     });
-    setIsOpen(false);
-    // Reset form
+    
+    // Reset form and close dialog
     setEditType("");
     setTitle("");
     setDescription("");
-    setJustification("");
+    setRationale("");
+    setOpen(false);
+    
+    // Show success message (in real app, would use toast)
+    alert("Your edit proposal has been submitted for review!");
   };
 
   const editTypes = [
-    { value: "control_update", label: "Update Existing Control", description: "Improve or modify an existing security control" },
-    { value: "new_control", label: "Add New Control", description: "Propose a completely new security control" },
-    { value: "mapping_update", label: "Update Framework Mapping", description: "Improve mappings between frameworks" },
-    { value: "new_mapping", label: "Add New Mapping", description: "Create new framework relationships" }
+    { value: "control_update", label: "Update Existing Control" },
+    { value: "new_control", label: "Propose New Control" },
+    { value: "mapping_update", label: "Update Control Mapping" },
+    { value: "new_mapping", label: "Propose New Mapping" }
   ];
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Edit3 className="h-5 w-5" />
-            Propose Community Edit
-          </DialogTitle>
+          <DialogTitle>Propose an Edit</DialogTitle>
           <DialogDescription>
-            Suggest improvements to our control library. Your proposal will be reviewed by the community.
+            Submit your proposal to improve controls, mappings, or add new content to the community library.
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="edit-type">Edit Type</Label>
-            <Select value={editType} onValueChange={setEditType}>
+            <Select value={editType} onValueChange={setEditType} required>
               <SelectTrigger>
                 <SelectValue placeholder="Select the type of edit" />
               </SelectTrigger>
@@ -75,11 +76,6 @@ export function ProposeEditDialog({ children }: ProposeEditDialogProps) {
                 ))}
               </SelectContent>
             </Select>
-            {editType && (
-              <p className="text-sm text-muted-foreground">
-                {editTypes.find(t => t.value === editType)?.description}
-              </p>
-            )}
           </div>
 
           <div className="space-y-2">
@@ -89,6 +85,7 @@ export function ProposeEditDialog({ children }: ProposeEditDialogProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Brief, descriptive title for your edit"
+              required
             />
           </div>
 
@@ -98,55 +95,71 @@ export function ProposeEditDialog({ children }: ProposeEditDialogProps) {
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Detailed description of the proposed changes"
+              placeholder="Detailed description of your proposed changes"
               rows={4}
+              required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="justification">Justification</Label>
+            <Label htmlFor="rationale">Rationale</Label>
             <Textarea
-              id="justification"
-              value={justification}
-              onChange={(e) => setJustification(e.target.value)}
-              placeholder="Why is this change needed? Include references, sources, or rationale."
+              id="rationale"
+              value={rationale}
+              onChange={(e) => setRationale(e.target.value)}
+              placeholder="Explain why this change is beneficial and provide supporting evidence"
               rows={3}
+              required
             />
           </div>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm">Review Process</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Step 1</Badge>
-                <span className="text-sm">Community voting (7 days)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Step 2</Badge>
-                <span className="text-sm">Expert reviewer validation</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Step 3</Badge>
-                <span className="text-sm">Implementation and publication</span>
-              </div>
-            </CardContent>
-          </Card>
+          {editType && (
+            <Card>
+              <CardContent className="pt-6">
+                <h4 className="font-medium mb-2">Submission Guidelines</h4>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  {editType === 'control_update' && (
+                    <>
+                      <p>• Specify the control ID you want to update</p>
+                      <p>• Provide clear rationale for the change</p>
+                      <p>• Include references to authoritative sources</p>
+                    </>
+                  )}
+                  {editType === 'new_control' && (
+                    <>
+                      <p>• Ensure the control doesn't already exist</p>
+                      <p>• Follow naming conventions for the framework</p>
+                      <p>• Include implementation guidance</p>
+                    </>
+                  )}
+                  {editType === 'mapping_update' && (
+                    <>
+                      <p>• Specify the mapping relationship to update</p>
+                      <p>• Provide evidence for the confidence level</p>
+                      <p>• Explain any gap analysis findings</p>
+                    </>
+                  )}
+                  {editType === 'new_mapping' && (
+                    <>
+                      <p>• Verify the mapping doesn't already exist</p>
+                      <p>• Provide confidence assessment</p>
+                      <p>• Include supporting documentation</p>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-          <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
+          <div className="flex gap-3 justify-end">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button 
-              onClick={handleSubmit}
-              disabled={!editType || !title || !description}
-            >
-              <FileText className="h-4 w-4 mr-2" />
+            <Button type="submit" disabled={!editType || !title || !description || !rationale}>
               Submit Proposal
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

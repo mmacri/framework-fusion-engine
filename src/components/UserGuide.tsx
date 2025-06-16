@@ -2,205 +2,181 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Play, Download, HelpCircle, Users, Search, Shield, FileText } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BookOpen, Play, CheckCircle, ArrowRight, Download, ExternalLink } from "lucide-react";
 
 export function UserGuide() {
-  const guideCategories = [
+  const guideSteps = [
     {
+      id: "getting-started",
       title: "Getting Started",
-      icon: Play,
-      description: "Learn the basics of Framework Fusion Engine",
-      color: "from-blue-50 to-blue-100 border-blue-200",
-      iconColor: "text-blue-600",
-      guides: [
-        { title: "Platform Overview", duration: "5 min", type: "Video" },
-        { title: "First Steps", duration: "3 min", type: "Article" },
-        { title: "Navigation Guide", duration: "4 min", type: "Interactive" }
+      description: "Learn the basics of Framework Fusion",
+      steps: [
+        "Navigate to the Overview page to see available frameworks",
+        "Select a framework to explore its controls",
+        "Use the search and filter options to find specific controls",
+        "View control details by clicking on individual controls"
       ]
     },
     {
-      title: "Control Management",
-      icon: Shield,
-      description: "Working with security controls and frameworks",
-      color: "from-green-50 to-green-100 border-green-200",
-      iconColor: "text-green-600",
-      guides: [
-        { title: "Browsing Controls", duration: "6 min", type: "Video" },
-        { title: "Search & Filtering", duration: "4 min", type: "Article" },
-        { title: "Understanding Categories", duration: "8 min", type: "Article" }
+      id: "framework-mapping",
+      title: "Framework Mapping",
+      description: "Understanding control relationships",
+      steps: [
+        "Go to the Mapping page from the navigation",
+        "Select source and target frameworks",
+        "Review mapping relationships and confidence levels",
+        "Use filters to find specific mapping types"
       ]
     },
     {
-      title: "Community Features",
-      icon: Users,
-      description: "Contributing and collaborating with the community",
-      color: "from-purple-50 to-purple-100 border-purple-200",
-      iconColor: "text-purple-600",
-      guides: [
-        { title: "Making Edits", duration: "10 min", type: "Video" },
-        { title: "Voting System", duration: "5 min", type: "Article" },
-        { title: "Discussion Forums", duration: "7 min", type: "Interactive" }
+      id: "gap-analysis",
+      title: "Gap Analysis",
+      description: "Identify coverage gaps",
+      steps: [
+        "Access the Analysis page",
+        "Compare frameworks to identify gaps",
+        "Review coverage statistics",
+        "Download gap reports for remediation planning"
       ]
     },
     {
-      title: "Advanced Features",
-      icon: FileText,
-      description: "Framework mapping, gap analysis, and reporting",
-      color: "from-orange-50 to-orange-100 border-orange-200",
-      iconColor: "text-orange-600",
-      guides: [
-        { title: "Framework Mapping", duration: "12 min", type: "Video" },
-        { title: "Gap Analysis", duration: "15 min", type: "Article" },
-        { title: "Generating Reports", duration: "8 min", type: "Video" }
+      id: "reports",
+      title: "Generating Reports",
+      description: "Create compliance reports",
+      steps: [
+        "Visit the Reports page",
+        "Select your desired framework and report type",
+        "Choose from available templates",
+        "Generate and download reports in various formats"
       ]
     }
   ];
 
-  const quickLinks = [
-    { title: "FAQ", icon: HelpCircle, description: "Frequently asked questions", link: "#" },
-    { title: "Video Tutorials", icon: Play, description: "Step-by-step video guides", link: "#" },
-    { title: "API Documentation", icon: FileText, description: "Technical integration guides", link: "#" },
-    { title: "Community Forum", icon: Users, description: "Get help from the community", link: "#" }
+  const faqs = [
+    {
+      question: "How do I find controls for a specific framework?",
+      answer: "Use the Controls page and select your framework from the dropdown filter. You can also search by control ID, title, or description."
+    },
+    {
+      question: "What do the confidence levels in mappings mean?",
+      answer: "Confidence levels (0-100%) indicate how closely related two controls are. Higher percentages mean stronger relationships."
+    },
+    {
+      question: "Can I contribute to the control library?",
+      answer: "Yes! Join our community to propose edits, suggest new controls, and improve existing mappings."
+    },
+    {
+      question: "How do I export my analysis results?",
+      answer: "Most pages have export options. Look for download buttons to get reports in PDF, Excel, or CSV formats."
+    }
   ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="text-center space-y-4">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <BookOpen className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            User Guide & Documentation
-          </h1>
-        </div>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          User Guide
+        </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Everything you need to know to effectively use Framework Fusion Engine. 
-          From basic navigation to advanced community features.
+          Learn how to effectively use Framework Fusion for your compliance management needs.
         </p>
-        
-        <div className="flex gap-4 justify-center">
-          <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-            <Play className="h-5 w-5 mr-2" />
-            Start Tutorial
-          </Button>
-          <Button variant="outline" size="lg">
-            <Download className="h-5 w-5 mr-2" />
-            Download PDF Guide
-          </Button>
-        </div>
       </div>
 
-      {/* Quick Start */}
-      <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50 to-purple-50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Play className="h-5 w-5 text-blue-600" />
-            Quick Start (5 minutes)
-          </CardTitle>
-          <CardDescription>Get up and running with the essential features</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-white rounded-lg border">
-              <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold mx-auto mb-2">1</div>
-              <h4 className="font-medium mb-1">Browse Controls</h4>
-              <p className="text-xs text-muted-foreground">Explore the control library</p>
-            </div>
-            <div className="text-center p-4 bg-white rounded-lg border">
-              <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold mx-auto mb-2">2</div>
-              <h4 className="font-medium mb-1">Search & Filter</h4>
-              <p className="text-xs text-muted-foreground">Find specific controls</p>
-            </div>
-            <div className="text-center p-4 bg-white rounded-lg border">
-              <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold mx-auto mb-2">3</div>
-              <h4 className="font-medium mb-1">View Mappings</h4>
-              <p className="text-xs text-muted-foreground">See framework relationships</p>
-            </div>
-            <div className="text-center p-4 bg-white rounded-lg border">
-              <div className="w-8 h-8 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center font-bold mx-auto mb-2">4</div>
-              <h4 className="font-medium mb-1">Contribute</h4>
-              <p className="text-xs text-muted-foreground">Make your first edit</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="guide" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="guide">Step-by-Step Guide</TabsTrigger>
+          <TabsTrigger value="faq">FAQ</TabsTrigger>
+          <TabsTrigger value="resources">Resources</TabsTrigger>
+        </TabsList>
 
-      {/* Guide Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {guideCategories.map((category, index) => (
-          <Card key={index} className={`bg-gradient-to-br ${category.color} hover:shadow-lg transition-shadow`}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <category.icon className={`h-6 w-6 ${category.iconColor}`} />
-                {category.title}
-              </CardTitle>
-              <CardDescription>{category.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {category.guides.map((guide, guideIndex) => (
-                  <div key={guideIndex} className="flex items-center justify-between p-3 bg-white rounded-lg border hover:bg-accent cursor-pointer transition-colors">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-sm">{guide.title}</h4>
-                      <p className="text-xs text-muted-foreground">{guide.duration}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">{guide.type}</Badge>
-                      <Button variant="ghost" size="sm">
-                        <Play className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Quick Links */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Additional Resources</CardTitle>
-          <CardDescription>More ways to get help and learn about the platform</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickLinks.map((link, index) => (
-              <div key={index} className="flex items-center gap-3 p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
-                <link.icon className="h-6 w-6 text-primary flex-shrink-0" />
-                <div>
-                  <h4 className="font-medium text-sm">{link.title}</h4>
-                  <p className="text-xs text-muted-foreground">{link.description}</p>
+        <TabsContent value="guide" className="space-y-6">
+          {guideSteps.map((section, index) => (
+            <Card key={section.id}>
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <Badge className="bg-blue-100 text-blue-800">{index + 1}</Badge>
+                  <CardTitle>{section.title}</CardTitle>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+                <CardDescription>{section.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {section.steps.map((step, stepIndex) => (
+                    <div key={stepIndex} className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                      <span className="text-sm">{step}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
 
-      {/* Contact Support */}
-      <Card className="border-l-4 border-l-green-500 bg-gradient-to-r from-green-50 to-blue-50">
-        <CardContent className="pt-6">
-          <div className="text-center space-y-4">
-            <HelpCircle className="h-12 w-12 text-green-600 mx-auto" />
-            <h3 className="text-lg font-semibold">Still need help?</h3>
-            <p className="text-muted-foreground">
-              Our community and support team are here to help you succeed with Framework Fusion Engine.
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Button className="bg-green-600 hover:bg-green-700">
-                <Users className="h-4 w-4 mr-2" />
-                Community Forum
-              </Button>
-              <Button variant="outline">
-                <HelpCircle className="h-4 w-4 mr-2" />
-                Contact Support
-              </Button>
-            </div>
+        <TabsContent value="faq" className="space-y-4">
+          {faqs.map((faq, index) => (
+            <Card key={index}>
+              <CardHeader>
+                <CardTitle className="text-lg">{faq.question}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">{faq.answer}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+
+        <TabsContent value="resources" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5" />
+                  Documentation
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button variant="outline" className="w-full justify-between">
+                  Framework Comparison Guide
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" className="w-full justify-between">
+                  Control Implementation Best Practices
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" className="w-full justify-between">
+                  Compliance Mapping Methodology
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Download className="h-5 w-5" />
+                  Quick Reference
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button variant="outline" className="w-full justify-between">
+                  Control Categories Cheat Sheet
+                  <Download className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" className="w-full justify-between">
+                  Framework Overview PDF
+                  <Download className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" className="w-full justify-between">
+                  Mapping Confidence Guide
+                  <Download className="h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
