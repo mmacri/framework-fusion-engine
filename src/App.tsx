@@ -15,6 +15,8 @@ const basename = import.meta.env.PROD ? '/framework-fusion-engine' : '';
 const App = () => {
   console.log('App loading with basename:', basename);
   console.log('Environment:', import.meta.env.MODE);
+  console.log('Production:', import.meta.env.PROD);
+  console.log('Base URL:', import.meta.env.BASE_URL);
   
   return (
     <QueryClientProvider client={queryClient}>
