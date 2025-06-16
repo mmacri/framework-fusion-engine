@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Edit3, GitBranch, MessageSquare, Star, Clock } from "lucide-react";
+import { Users, Edit3, GitBranch, MessageSquare, Star, Clock, Plus, Vote } from "lucide-react";
+import { CommunityEditsDashboard } from "./CommunityEditsDashboard";
 
 export function CommunityDashboard() {
   const recentEdits = [
@@ -12,21 +13,24 @@ export function CommunityDashboard() {
       title: "Updated NIST AC-2 Implementation",
       editor: "security_expert_123",
       timestamp: "2 hours ago",
-      status: "pending_review"
+      status: "pending_review",
+      votes: { approve: 12, reject: 2 }
     },
     {
       id: 2,
       title: "Added PCI-DSS 4.0.1 Control",
       editor: "compliance_pro",
       timestamp: "5 hours ago",
-      status: "approved"
+      status: "approved",
+      votes: { approve: 15, reject: 1 }
     },
     {
       id: 3,
       title: "Enhanced HIPAA Control Mapping",
       editor: "healthcare_admin",
       timestamp: "1 day ago",
-      status: "under_discussion"
+      status: "under_discussion",
+      votes: { approve: 8, reject: 3 }
     }
   ];
 
@@ -88,15 +92,23 @@ export function CommunityDashboard() {
       <Tabs defaultValue="recent-activity" className="space-y-4">
         <TabsList>
           <TabsTrigger value="recent-activity">Recent Activity</TabsTrigger>
-          <TabsTrigger value="pending-reviews">Pending Reviews</TabsTrigger>
+          <TabsTrigger value="community-edits">Community Edits</TabsTrigger>
           <TabsTrigger value="contributors">Top Contributors</TabsTrigger>
         </TabsList>
 
         <TabsContent value="recent-activity" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Community Edits</CardTitle>
-              <CardDescription>Latest contributions from community members</CardDescription>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Recent Community Edits</CardTitle>
+                  <CardDescription>Latest contributions from community members</CardDescription>
+                </div>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Propose Edit
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -109,6 +121,11 @@ export function CommunityDashboard() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 text-sm">
+                        <Vote className="h-3 w-3" />
+                        <span className="text-green-600">+{edit.votes.approve}</span>
+                        <span className="text-red-600">-{edit.votes.reject}</span>
+                      </div>
                       <Badge variant={
                         edit.status === 'approved' ? 'default' : 
                         edit.status === 'pending_review' ? 'secondary' : 'outline'
@@ -127,19 +144,8 @@ export function CommunityDashboard() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="pending-reviews">
-          <Card>
-            <CardHeader>
-              <CardTitle>Edits Awaiting Review</CardTitle>
-              <CardDescription>Help review and approve community contributions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                12 edits are currently pending community review and approval.
-              </p>
-              <Button className="mt-4">Review Pending Edits</Button>
-            </CardContent>
-          </Card>
+        <TabsContent value="community-edits">
+          <CommunityEditsDashboard />
         </TabsContent>
 
         <TabsContent value="contributors">
