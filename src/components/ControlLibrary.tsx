@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,15 +14,15 @@ interface ControlLibraryProps {
 
 export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPriority, setSelectedPriority] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedControlFramework, setSelectedControlFramework] = useState(selectedFramework || "");
+  const [selectedPriority, setSelectedPriority] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedControlFramework, setSelectedControlFramework] = useState(selectedFramework || "all");
 
   const frameworks = Object.keys(mockControlsData);
   
   // Get all controls from selected framework or all frameworks
   const getAllControls = () => {
-    if (selectedControlFramework) {
+    if (selectedControlFramework && selectedControlFramework !== "all") {
       return mockControlsData[selectedControlFramework] || [];
     }
     return Object.values(mockControlsData).flat();
@@ -42,8 +41,8 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
       control.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       control.id.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesPriority = !selectedPriority || control.priority === selectedPriority;
-    const matchesCategory = !selectedCategory || control.category === selectedCategory;
+    const matchesPriority = selectedPriority === "all" || control.priority === selectedPriority;
+    const matchesCategory = selectedCategory === "all" || control.category === selectedCategory;
     
     return matchesSearch && matchesPriority && matchesCategory;
   });
@@ -158,7 +157,7 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
               <SelectValue placeholder="All Frameworks" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Frameworks</SelectItem>
+              <SelectItem value="all">All Frameworks</SelectItem>
               {frameworks.map(framework => (
                 <SelectItem key={framework} value={framework}>{framework}</SelectItem>
               ))}
@@ -170,7 +169,7 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map(category => (
                 <SelectItem key={category} value={category}>{category}</SelectItem>
               ))}
@@ -182,14 +181,23 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
               <SelectValue placeholder="All Priorities" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Priorities</SelectItem>
+              <SelectItem value="all">All Priorities</SelectItem>
               {priorities.map(priority => (
                 <SelectItem key={priority} value={priority}>{priority}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
-          <Button variant="outline" className="bg-white">
+          <Button 
+            variant="outline" 
+            className="bg-white"
+            onClick={() => {
+              setSearchTerm("");
+              setSelectedCategory("all");
+              setSelectedPriority("all");
+              setSelectedControlFramework("all");
+            }}
+          >
             <Filter className="h-4 w-4 mr-2" />
             Clear Filters
           </Button>

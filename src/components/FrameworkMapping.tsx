@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,8 +8,8 @@ import { mockControlsData, mockRelationships } from "@/data/reportMockData";
 import { GitBranch, Search, Link, ArrowRight, Filter } from "lucide-react";
 
 export function FrameworkMapping() {
-  const [sourceFramework, setSourceFramework] = useState("");
-  const [targetFramework, setTargetFramework] = useState("");
+  const [sourceFramework, setSourceFramework] = useState("all");
+  const [targetFramework, setTargetFramework] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
   const frameworks = Object.keys(mockControlsData);
@@ -21,8 +20,8 @@ export function FrameworkMapping() {
       rel.target.toLowerCase().includes(searchTerm.toLowerCase()) ||
       rel.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesSource = !sourceFramework || rel.source.includes(sourceFramework);
-    const matchesTarget = !targetFramework || rel.target.includes(targetFramework);
+    const matchesSource = sourceFramework === "all" || rel.source.includes(sourceFramework);
+    const matchesTarget = targetFramework === "all" || rel.target.includes(targetFramework);
     
     return matchesSearch && matchesSource && matchesTarget;
   });
@@ -73,7 +72,7 @@ export function FrameworkMapping() {
               <SelectValue placeholder="Source Framework" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Sources</SelectItem>
+              <SelectItem value="all">All Sources</SelectItem>
               {frameworks.map(framework => (
                 <SelectItem key={framework} value={framework}>{framework}</SelectItem>
               ))}
@@ -85,14 +84,22 @@ export function FrameworkMapping() {
               <SelectValue placeholder="Target Framework" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Targets</SelectItem>
+              <SelectItem value="all">All Targets</SelectItem>
               {frameworks.map(framework => (
                 <SelectItem key={framework} value={framework}>{framework}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
-          <Button variant="outline" className="bg-white">
+          <Button 
+            variant="outline" 
+            className="bg-white"
+            onClick={() => {
+              setSearchTerm("");
+              setSourceFramework("all");
+              setTargetFramework("all");
+            }}
+          >
             <Filter className="h-4 w-4 mr-2" />
             Clear Filters
           </Button>

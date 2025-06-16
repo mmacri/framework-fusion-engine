@@ -8,8 +8,8 @@ import { mockControlsData } from "@/data/reportMockData";
 import { AlertTriangle, CheckCircle, XCircle, TrendingUp, Download, Search } from "lucide-react";
 
 export function GapAnalysis() {
-  const [sourceFramework, setSourceFramework] = useState("");
-  const [targetFramework, setTargetFramework] = useState("");
+  const [sourceFramework, setSourceFramework] = useState("all");
+  const [targetFramework, setTargetFramework] = useState("all");
 
   const frameworks = Object.keys(mockControlsData);
 
@@ -82,6 +82,7 @@ export function GapAnalysis() {
               <SelectValue placeholder="Select Source Framework" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="all">All Frameworks</SelectItem>
               {frameworks.map(framework => (
                 <SelectItem key={framework} value={framework}>{framework}</SelectItem>
               ))}
@@ -95,6 +96,7 @@ export function GapAnalysis() {
               <SelectValue placeholder="Select Target Framework" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="all">All Frameworks</SelectItem>
               {frameworks.map(framework => (
                 <SelectItem key={framework} value={framework}>{framework}</SelectItem>
               ))}

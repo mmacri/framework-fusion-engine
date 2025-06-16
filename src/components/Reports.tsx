@@ -8,8 +8,8 @@ import { mockControlsData } from "@/data/reportMockData";
 import { Download, FileText, Calendar, Settings, BarChart3, Shield, FileSpreadsheet } from "lucide-react";
 
 export function Reports() {
-  const [selectedFramework, setSelectedFramework] = useState("");
-  const [reportType, setReportType] = useState("");
+  const [selectedFramework, setSelectedFramework] = useState("all");
+  const [reportType, setReportType] = useState("all");
 
   const frameworks = Object.keys(mockControlsData);
 
@@ -116,6 +116,7 @@ export function Reports() {
               <SelectValue placeholder="Report Type" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
               {reportTemplates.map(template => (
                 <SelectItem key={template.id} value={template.id}>{template.title}</SelectItem>
               ))}
