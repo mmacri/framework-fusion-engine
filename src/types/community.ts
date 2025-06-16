@@ -1,7 +1,7 @@
 
 export interface CommunityEdit {
   id: string;
-  type: 'control_update' | 'new_control' | 'mapping_update' | 'new_mapping';
+  type: 'control_update' | 'new_control' | 'mapping_update' | 'new_mapping' | 'framework_update' | 'new_framework';
   title: string;
   description: string;
   proposedBy: string;
@@ -41,4 +41,38 @@ export interface VotingThreshold {
   minReviewerApprovals: number;
   maxRejectionVotes: number;
   reviewPeriodDays: number;
+}
+
+export interface Discussion {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  createdAt: string;
+  lastActivity: string;
+  status: 'open' | 'closed' | 'resolved';
+  category: 'general' | 'frameworks' | 'controls' | 'mappings' | 'technical';
+  tags: string[];
+  replies: DiscussionReply[];
+  votes: number;
+}
+
+export interface DiscussionReply {
+  id: string;
+  content: string;
+  author: string;
+  timestamp: string;
+  votes: number;
+}
+
+export interface Framework {
+  id: string;
+  name: string;
+  version: string;
+  description: string;
+  type: 'standard' | 'custom';
+  addedBy: string;
+  addedAt: string;
+  status: 'active' | 'deprecated';
+  controlCount: number;
 }

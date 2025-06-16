@@ -1,50 +1,27 @@
+
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, MessageSquare, Edit3, ThumbsUp, TrendingUp, Star, GitBranch, ArrowRight } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Users, MessageSquare, Edit3, Settings, Plus, GitBranch, BookOpen } from "lucide-react";
+import { FrameworkManagement } from "./FrameworkManagement";
+import { DiscussionBoard } from "./DiscussionBoard";
 
 interface CommunityDashboardProps {
   onNavigateToEdits?: () => void;
 }
 
 export function CommunityDashboard({ onNavigateToEdits }: CommunityDashboardProps) {
-  const communityStats = [
-    { label: "Active Contributors", value: "847", icon: Users, color: "text-blue-600" },
-    { label: "Total Edits", value: "2,134", icon: Edit3, color: "text-green-600" },
-    { label: "Discussions", value: "356", icon: MessageSquare, color: "text-purple-600" },
-    { label: "Votes Cast", value: "5,892", icon: ThumbsUp, color: "text-orange-600" }
-  ];
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const recentActivity = [
-    {
-      type: "edit",
-      user: "Sarah Chen",
-      action: "Updated NIST AC-2 implementation guidance",
-      time: "2 hours ago",
-      votes: 12
-    },
-    {
-      type: "discussion",
-      user: "Mike Rodriguez",
-      action: "Started discussion on PCI-DSS scope clarification",
-      time: "4 hours ago",
-      votes: 8
-    },
-    {
-      type: "edit",
-      user: "Jennifer Park",
-      action: "Added new SOX control mapping",
-      time: "6 hours ago",
-      votes: 15
-    }
-  ];
-
-  const topContributors = [
-    { name: "Dr. Sarah Chen", contributions: 245, reputation: 1520, avatar: "SC" },
-    { name: "Mike Rodriguez", contributions: 189, reputation: 1247, avatar: "MR" },
-    { name: "Jennifer Park", contributions: 156, reputation: 892, avatar: "JP" },
-    { name: "Robert Kim", contributions: 134, reputation: 756, avatar: "RK" }
-  ];
+  // Real stats that will be updated based on actual data
+  const [stats, setStats] = useState({
+    totalEdits: 0,
+    pendingEdits: 0,
+    discussions: 0,
+    frameworks: 5 // Starting with built-in frameworks
+  });
 
   const handleStartContributing = () => {
     if (onNavigateToEdits) {
@@ -52,147 +29,157 @@ export function CommunityDashboard({ onNavigateToEdits }: CommunityDashboardProp
     }
   };
 
-  const handleViewDiscussions = () => {
-    // Simulate opening discussions - in a real app this would navigate to discussions page
-    alert("Discussions feature coming soon! Join our community forum to participate in ongoing discussions about compliance frameworks and security controls.");
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-          Community Dashboard
+          Community Hub
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Join our collaborative community working to improve security controls and compliance frameworks. 
-          Contribute your expertise and learn from others.
+          Collaborate on security frameworks, controls, and mappings. Manage frameworks and participate in discussions.
         </p>
       </div>
 
-      {/* Community Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {communityStats.map((stat, index) => (
-          <Card key={index}>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <stat.icon className={`h-8 w-8 ${stat.color}`} />
-                <div>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="frameworks">Frameworks</TabsTrigger>
+          <TabsTrigger value="discussions">Discussions</TabsTrigger>
+          <TabsTrigger value="edits">Proposals</TabsTrigger>
+        </TabsList>
 
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Recent Community Activity
-          </CardTitle>
-          <CardDescription>Latest contributions and discussions from the community</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-accent rounded-lg">
+        <TabsContent value="overview" className="space-y-6">
+          {/* Community Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card>
+              <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
-                    {activity.user.split(' ').map(n => n[0]).join('')}
-                  </div>
+                  <Edit3 className="h-8 w-8 text-green-600" />
                   <div>
-                    <p className="font-medium">{activity.user}</p>
-                    <p className="text-sm text-muted-foreground">{activity.action}</p>
-                    <p className="text-xs text-muted-foreground">{activity.time}</p>
+                    <div className="text-2xl font-bold">{stats.totalEdits}</div>
+                    <div className="text-sm text-muted-foreground">Total Proposals</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <ThumbsUp className="h-3 w-3" />
-                    {activity.votes}
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Top Contributors */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Star className="h-5 w-5" />
-            Top Contributors
-          </CardTitle>
-          <CardDescription>Community members making the biggest impact</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {topContributors.map((contributor, index) => (
-              <div key={index} className="flex items-center justify-between">
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center font-medium">
-                    {contributor.avatar}
-                  </div>
+                  <MessageSquare className="h-8 w-8 text-purple-600" />
                   <div>
-                    <p className="font-medium">{contributor.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {contributor.contributions} contributions • {contributor.reputation} reputation
-                    </p>
+                    <div className="text-2xl font-bold">{stats.discussions}</div>
+                    <div className="text-sm text-muted-foreground">Active Discussions</div>
                   </div>
                 </div>
-                <Badge variant="outline">Rank #{index + 1}</Badge>
-              </div>
-            ))}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <BookOpen className="h-8 w-8 text-blue-600" />
+                  <div>
+                    <div className="text-2xl font-bold">{stats.frameworks}</div>
+                    <div className="text-sm text-muted-foreground">Frameworks</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <GitBranch className="h-8 w-8 text-orange-600" />
+                  <div>
+                    <div className="text-2xl font-bold">{stats.pendingEdits}</div>
+                    <div className="text-sm text-muted-foreground">Pending Review</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Call to Action */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50 to-purple-50">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <Edit3 className="h-12 w-12 text-blue-600 mx-auto" />
-              <h3 className="text-lg font-semibold">Make Your First Edit</h3>
-              <p className="text-muted-foreground">
-                Help improve control descriptions and implementation guidance
-              </p>
-              <Button 
-                className="bg-blue-600 hover:bg-blue-700"
-                onClick={handleStartContributing}
-              >
-                <Edit3 className="h-4 w-4 mr-2" />
-                Start Contributing
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="border-l-4 border-l-blue-500">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <Edit3 className="h-12 w-12 text-blue-600 mx-auto" />
+                  <h3 className="text-lg font-semibold">Submit Proposal</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Propose changes to controls, mappings, or frameworks
+                  </p>
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700"
+                    onClick={handleStartContributing}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Proposal
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card className="border-l-4 border-l-green-500 bg-gradient-to-r from-green-50 to-blue-50">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <MessageSquare className="h-12 w-12 text-green-600 mx-auto" />
-              <h3 className="text-lg font-semibold">Join Discussions</h3>
-              <p className="text-muted-foreground">
-                Share knowledge and learn from compliance experts
-              </p>
-              <Button 
-                className="bg-green-600 hover:bg-green-700"
-                onClick={handleViewDiscussions}
-              >
-                <MessageSquare className="h-4 w-4 mr-2" />
-                View Discussions
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Card className="border-l-4 border-l-green-500">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <BookOpen className="h-12 w-12 text-green-600 mx-auto" />
+                  <h3 className="text-lg font-semibold">Manage Frameworks</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Add, update, or manage security frameworks
+                  </p>
+                  <Button 
+                    className="bg-green-600 hover:bg-green-700"
+                    onClick={() => setActiveTab("frameworks")}
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    Manage
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-purple-500">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <MessageSquare className="h-12 w-12 text-purple-600 mx-auto" />
+                  <h3 className="text-lg font-semibold">Join Discussions</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Participate in community discussions and Q&A
+                  </p>
+                  <Button 
+                    className="bg-purple-600 hover:bg-purple-700"
+                    onClick={() => setActiveTab("discussions")}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Browse
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="frameworks">
+          <FrameworkManagement />
+        </TabsContent>
+
+        <TabsContent value="discussions">
+          <DiscussionBoard />
+        </TabsContent>
+
+        <TabsContent value="edits">
+          <div className="text-center py-8">
+            <h3 className="text-lg font-semibold mb-4">Edit Proposals</h3>
+            <p className="text-muted-foreground mb-6">
+              View and manage all community proposals for frameworks, controls, and mappings.
+            </p>
+            <Button onClick={handleStartContributing} size="lg">
+              <Edit3 className="h-4 w-4 mr-2" />
+              Go to Proposals
+            </Button>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

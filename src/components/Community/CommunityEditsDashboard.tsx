@@ -13,73 +13,8 @@ import { EditDetailDialog } from "./EditDetailDialog";
 import { toast } from "@/hooks/use-toast";
 import { AdminApprovalPanel } from "./AdminApprovalPanel";
 
-const initialMockEdits: CommunityEdit[] = [
-  {
-    id: "edit-1",
-    type: "control_update",
-    title: "Update NIST AC-2 for Zero Trust Architecture",
-    description: "Enhance access control requirements to include zero trust principles and continuous verification mechanisms",
-    proposedBy: "security_architect_123",
-    proposedAt: "2024-12-15T10:30:00Z",
-    status: "pending",
-    votes: { approve: 12, reject: 2, userVotes: {} },
-    proposedData: {
-      title: "Account Management - Enhanced for Zero Trust",
-      description: "Updated description with zero trust requirements including continuous verification, least privilege access, and dynamic policy enforcement...",
-      framework: "nist",
-      controlId: "AC-2"
-    },
-    comments: [
-      {
-        id: "comment-1",
-        userId: "reviewer_expert",
-        content: "This looks great! The zero trust principles are well integrated. Consider adding more specific implementation guidance for cloud environments.",
-        timestamp: "2024-12-15T11:00:00Z",
-        type: "review"
-      }
-    ],
-    reviewers: ["expert_reviewer_1", "compliance_specialist"]
-  },
-  {
-    id: "edit-2", 
-    type: "new_control",
-    title: "Add Cloud Security Control CS-1",
-    description: "New control for cloud-native security requirements focusing on container security and microservices architecture",
-    proposedBy: "cloud_expert",
-    proposedAt: "2024-12-14T15:20:00Z",
-    status: "under_review",
-    votes: { approve: 15, reject: 1, userVotes: {} },
-    proposedData: {
-      id: "CS-1",
-      title: "Cloud Infrastructure Security",
-      description: "Ensure cloud infrastructure meets security baselines including container image scanning, runtime protection, and network segmentation...",
-      framework: "nist"
-    },
-    comments: [],
-    reviewers: ["cloud_reviewer", "security_architect_123"]
-  },
-  {
-    id: "edit-3",
-    type: "mapping_update",
-    title: "Improve ISO 27001 to NIST Mapping Accuracy",
-    description: "Update mapping confidence levels and add missing relationships between ISO 27001 A.9.1.1 and NIST AC controls",
-    proposedBy: "compliance_mapper",
-    proposedAt: "2024-12-13T09:15:00Z",
-    status: "approved",
-    votes: { approve: 18, reject: 0, userVotes: {} },
-    proposedData: {
-      sourceControl: "ISO27001-A.9.1.1",
-      targetControl: "NIST-AC-2",
-      confidence: "high",
-      rationale: "Direct mapping based on access control requirements"
-    },
-    comments: [],
-    reviewers: ["mapping_specialist"]
-  }
-];
-
 export function CommunityEditsDashboard() {
-  const [edits, setEdits] = useState<CommunityEdit[]>(initialMockEdits);
+  const [edits, setEdits] = useState<CommunityEdit[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [userVotes, setUserVotes] = useState<Record<string, 'approve' | 'reject'>>({});
@@ -92,7 +27,6 @@ export function CommunityEditsDashboard() {
   });
 
   const handleVote = (editId: string, vote: 'approve' | 'reject') => {
-    // Check if user already voted
     if (userVotes[editId]) {
       toast({
         title: "Already voted",
@@ -107,7 +41,6 @@ export function CommunityEditsDashboard() {
         const newVotes = { ...edit.votes };
         newVotes[vote]++;
         
-        // Auto-approve if thresholds are met
         let newStatus = edit.status;
         if (newVotes.approve >= 10 && newVotes.reject <= 3) {
           newStatus = 'approved';
@@ -129,7 +62,6 @@ export function CommunityEditsDashboard() {
       return edit;
     }));
 
-    // Track user vote
     setUserVotes(prev => ({ ...prev, [editId]: vote }));
     
     toast({
@@ -213,7 +145,7 @@ export function CommunityEditsDashboard() {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Community Edits</h1>
+          <h1 className="text-3xl font-bold">Community Proposals</h1>
           <p className="text-muted-foreground">Propose and vote on improvements to controls and mappings</p>
         </div>
         <ProposeEditDialog onSubmitEdit={handleSubmitEdit}>
@@ -274,7 +206,7 @@ export function CommunityEditsDashboard() {
 
       <div className="flex gap-4">
         <Input
-          placeholder="Search edits..."
+          placeholder="Search proposals..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-sm"
@@ -284,7 +216,7 @@ export function CommunityEditsDashboard() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Edits</SelectItem>
+            <SelectItem value="all">All Proposals</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
             <SelectItem value="under_review">Under Review</SelectItem>
             <SelectItem value="approved">Approved</SelectItem>
@@ -295,35 +227,45 @@ export function CommunityEditsDashboard() {
 
       <Tabs defaultValue="proposals" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="proposals">Edit Proposals</TabsTrigger>
+          <TabsTrigger value="proposals">Proposals</TabsTrigger>
           <TabsTrigger value="voting">Voting Guidelines</TabsTrigger>
         </TabsList>
 
         <TabsContent value="proposals" className="space-y-4">
-          {filteredEdits.map((edit) => (
-            <EditDetailDialog 
-              key={edit.id} 
-              edit={edit} 
-              onAddComment={handleAddComment}
-            >
-              <div>
-                <EditProposalCard 
-                  edit={edit} 
-                  onVote={handleVote}
-                  getStatusColor={getStatusColor}
-                  getStatusIcon={getStatusIcon}
-                  userVoted={userVotes[edit.id]}
-                />
-              </div>
-            </EditDetailDialog>
-          ))}
-          
-          {filteredEdits.length === 0 && (
+          {filteredEdits.length === 0 ? (
             <Card>
               <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground">No proposals found matching your criteria.</p>
+                <Edit3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No proposals yet</h3>
+                <p className="text-muted-foreground mb-4">
+                  Be the first to propose an improvement to the community library!
+                </p>
+                <ProposeEditDialog onSubmitEdit={handleSubmitEdit}>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create First Proposal
+                  </Button>
+                </ProposeEditDialog>
               </CardContent>
             </Card>
+          ) : (
+            filteredEdits.map((edit) => (
+              <EditDetailDialog 
+                key={edit.id} 
+                edit={edit} 
+                onAddComment={handleAddComment}
+              >
+                <div>
+                  <EditProposalCard 
+                    edit={edit} 
+                    onVote={handleVote}
+                    getStatusColor={getStatusColor}
+                    getStatusIcon={getStatusIcon}
+                    userVoted={userVotes[edit.id]}
+                  />
+                </div>
+              </EditDetailDialog>
+            ))
           )}
         </TabsContent>
 
@@ -381,7 +323,6 @@ export function CommunityEditsDashboard() {
         </TabsContent>
       </Tabs>
 
-      {/* Admin Panel */}
       <AdminApprovalPanel
         edits={edits}
         onApproveEdit={handleAdminApprove}
