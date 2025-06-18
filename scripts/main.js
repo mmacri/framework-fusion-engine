@@ -1,7 +1,4 @@
 
-// Component imports (simulated)
-// In a real setup, these would be proper ES6 imports
-
 // Simple smooth scrolling for anchor links
 function initSmoothScrolling() {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -59,42 +56,37 @@ function initStatsAnimation() {
 
 // Load components when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('Loading static page components...');
+  
   // Load all sections
   if (typeof createHeroSection !== 'undefined') {
     document.getElementById('hero-section').innerHTML = createHeroSection();
+    console.log('Hero section loaded');
   }
   if (typeof createNavigationSection !== 'undefined') {
     document.getElementById('navigation-section').innerHTML = createNavigationSection();
+    console.log('Navigation section loaded');
   }
   if (typeof createStatsSection !== 'undefined') {
     document.getElementById('stats-section').innerHTML = createStatsSection();
+    console.log('Stats section loaded');
   }
   if (typeof createFeaturesSection !== 'undefined') {
     document.getElementById('features-section').innerHTML = createFeaturesSection();
+    console.log('Features section loaded');
   }
   if (typeof createGettingStartedSection !== 'undefined') {
     document.getElementById('getting-started-section').innerHTML = createGettingStartedSection();
+    console.log('Getting started section loaded');
   }
   if (typeof createFooterSection !== 'undefined') {
     document.getElementById('footer-section').innerHTML = createFooterSection();
+    console.log('Footer section loaded');
   }
 
   // Initialize interactive features
   initSmoothScrolling();
   initStatsAnimation();
+  
+  console.log('Static page initialization complete');
 });
-
-// Load component scripts
-function loadScript(src) {
-  const script = document.createElement('script');
-  script.src = src;
-  document.head.appendChild(script);
-}
-
-// Load all component scripts
-loadScript('./components/hero.js');
-loadScript('./components/navigation.js');
-loadScript('./components/stats.js');
-loadScript('./components/features.js');
-loadScript('./components/getting-started.js');
-loadScript('./components/footer.js');

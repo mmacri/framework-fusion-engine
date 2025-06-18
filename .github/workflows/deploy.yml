@@ -31,17 +31,30 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build React app
         run: npm run build
         env:
           NODE_ENV: production
 
-      - name: Copy static files
+      - name: Copy static files to dist
         run: |
-          cp -r scripts dist/ || true
-          cp -r components dist/ || true
-          cp -r styles dist/ || true
-          cp index.html dist/static.html || true
+          # Copy all component scripts
+          mkdir -p dist/components
+          cp -r components/* dist/components/ 2>/dev/null || true
+          
+          # Copy all scripts
+          mkdir -p dist/scripts
+          cp -r scripts/* dist/scripts/ 2>/dev/null || true
+          
+          # Copy styles
+          mkdir -p dist/styles
+          cp -r styles/* dist/styles/ 2>/dev/null || true
+          
+          # Copy landing.html as index.html for root access
+          cp public/landing.html dist/landing.html 2>/dev/null || true
+          
+          # Copy 404.html
+          cp public/404.html dist/404.html 2>/dev/null || true
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
