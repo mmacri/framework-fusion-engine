@@ -10,9 +10,12 @@ import { UserGuide } from "./UserGuide";
 import { UseCasesLibrary } from "./UseCasesLibrary";
 import { CommunityDashboard } from "./Community/CommunityDashboard";
 import { CommunityEditsDashboard } from "./Community/CommunityEditsDashboard";
+import { MasterFrameworkDashboard } from "./MasterFramework/MasterFrameworkDashboard";
+import { AssessmentsMain } from "./Assessments/AssessmentsMain";
+import { ReportsMain } from "./Reports/ReportsMain";
 
 export function MainApp() {
-  const [activeView, setActiveView] = useState("overview");
+  const [activeView, setActiveView] = useState("master-framework");
   const [selectedFramework, setSelectedFramework] = useState<string | null>(null);
 
   const handleFrameworkSelect = (framework: string) => {
@@ -26,6 +29,8 @@ export function MainApp() {
 
   const renderActiveComponent = () => {
     switch (activeView) {
+      case "master-framework":
+        return <MasterFrameworkDashboard />;
       case "overview":
         return <DashboardOverview onFrameworkSelect={handleFrameworkSelect} />;
       case "controls":
@@ -44,6 +49,14 @@ export function MainApp() {
         return <UseCasesLibrary />;
       case "guide":
         return <UserGuide />;
+      case "compliance-qa":
+      case "auditor-assessment":
+      case "project-assessment":
+        return <AssessmentsMain activeView={activeView} />;
+      case "framework-reports":
+      case "assessment-reports":
+      case "compliance-dashboard":
+        return <ReportsMain activeView={activeView} />;
       default:
         return <DashboardOverview onFrameworkSelect={handleFrameworkSelect} />;
     }

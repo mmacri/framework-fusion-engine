@@ -31,9 +31,19 @@ interface AppNavigationProps {
 export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) {
   const mainNavItems = [
     { id: "master-framework", label: "Master Framework", icon: BarChart3 },
-    { id: "overview", label: "Overview", icon: Home },
-    { id: "controls", label: "Controls", icon: Shield },
-    { id: "mapping", label: "Mapping", icon: FileText }
+    { id: "overview", label: "Overview", icon: Home }
+  ];
+
+  const assessmentItems = [
+    { id: "compliance-qa", label: "Compliance Q&A", icon: FileText },
+    { id: "auditor-assessment", label: "Auditor Assessment", icon: Users },
+    { id: "project-assessment", label: "Project Assessment", icon: BarChart3 }
+  ];
+
+  const reportItems = [
+    { id: "framework-reports", label: "Framework Reports", icon: Download },
+    { id: "assessment-reports", label: "Assessment Reports", icon: FileText },
+    { id: "compliance-dashboard", label: "Compliance Dashboard", icon: BarChart3 }
   ];
 
   const communityItems = [
@@ -43,7 +53,6 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
 
   const resourceItems = [
     { id: "use-cases", label: "Use Cases", icon: BookOpen },
-    { id: "reports", label: "Reports", icon: Download },
     { id: "guide", label: "User Guide", icon: HelpCircle }
   ];
 
@@ -82,6 +91,64 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
                 </NavigationMenuItem>
               ))}
 
+              {/* Assessments Dropdown */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="h-9 text-gray-700 hover:text-blue-600">
+                  <Users className="h-4 w-4 mr-2" />
+                  Assessments
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="grid w-[300px] gap-3 p-4 bg-white border border-gray-200 z-50">
+                    {assessmentItems.map((item) => (
+                      <NavigationMenuLink key={item.id} asChild>
+                        <Button
+                          variant={activeView === item.id ? "default" : "ghost"}
+                          size="sm"
+                          onClick={() => onViewChange(item.id)}
+                          className={`w-full justify-start gap-2 ${
+                            activeView === item.id 
+                              ? "bg-blue-600 text-white hover:bg-blue-700" 
+                              : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          <item.icon className="h-4 w-4" />
+                          {item.label}
+                        </Button>
+                      </NavigationMenuLink>
+                    ))}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              {/* Reports Dropdown */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="h-9 text-gray-700 hover:text-blue-600">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Reports
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="grid w-[300px] gap-3 p-4 bg-white border border-gray-200 z-50">
+                    {reportItems.map((item) => (
+                      <NavigationMenuLink key={item.id} asChild>
+                        <Button
+                          variant={activeView === item.id ? "default" : "ghost"}
+                          size="sm"
+                          onClick={() => onViewChange(item.id)}
+                          className={`w-full justify-start gap-2 ${
+                            activeView === item.id 
+                              ? "bg-blue-600 text-white hover:bg-blue-700" 
+                              : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          <item.icon className="h-4 w-4" />
+                          {item.label}
+                        </Button>
+                      </NavigationMenuLink>
+                    ))}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
               {/* Community Dropdown */}
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="h-9 text-gray-700 hover:text-blue-600">
@@ -89,7 +156,7 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
                   Community
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="grid w-[300px] gap-3 p-4 bg-white border border-gray-200">
+                  <div className="grid w-[300px] gap-3 p-4 bg-white border border-gray-200 z-50">
                     {communityItems.map((item) => (
                       <NavigationMenuLink key={item.id} asChild>
                         <Button
@@ -115,7 +182,7 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="h-9 text-gray-700 hover:text-blue-600">Resources</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="grid w-[300px] gap-3 p-4 bg-white border border-gray-200">
+                  <div className="grid w-[300px] gap-3 p-4 bg-white border border-gray-200 z-50">
                     {resourceItems.map((item) => (
                       <NavigationMenuLink key={item.id} asChild>
                         <Button

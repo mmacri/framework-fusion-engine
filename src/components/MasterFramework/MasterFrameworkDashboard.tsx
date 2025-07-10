@@ -314,11 +314,31 @@ export function MasterFrameworkDashboard() {
         </TabsContent>
 
         <TabsContent value="qa" className="mt-6">
-          <ComplianceQA />
+          <div className="text-center py-8">
+            <p className="text-gray-600 mb-4">
+              Compliance Q&A Assessment has been moved to the Assessments section
+            </p>
+            <Button 
+              onClick={() => window.location.hash = '#assessments'}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Go to Assessments
+            </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="auditor" className="mt-6">
-          <AuditorAssessment />
+          <div className="text-center py-8">
+            <p className="text-gray-600 mb-4">
+              Auditor Assessment has been moved to the Assessments section
+            </p>
+            <Button 
+              onClick={() => window.location.hash = '#assessments'}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Go to Assessments
+            </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="stats" className="mt-6">
