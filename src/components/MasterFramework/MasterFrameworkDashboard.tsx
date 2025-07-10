@@ -243,7 +243,7 @@ export function MasterFrameworkDashboard() {
       </div>
 
       <MasterFrameworkFilters
-        data={allData[activeTab] || []}
+        data={Object.values(allData).flat()}
         filters={filters}
         onFiltersChange={setFilters}
         searchTerm={searchTerm}
