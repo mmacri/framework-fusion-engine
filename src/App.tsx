@@ -9,8 +9,8 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Get base path for GitHub Pages
-const basename = import.meta.env.PROD ? '/framework-fusion-engine' : '';
+// Remove basename for Lovable published pages - it causes routing issues
+const basename = '';
 
 const App = () => {
   console.log('Framework Fusion Engine - App Loading');
