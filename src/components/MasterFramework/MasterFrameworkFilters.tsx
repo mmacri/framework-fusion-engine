@@ -114,14 +114,14 @@ export function MasterFrameworkFilters({
           <div className="space-y-2">
             <Label>Domain</Label>
             <Select 
-              value={filters.domains?.[0] || ''} 
-              onValueChange={(value) => handleFilterChange('domains', value ? [value] : [])}
+              value={filters.domains?.[0] || 'all'} 
+              onValueChange={(value) => handleFilterChange('domains', value === 'all' ? [] : [value])}
             >
               <SelectTrigger>
                 <SelectValue placeholder="All Domains" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Domains</SelectItem>
+                <SelectItem value="all">All Domains</SelectItem>
                 {filterOptions.domains.map(domain => (
                   <SelectItem key={domain} value={domain}>{domain}</SelectItem>
                 ))}
@@ -139,7 +139,7 @@ export function MasterFrameworkFilters({
                 <SelectValue placeholder="All Frequencies" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Frequencies</SelectItem>
+                <SelectItem value="all">All Frequencies</SelectItem>
                 {filterOptions.frequencies.map(frequency => (
                   <SelectItem key={frequency} value={frequency}>{frequency}</SelectItem>
                 ))}
@@ -157,7 +157,7 @@ export function MasterFrameworkFilters({
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 {filterOptions.statuses.map(status => (
                   <SelectItem key={status} value={status}>{status}</SelectItem>
                 ))}
