@@ -14,11 +14,13 @@ import {
   BarChart3,
   Target,
   Calendar,
-  Users
+  Users,
+  GitBranch
 } from 'lucide-react';
 import { masterListData, tripwireCoreData, alertData } from '../../data/masterFramework';
 import { MasterFrameworkRecord } from '../../types/masterFramework';
 import { getSavedAssessments, getAssessmentsByProject, getAssessmentsByReport, getAssessmentsByGoalObjective } from '../../utils/assessmentStorage';
+import { CorrelatedReports } from './CorrelatedReports';
 
 interface ReportFilters {
   framework: string;
@@ -48,7 +50,7 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
   const [filteredAssessments, setFilteredAssessments] = useState(getSavedAssessments());
 
   useEffect(() => {
-    if (activeView && ['framework-reports', 'assessment-reports', 'compliance-dashboard'].includes(activeView)) {
+    if (activeView && ['framework-reports', 'correlated-reports', 'assessment-results', 'compliance-dashboard'].includes(activeView)) {
       setActiveReportType(activeView);
     }
   }, [activeView]);
@@ -196,11 +198,16 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
 
       {/* Report Type Tabs */}
       <Tabs value={activeReportType} onValueChange={setActiveReportType}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="framework-reports">Framework Reports</TabsTrigger>
+          <TabsTrigger value="correlated-reports">Correlated Reports</TabsTrigger>
           <TabsTrigger value="assessment-results">Assessment Results</TabsTrigger>
           <TabsTrigger value="compliance-dashboard">Compliance Dashboard</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="correlated-reports" className="space-y-6">
+          <CorrelatedReports />
+        </TabsContent>
 
         <TabsContent value="framework-reports" className="space-y-6">
           {/* Filters */}

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Download, FileText, BarChart3, Shield, Calendar, Filter } from "lucide-react";
+import { QuickReportsDropdown } from "./Reports/QuickReportsDropdown";
 
 export function Reports() {
   const [selectedFramework, setSelectedFramework] = useState("all");
@@ -91,13 +92,18 @@ export function Reports() {
     <div className="space-y-6">
       {/* Header */}
       <div className="space-y-4">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Reports & Export
-          </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Generate comprehensive reports for compliance documentation and auditing
-          </p>
+        <div className="flex items-center justify-between">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Reports & Export
+            </h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Generate comprehensive reports for compliance documentation and auditing
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <QuickReportsDropdown />
+          </div>
         </div>
 
         {/* Report Configuration */}
