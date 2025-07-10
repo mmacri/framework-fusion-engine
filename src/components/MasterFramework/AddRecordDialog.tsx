@@ -10,9 +10,10 @@ import { MasterFrameworkRecord } from '../../types/masterFramework';
 
 interface AddRecordDialogProps {
   onAdd: (record: MasterFrameworkRecord) => void;
+  framework?: string;
 }
 
-export function AddRecordDialog({ onAdd }: AddRecordDialogProps) {
+export function AddRecordDialog({ onAdd, framework = "Master List" }: AddRecordDialogProps) {
   const [open, setOpen] = useState(false);
   const [newRecord, setNewRecord] = useState<Partial<MasterFrameworkRecord>>({
     id: '',
@@ -32,7 +33,7 @@ export function AddRecordDialog({ onAdd }: AddRecordDialogProps) {
     likelySources: [],
     notes: '',
     status: 'Enabled',
-    framework: 'Master List',
+    framework: framework as any,
     correlatedRecords: []
   });
   const [newSource, setNewSource] = useState('');
@@ -69,7 +70,7 @@ export function AddRecordDialog({ onAdd }: AddRecordDialogProps) {
       likelySources: [],
       notes: '',
       status: 'Enabled',
-      framework: 'Master List',
+      framework: framework as any,
       correlatedRecords: []
     });
   };

@@ -131,14 +131,14 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
                 <ExcelImportDialog onImport={onImportRecords} />
               )}
               {onAddRecord && (
-                <AddRecordDialog onAdd={onAddRecord} />
+                <AddRecordDialog onAdd={onAddRecord} framework={framework} />
               )}
             </div>
           </div>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
-          <Table>
+          <Table className="min-w-full table-fixed">
             <TableHeader>
               <TableRow>
                 <TableHead>
@@ -185,24 +185,24 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
                   </TableCell>
                   <TableCell>{record.cipStandards}</TableCell>
                   <TableCell>{record.cipReq}</TableCell>
-                  <TableCell className="max-w-xs truncate">{record.reportName}</TableCell>
+                  <TableCell className="min-w-48 whitespace-normal break-words">{record.reportName}</TableCell>
                   <TableCell>
                     <Badge variant={getFrequencyColor(record.frequency)}>
                       {record.frequency}
                     </Badge>
                   </TableCell>
-                  <TableCell className="max-w-xs truncate">{record.assetScope}</TableCell>
-                  <TableCell className="max-w-xs truncate">{record.timeScope}</TableCell>
-                  <TableCell className="max-w-xs truncate">{record.dataRetention}</TableCell>
-                  <TableCell className="max-w-xs truncate">{record.goalObjective}</TableCell>
-                  <TableCell className="max-w-xs truncate">{record.description}</TableCell>
-                  <TableCell className="max-w-xs truncate">{record.details}</TableCell>
-                  <TableCell className="max-w-xs truncate">{record.outputFormat}</TableCell>
-                  <TableCell className="max-w-xs truncate">{record.primaryAudience}</TableCell>
-                  <TableCell className="max-w-xs truncate">
+                  <TableCell className="min-w-32 whitespace-normal break-words">{record.assetScope}</TableCell>
+                  <TableCell className="min-w-32 whitespace-normal break-words">{record.timeScope}</TableCell>
+                  <TableCell className="min-w-32 whitespace-normal break-words">{record.dataRetention}</TableCell>
+                  <TableCell className="min-w-48 whitespace-normal break-words">{record.goalObjective}</TableCell>
+                  <TableCell className="min-w-64 whitespace-normal break-words">{record.description}</TableCell>
+                  <TableCell className="min-w-64 whitespace-normal break-words">{record.details}</TableCell>
+                  <TableCell className="min-w-32 whitespace-normal break-words">{record.outputFormat}</TableCell>
+                  <TableCell className="min-w-32 whitespace-normal break-words">{record.primaryAudience}</TableCell>
+                  <TableCell className="min-w-32 whitespace-normal break-words">
                     {record.likelySources.join(', ')}
                   </TableCell>
-                  <TableCell className="max-w-xs truncate">{record.notes}</TableCell>
+                  <TableCell className="min-w-32 whitespace-normal break-words">{record.notes}</TableCell>
                   {showCorrelations && (
                     <TableCell>
                       {record.correlatedRecords?.length ? (

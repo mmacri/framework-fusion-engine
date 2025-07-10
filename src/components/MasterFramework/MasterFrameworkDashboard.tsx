@@ -21,6 +21,8 @@ export function MasterFrameworkDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [masterData, setMasterData] = useState(masterListData);
+  const [tripwireData, setTripwireData] = useState(tripwireCoreData);
+  const [alertsData, setAlertsData] = useState(alertData);
 
   const handleAddRecord = (newRecord: MasterFrameworkRecord) => {
     setMasterData(prev => [...prev, newRecord]);
@@ -49,9 +51,9 @@ export function MasterFrameworkDashboard() {
 
   const allData = useMemo(() => ({
     'master': masterData,
-    'tripwire': tripwireCoreData,
-    'alert': alertData
-  }), [masterData]);
+    'tripwire': tripwireData,
+    'alert': alertsData
+  }), [masterData, tripwireData, alertsData]);
 
   const allDomains = useMemo(() => {
     const domains = new Set<string>();
@@ -89,6 +91,11 @@ export function MasterFrameworkDashboard() {
         return false;
       }
 
+      // Report Names filter
+      if (filters.reportNames?.length && !filters.reportNames.includes(record.reportName)) {
+        return false;
+      }
+
       // CIP Standards filter
       if (filters.cipStandards?.length && !filters.cipStandards.includes(record.cipStandards)) {
         return false;
@@ -96,6 +103,16 @@ export function MasterFrameworkDashboard() {
 
       // Frequency filter
       if (filters.frequency?.length && !filters.frequency.includes(record.frequency)) {
+        return false;
+      }
+
+      // Asset Scopes filter
+      if (filters.assetScopes?.length && !filters.assetScopes.includes(record.assetScope)) {
+        return false;
+      }
+
+      // Primary Audiences filter
+      if (filters.primaryAudiences?.length && !filters.primaryAudiences.includes(record.primaryAudience)) {
         return false;
       }
 
@@ -241,6 +258,23 @@ export function MasterFrameworkDashboard() {
             data={filteredData}
             framework="Tripwire Core"
             showCorrelations={true}
+            onAddRecord={(record) => {
+              const newRecord = { ...record, framework: 'Tripwire Core' as const };
+              setTripwireData(prev => [...prev, newRecord]);
+            }}
+            onImportRecords={(records) => {
+              const updatedRecords = records.map(r => ({ ...r, framework: 'Tripwire Core' as const }));
+              setTripwireData(prev => [...prev, ...updatedRecords]);
+            }}
+            onDeleteRecord={(id) => {
+              setTripwireData(prev => prev.filter(record => record.id !== id));
+            }}
+            onDeleteMultiple={(ids) => {
+              setTripwireData(prev => prev.filter(record => !ids.includes(record.id)));
+            }}
+            onDeleteAll={() => {
+              setTripwireData([]);
+            }}
           />
         </TabsContent>
 
@@ -249,6 +283,23 @@ export function MasterFrameworkDashboard() {
             data={filteredData}
             framework="Alert"
             showCorrelations={true}
+            onAddRecord={(record) => {
+              const newRecord = { ...record, framework: 'Alert' as const };
+              setAlertsData(prev => [...prev, newRecord]);
+            }}
+            onImportRecords={(records) => {
+              const updatedRecords = records.map(r => ({ ...r, framework: 'Alert' as const }));
+              setAlertsData(prev => [...prev, ...updatedRecords]);
+            }}
+            onDeleteRecord={(id) => {
+              setAlertsData(prev => prev.filter(record => record.id !== id));
+            }}
+            onDeleteMultiple={(ids) => {
+              setAlertsData(prev => prev.filter(record => !ids.includes(record.id)));
+            }}
+            onDeleteAll={() => {
+              setAlertsData([]);
+            }}
           />
         </TabsContent>
 

@@ -50,11 +50,14 @@ export interface ComplianceAssessment {
 
 export interface FilterCriteria {
   domains?: string[];
+  reportNames?: string[];
   cipStandards?: string[];
   cipReq?: string[];
   frequency?: string[];
   status?: string[];
   framework?: string[];
+  assetScopes?: string[];
+  primaryAudiences?: string[];
   searchTerm?: string;
   showMappedOnly?: boolean;
   showGapsOnly?: boolean;
