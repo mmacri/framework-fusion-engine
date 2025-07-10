@@ -41,6 +41,11 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
     searchTerm: ''
   });
   const [activeReportType, setActiveReportType] = useState('framework-reports');
+  const [assessmentSearch, setAssessmentSearch] = useState({
+    projectName: '',
+    reportName: ''
+  });
+  const [filteredAssessments, setFilteredAssessments] = useState(getSavedAssessments());
 
   useEffect(() => {
     if (activeView && ['framework-reports', 'assessment-reports', 'compliance-dashboard'].includes(activeView)) {
@@ -154,6 +159,30 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
   };
 
   const mockAssessmentResults = getSavedAssessments();
+
+  // Update filtered assessments when search changes
+  useEffect(() => {
+    let results = getSavedAssessments();
+    
+    if (assessmentSearch.projectName) {
+      results = getAssessmentsByProject(assessmentSearch.projectName);
+    }
+    
+    if (assessmentSearch.reportName) {
+      const reportResults = getAssessmentsByReport(assessmentSearch.reportName);
+      const goalResults = getAssessmentsByGoalObjective(assessmentSearch.reportName);
+      // Combine and deduplicate results
+      const combined = [...reportResults, ...goalResults];
+      const unique = combined.filter((item, index, arr) => 
+        arr.findIndex(i => i.id === item.id) === index
+      );
+      results = assessmentSearch.projectName 
+        ? results.filter(r => unique.some(u => u.id === r.id))
+        : unique;
+    }
+    
+    setFilteredAssessments(results);
+  }, [assessmentSearch]);
 
   return (
     <div className="space-y-6">
@@ -378,14 +407,19 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockAssessmentResults.length === 0 ? (
+                {filteredAssessments.length === 0 ? (
                   <div className="text-center py-8">
                     <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold mb-2">No Assessment Results</h3>
-                    <p className="text-gray-600">Complete assessments to see results here.</p>
+                    <p className="text-gray-600">
+                      {mockAssessmentResults.length === 0 
+                        ? 'Complete assessments to see results here.'
+                        : 'No assessments match your search criteria.'
+                      }
+                    </p>
                   </div>
                 ) : (
-                  mockAssessmentResults.map((result, index) => (
+                  filteredAssessments.map((result, index) => (
                     <div key={result.id || index} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
                         <div>
@@ -435,27 +469,39 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       <Input 
                         placeholder="Search by project name..." 
-                        onChange={(e) => {
-                          // This would filter the assessment results
-                          console.log('Searching for:', e.target.value);
-                        }}
+                        value={assessmentSearch.projectName}
+                        onChange={(e) => setAssessmentSearch(prev => ({
+                          ...prev,
+                          projectName: e.target.value
+                        }))}
                       />
                       <Input 
                         placeholder="Search by report name or goal..." 
-                        onChange={(e) => {
-                          // This would filter by report name or goal/objective
-                          console.log('Searching for:', e.target.value);
-                        }}
+                        value={assessmentSearch.reportName}
+                        onChange={(e) => setAssessmentSearch(prev => ({
+                          ...prev,
+                          reportName: e.target.value
+                        }))}
                       />
                     </div>
-                    <Button onClick={() => {
-                      // Refresh assessment results
-                      const freshResults = getSavedAssessments();
-                      console.log('Found assessments:', freshResults);
-                    }}>
-                      <Search className="h-4 w-4 mr-2" />
-                      Search Assessments
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          setAssessmentSearch({ projectName: '', reportName: '' });
+                        }}
+                      >
+                        Clear Search
+                      </Button>
+                      <Button onClick={() => {
+                        // Refresh assessment results
+                        const freshResults = getSavedAssessments();
+                        setFilteredAssessments(freshResults);
+                      }}>
+                        <Search className="h-4 w-4 mr-2" />
+                        Refresh Results
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
