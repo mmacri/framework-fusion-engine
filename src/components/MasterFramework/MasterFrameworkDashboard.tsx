@@ -27,6 +27,11 @@ export function MasterFrameworkDashboard() {
     console.log('Added new record:', newRecord);
   };
 
+  const handleImportRecords = (newRecords: MasterFrameworkRecord[]) => {
+    setMasterData(prev => [...prev, ...newRecords]);
+    console.log('Imported records:', newRecords.length);
+  };
+
   const allData = useMemo(() => ({
     'master': masterData,
     'tripwire': tripwireCoreData,
@@ -209,6 +214,7 @@ export function MasterFrameworkDashboard() {
               framework="Master List"
               showCorrelations={true}
               onAddRecord={handleAddRecord}
+              onImportRecords={handleImportRecords}
             />
         </TabsContent>
 

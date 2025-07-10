@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Eye, Edit, Link, AlertTriangle, CheckCircle, Clock, XCircle, Plus } from 'lucide-react';
 import { AddRecordDialog } from './AddRecordDialog';
+import { ExcelImportDialog } from './ExcelImportDialog';
 import { MasterFrameworkRecord } from '../../types/masterFramework';
 
 interface MasterFrameworkTableProps {
@@ -16,9 +17,10 @@ interface MasterFrameworkTableProps {
   framework: string;
   showCorrelations?: boolean;
   onAddRecord?: (record: MasterFrameworkRecord) => void;
+  onImportRecords?: (records: MasterFrameworkRecord[]) => void;
 }
 
-export function MasterFrameworkTable({ data, framework, showCorrelations = false, onAddRecord }: MasterFrameworkTableProps) {
+export function MasterFrameworkTable({ data, framework, showCorrelations = false, onAddRecord, onImportRecords }: MasterFrameworkTableProps) {
   const [selectedRecord, setSelectedRecord] = useState<MasterFrameworkRecord | null>(null);
   const [editingRecord, setEditingRecord] = useState<MasterFrameworkRecord | null>(null);
 
@@ -69,15 +71,20 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            {framework} Framework
-            <Badge variant="outline">{data.length} Records</Badge>
-          </CardTitle>
-          {onAddRecord && (
-            <AddRecordDialog onAdd={onAddRecord} />
-          )}
-        </div>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              {framework} Framework
+              <Badge variant="outline">{data.length} Records</Badge>
+            </CardTitle>
+            <div className="flex gap-2">
+              {onImportRecords && (
+                <ExcelImportDialog onImport={onImportRecords} />
+              )}
+              {onAddRecord && (
+                <AddRecordDialog onAdd={onAddRecord} />
+              )}
+            </div>
+          </div>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
@@ -86,12 +93,20 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
               <TableRow>
                 <TableHead>ID</TableHead>
                 <TableHead>Domain</TableHead>
-                <TableHead>CIP Standard</TableHead>
+                <TableHead>CIP Standards</TableHead>
                 <TableHead>CIP Req</TableHead>
                 <TableHead>Report Name</TableHead>
                 <TableHead>Frequency</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Asset Scope</TableHead>
+                <TableHead>Time Scope</TableHead>
+                <TableHead>Data Retention</TableHead>
+                <TableHead>Goal / Objective</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Details</TableHead>
+                <TableHead>Output Format</TableHead>
                 <TableHead>Primary Audience</TableHead>
+                <TableHead>Likely Source(s)</TableHead>
+                <TableHead>Notes</TableHead>
                 {showCorrelations && <TableHead>Correlations</TableHead>}
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -114,13 +129,18 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
                       {record.frequency}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(record.status)}
-                      <span className="text-sm">{record.status}</span>
-                    </div>
-                  </TableCell>
+                  <TableCell className="max-w-xs truncate">{record.assetScope}</TableCell>
+                  <TableCell className="max-w-xs truncate">{record.timeScope}</TableCell>
+                  <TableCell className="max-w-xs truncate">{record.dataRetention}</TableCell>
+                  <TableCell className="max-w-xs truncate">{record.goalObjective}</TableCell>
+                  <TableCell className="max-w-xs truncate">{record.description}</TableCell>
+                  <TableCell className="max-w-xs truncate">{record.details}</TableCell>
+                  <TableCell className="max-w-xs truncate">{record.outputFormat}</TableCell>
                   <TableCell className="max-w-xs truncate">{record.primaryAudience}</TableCell>
+                  <TableCell className="max-w-xs truncate">
+                    {record.likelySources.join(', ')}
+                  </TableCell>
+                  <TableCell className="max-w-xs truncate">{record.notes}</TableCell>
                   {showCorrelations && (
                     <TableCell>
                       {record.correlatedRecords?.length ? (
