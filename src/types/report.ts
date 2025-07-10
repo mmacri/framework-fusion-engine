@@ -46,6 +46,12 @@ export interface Control {
   relatedControls?: string[];
   requirements?: string[];
   relatedRequirements?: string[];
+  masterFrameworkMapping?: {
+    masterId: string;
+    correlationType: 'exact' | 'partial' | 'inferred';
+    correlationScore: number;
+    notes?: string;
+  };
 }
 
 export interface ControlRelationship {

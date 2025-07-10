@@ -12,6 +12,7 @@ import { masterListData, tripwireCoreData, alertData } from '../../data/masterFr
 import { MasterFrameworkTable } from './MasterFrameworkTable';
 import { CorrelationView } from './CorrelationView';
 import { ComplianceQA } from './ComplianceQA';
+import { AuditorAssessment } from './AuditorAssessment';
 import { FrameworkStats } from './FrameworkStats';
 
 export function MasterFrameworkDashboard() {
@@ -140,7 +141,7 @@ export function MasterFrameworkDashboard() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Centralized Compliance Framework Library</h1>
           <p className="text-gray-600 mt-2">
-            Master framework with correlation mapping to Tripwire Core and Alert systems
+            Master framework serving as the authoritative source with complete correlation mapping to all sub-frameworks
           </p>
         </div>
         <div className="flex gap-2">
@@ -268,7 +269,7 @@ export function MasterFrameworkDashboard() {
 
       {/* Framework Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="master" className="flex items-center gap-2">
             <CheckCircle className="h-4 w-4" />
             Master List
@@ -290,6 +291,9 @@ export function MasterFrameworkDashboard() {
           <TabsTrigger value="qa" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
             Q&A Assessment
+          </TabsTrigger>
+          <TabsTrigger value="auditor">
+            Auditor Assessment
           </TabsTrigger>
           <TabsTrigger value="stats">
             Analytics
@@ -326,6 +330,10 @@ export function MasterFrameworkDashboard() {
 
         <TabsContent value="qa" className="mt-6">
           <ComplianceQA />
+        </TabsContent>
+
+        <TabsContent value="auditor" className="mt-6">
+          <AuditorAssessment />
         </TabsContent>
 
         <TabsContent value="stats" className="mt-6">

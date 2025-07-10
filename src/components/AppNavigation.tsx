@@ -30,6 +30,7 @@ interface AppNavigationProps {
 
 export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) {
   const mainNavItems = [
+    { id: "master-framework", label: "Master Framework", icon: BarChart3 },
     { id: "overview", label: "Overview", icon: Home },
     { id: "controls", label: "Controls", icon: Shield },
     { id: "mapping", label: "Mapping", icon: FileText },
@@ -44,7 +45,6 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
   const resourceItems = [
     { id: "use-cases", label: "Use Cases", icon: BookOpen },
     { id: "reports", label: "Reports", icon: Download },
-    { id: "master-framework", label: "Master Framework", icon: BarChart3 },
     { id: "guide", label: "User Guide", icon: HelpCircle }
   ];
 
@@ -56,8 +56,8 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
           <div className="flex items-center gap-3">
             <Shield className="h-8 w-8 text-blue-600" />
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">Framework Fusion</h1>
-              <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700 border-gray-200">Community Edition</Badge>
+              <h1 className="text-lg font-semibold text-gray-900">Centralized Compliance Framework Library</h1>
+              <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700 border-gray-200">Master Framework System</Badge>
             </div>
           </div>
 

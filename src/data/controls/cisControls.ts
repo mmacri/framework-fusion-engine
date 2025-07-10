@@ -11,7 +11,13 @@ export const cisControls: Control[] = [
     description: "Establish and maintain an accurate, detailed, and up-to-date inventory of all enterprise assets with the potential to store or process data",
     implementation: "Automated asset discovery tools with manual verification processes",
     controlEnhancements: ["Asset tagging", "Real-time discovery", "Integration with CMDB"],
-    relatedControls: ["CIS-1.2", "CIS-1.3", "CIS-2.1"]
+    relatedControls: ["CIS-1.2", "CIS-1.3", "CIS-2.1"],
+    masterFrameworkMapping: {
+      masterId: "ML-020",
+      correlationType: "exact",
+      correlationScore: 0.95,
+      notes: "Direct mapping to System Inventory Master Framework record"
+    }
   },
   { 
     id: "CIS-1.2", 
@@ -23,7 +29,13 @@ export const cisControls: Control[] = [
     description: "Ensure that only authorized assets are connected to the enterprise network",
     implementation: "Network access control (NAC) solutions with automated quarantine",
     controlEnhancements: ["Device certification", "Network segmentation", "Automated remediation"],
-    relatedControls: ["CIS-1.1", "CIS-4.1", "CIS-12.1"]
+    relatedControls: ["CIS-1.1", "CIS-4.1", "CIS-12.1"],
+    masterFrameworkMapping: {
+      masterId: "ML-012",
+      correlationType: "partial",
+      correlationScore: 0.85,
+      notes: "Relates to Network Traffic Analysis for unauthorized device detection"
+    }
   },
   { 
     id: "CIS-2.1", 
@@ -35,7 +47,13 @@ export const cisControls: Control[] = [
     description: "Establish and maintain a detailed inventory of all licensed software installed on enterprise assets",
     implementation: "Software asset management tools with license compliance tracking",
     controlEnhancements: ["License optimization", "Usage monitoring", "Compliance reporting"],
-    relatedControls: ["CIS-2.2", "CIS-2.3", "CIS-16.1"]
+    relatedControls: ["CIS-2.2", "CIS-2.3", "CIS-16.1"],
+    masterFrameworkMapping: {
+      masterId: "ML-020",
+      correlationType: "exact",
+      correlationScore: 0.90,
+      notes: "Software inventory component of System Inventory"
+    }
   },
   { 
     id: "CIS-3.1", 
@@ -71,7 +89,13 @@ export const cisControls: Control[] = [
     description: "Establish and maintain an inventory of all accounts managed in the enterprise",
     implementation: "Identity governance tools with automated account lifecycle management",
     controlEnhancements: ["Privileged account management", "Account certification", "Role-based access"],
-    relatedControls: ["CIS-5.2", "CIS-5.3", "CIS-6.1"]
+    relatedControls: ["CIS-5.2", "CIS-5.3", "CIS-6.1"],
+    masterFrameworkMapping: {
+      masterId: "ML-001",
+      correlationType: "exact",
+      correlationScore: 0.95,
+      notes: "Direct correlation to AD Access Failure monitoring"
+    }
   },
   { 
     id: "CIS-6.1", 

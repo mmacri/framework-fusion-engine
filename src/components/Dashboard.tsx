@@ -14,7 +14,7 @@ import { RouteHandler } from "@/components/RouteHandler";
 import { MasterFrameworkDashboard } from "@/components/MasterFramework/MasterFrameworkDashboard";
 
 export function Dashboard() {
-  const [activeView, setActiveView] = useState("overview");
+  const [activeView, setActiveView] = useState("master-framework");
   const [selectedFramework, setSelectedFramework] = useState<string | null>(null);
 
   useEffect(() => {

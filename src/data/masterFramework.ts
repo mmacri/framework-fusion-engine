@@ -586,44 +586,163 @@ export const alertData: MasterFrameworkRecord[] = [
 ];
 
 export const complianceQuestions: ComplianceQuestion[] = [
+  // Auditor Assessment Questions
   {
     id: 'Q001',
-    question: 'Are all AD group changes monitored and reported?',
-    category: 'Access Control',
+    question: 'Are all AD group changes monitored and reported in real-time?',
+    category: 'Access Control - Auditor Review',
     relatedDomains: ['Access - AD'],
     relatedCipStandards: ['CIP-007-6'],
     weight: 10
   },
   {
     id: 'Q002',
-    question: 'Is there a report for each CIP-007-6 control requirement?',
-    category: 'Systems Security Management',
-    relatedDomains: ['System Integrity', 'Access - AD', 'Vulnerability Management'],
-    relatedCipStandards: ['CIP-007-6'],
+    question: 'Is there documented evidence of a complete master framework covering all CIP requirements?',
+    category: 'Framework Compliance - Auditor Review', 
+    relatedDomains: ['Access - AD', 'Network', 'Physical', 'System'],
+    relatedCipStandards: ['CIP-005-6', 'CIP-006-6', 'CIP-007-6', 'CIP-010-3'],
     weight: 15
   },
   {
     id: 'Q003',
-    question: 'Which reports are only triggered by alerts vs scheduled reports?',
-    category: 'Monitoring and Alerting',
-    relatedDomains: ['Access - AD', 'Network Security', 'Physical Security'],
-    relatedCipStandards: ['CIP-005-6', 'CIP-006-6', 'CIP-007-6'],
-    weight: 8
-  },
-  {
-    id: 'Q004',
-    question: 'Are configuration changes detected within 15 minutes of occurrence?',
-    category: 'Configuration Management',
-    relatedDomains: ['System Integrity'],
+    question: 'Are configuration changes detected and alerted within 15 minutes across all critical cyber assets?',
+    category: 'Change Management - Auditor Review',
+    relatedDomains: ['Change'],
     relatedCipStandards: ['CIP-010-3'],
     weight: 12
   },
   {
-    id: 'Q005',
-    question: 'Is security patch deployment tracked and reported monthly?',
-    category: 'Vulnerability Management',
-    relatedDomains: ['Vulnerability Management'],
+    id: 'Q004',
+    question: 'Is security patch deployment status tracked monthly with documented risk assessments for delayed patches?',
+    category: 'Vulnerability Management - Auditor Review',
+    relatedDomains: ['Patches'],
     relatedCipStandards: ['CIP-007-6'],
     weight: 11
+  },
+  {
+    id: 'Q005',
+    question: 'Are physical access events logged and reviewed daily with 7-year retention?',
+    category: 'Physical Security - Auditor Review',
+    relatedDomains: ['Physical'],
+    relatedCipStandards: ['CIP-006-6'],
+    weight: 9
+  },
+
+  // Self-Assessment Questions for Quarterly Reporting
+  {
+    id: 'SA001',
+    question: 'Does your organization have automated tools for continuous asset inventory management?',
+    category: 'Asset Management - Self Assessment',
+    relatedDomains: ['System'],
+    relatedCipStandards: ['CIP-002-6', 'CIP-007-6'],
+    weight: 8
+  },
+  {
+    id: 'SA002',
+    question: 'Are all privileged user accounts monitored with real-time alerting for suspicious activities?',
+    category: 'Access Control - Self Assessment',
+    relatedDomains: ['Access - AD', 'Access - Local'],
+    relatedCipStandards: ['CIP-007-6'],
+    weight: 9
+  },
+  {
+    id: 'SA003',
+    question: 'Is network traffic analyzed daily for anomalies and potential security threats?',
+    category: 'Network Security - Self Assessment',
+    relatedDomains: ['Network'],
+    relatedCipStandards: ['CIP-005-6'],
+    weight: 8
+  },
+  {
+    id: 'SA004',
+    question: 'Are malware detection capabilities deployed on all endpoints with centralized reporting?',
+    category: 'Malware Protection - Self Assessment',
+    relatedDomains: ['Malware'],
+    relatedCipStandards: ['CIP-007-6'],
+    weight: 7
+  },
+  {
+    id: 'SA005',
+    question: 'Do you conduct regular vulnerability scans and maintain patch management schedules?',
+    category: 'Vulnerability Management - Self Assessment',
+    relatedDomains: ['Patches'],
+    relatedCipStandards: ['CIP-007-6'],
+    weight: 8
+  },
+  {
+    id: 'SA006',
+    question: 'Is your organization prepared to demonstrate compliance correlation between Master Framework and all implemented sub-frameworks?',
+    category: 'Framework Readiness - Self Assessment',
+    relatedDomains: ['Access - AD', 'Network', 'Physical', 'System', 'Change', 'Malware', 'Patches'],
+    relatedCipStandards: ['CIP-005-6', 'CIP-006-6', 'CIP-007-6', 'CIP-010-3'],
+    weight: 12
+  },
+
+  // Project-Specific Assessment Questions
+  {
+    id: 'PA001',
+    question: 'Has this project implemented all Master Framework controls applicable to its scope?',
+    category: 'Project Compliance - Assessment',
+    relatedDomains: ['System'],
+    relatedCipStandards: ['CIP-002-6'],
+    weight: 10
+  },
+  {
+    id: 'PA002',
+    question: 'Are project-specific security controls documented and mapped to the Master Framework?',
+    category: 'Project Documentation - Assessment',
+    relatedDomains: ['Access - AD', 'Network', 'Physical'],
+    relatedCipStandards: ['CIP-005-6', 'CIP-006-6', 'CIP-007-6'],
+    weight: 9
+  },
+  {
+    id: 'PA003',
+    question: 'Has the project completed gap analysis against Master Framework requirements?',
+    category: 'Project Readiness - Assessment',
+    relatedDomains: ['Change', 'Patches', 'Audit - Windows', 'Audit - Linux'],
+    relatedCipStandards: ['CIP-007-6', 'CIP-010-3'],
+    weight: 11
+  },
+  {
+    id: 'PA004',
+    question: 'Are project stakeholders trained on Master Framework compliance requirements?',
+    category: 'Project Training - Assessment',
+    relatedDomains: ['Access - AD', 'Physical'],
+    relatedCipStandards: ['CIP-006-6', 'CIP-007-6'],
+    weight: 6
+  },
+
+  // Quarterly Reporting Questions
+  {
+    id: 'QR001',
+    question: 'What percentage of Master Framework controls are currently implemented and operational?',
+    category: 'Quarterly Metrics - Reporting',
+    relatedDomains: ['System'],
+    relatedCipStandards: ['CIP-002-6', 'CIP-005-6', 'CIP-006-6', 'CIP-007-6', 'CIP-010-3'],
+    weight: 15
+  },
+  {
+    id: 'QR002',
+    question: 'How many security incidents were detected and resolved using Master Framework monitoring?',
+    category: 'Quarterly Metrics - Reporting',
+    relatedDomains: ['Access - AD', 'Network', 'Malware'],
+    relatedCipStandards: ['CIP-005-6', 'CIP-007-6'],
+    weight: 12
+  },
+  {
+    id: 'QR003',
+    question: 'What is the average time to detect and respond to security events across all frameworks?',
+    category: 'Quarterly Performance - Reporting',
+    relatedDomains: ['Network', 'Access - AD', 'Physical'],
+    relatedCipStandards: ['CIP-005-6', 'CIP-006-6', 'CIP-007-6'],
+    weight: 10
+  },
+  {
+    id: 'QR004',
+    question: 'Are all correlation mappings between Master Framework and sub-frameworks current and validated?',
+    category: 'Quarterly Validation - Reporting',
+    relatedDomains: ['System'],
+    relatedCipStandards: ['CIP-002-6', 'CIP-005-6', 'CIP-006-6', 'CIP-007-6', 'CIP-010-3'],
+    weight: 13
   }
 ];
