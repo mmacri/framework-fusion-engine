@@ -3,18 +3,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   FileText, 
   Users, 
   BarChart3,
   CheckCircle,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Search,
+  Filter
 } from 'lucide-react';
 import { ComplianceQA } from '../MasterFramework/ComplianceQA';
 import { AuditorAssessment } from '../MasterFramework/AuditorAssessment';
 import { EnhancedComplianceQA } from './EnhancedComplianceQA';
 import { EnhancedAuditorAssessment } from './EnhancedAuditorAssessment';
+import { CompactAssessmentCard } from './CompactAssessmentCard';
+import { getSavedAssessments } from '../../utils/assessmentStorage';
 
 interface AssessmentsMainProps {
   activeView?: string;
@@ -22,12 +28,19 @@ interface AssessmentsMainProps {
 
 export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
   const [activeAssessment, setActiveAssessment] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [savedAssessments, setSavedAssessments] = useState(getSavedAssessments());
 
   useEffect(() => {
     if (activeView && ['compliance-qa', 'auditor-assessment', 'project-assessment'].includes(activeView)) {
       setActiveAssessment(activeView);
     }
   }, [activeView]);
+
+  useEffect(() => {
+    setSavedAssessments(getSavedAssessments());
+  }, [activeAssessment]);
 
   // If we have an activeView from navigation, use it directly
   if (activeView && ['compliance-qa', 'auditor-assessment', 'project-assessment'].includes(activeView)) {
@@ -223,6 +236,30 @@ export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
     );
   }
 
+  // Filter assessments based on search and status
+  const filteredSavedAssessments = savedAssessments.filter(assessment => {
+    const matchesSearch = searchTerm === '' || 
+      assessment.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      assessment.framework.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      assessment.domain.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = filterStatus === 'all' || assessment.status === filterStatus;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const assessmentPreviews = assessmentTypes.map(type => ({
+    id: type.id,
+    title: type.title,
+    description: type.description,
+    type: type.id as any,
+    estimatedTime: type.estimatedTime,
+    difficulty: type.difficulty,
+    status: type.status.toLowerCase().replace(' ', '-') as any,
+    lastProgress: type.id === 'auditor-assessment' ? 60 : undefined,
+    lastActivity: type.id === 'compliance-qa' ? '2 days ago' : undefined
+  }));
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -233,98 +270,121 @@ export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
         </p>
       </div>
 
-      {/* Assessment Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {assessmentTypes.map((assessment) => {
-          const IconComponent = assessment.icon;
-          const isAvailable = assessment.status === 'Available';
-          
-          return (
-            <Card key={assessment.id} className="hover:shadow-lg transition-shadow duration-200">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <IconComponent className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{assessment.title}</CardTitle>
-                    </div>
-                  </div>
-                  <Badge className={getStatusColor(assessment.status)}>
-                    {assessment.status}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <CardDescription className="text-gray-600">
-                  {assessment.description}
-                </CardDescription>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Estimated Time:</span>
-                    <span className="font-medium">{assessment.estimatedTime}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Difficulty:</span>
-                    <Badge variant="outline" className={getDifficultyColor(assessment.difficulty)}>
-                      {assessment.difficulty}
-                    </Badge>
-                  </div>
-                </div>
+      <Tabs defaultValue="new" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="new">New Assessment</TabsTrigger>
+          <TabsTrigger value="saved">Saved Assessments ({savedAssessments.length})</TabsTrigger>
+        </TabsList>
 
-                <Button 
-                  className="w-full" 
-                  disabled={!isAvailable}
-                  onClick={() => isAvailable && setActiveAssessment(assessment.id)}
-                >
-                  {isAvailable ? 'Start Assessment' : 'Coming Soon'}
-                </Button>
+        <TabsContent value="new" className="space-y-6">
+          <div className="space-y-4">
+            {assessmentPreviews.map((assessment) => (
+              <CompactAssessmentCard
+                key={assessment.id}
+                assessment={assessment}
+                onStart={(id) => setActiveAssessment(id)}
+                onContinue={(id) => setActiveAssessment(id)}
+              />
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="saved" className="space-y-6">
+          {/* Search and Filter Controls */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      placeholder="Search assessments by project, framework, or domain..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-9"
+                    />
+                  </div>
+                </div>
+                <Select value={filterStatus} onValueChange={setFilterStatus}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Saved Assessments List */}
+          {filteredSavedAssessments.length === 0 ? (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No Saved Assessments</h3>
+                <p className="text-gray-600">
+                  {searchTerm || filterStatus !== 'all' 
+                    ? 'No assessments match your search criteria.' 
+                    : 'Start your first assessment to see results here.'}
+                </p>
               </CardContent>
             </Card>
-          );
-        })}
-      </div>
-
-      {/* Recent Assessments */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Recent Assessment Activity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <div>
-                  <p className="font-medium">Compliance Q&A Assessment</p>
-                  <p className="text-sm text-gray-600">Completed 2 days ago</p>
-                </div>
-              </div>
-              <Badge variant="outline" className="bg-green-100 text-green-800">
-                85% Score
-              </Badge>
+          ) : (
+            <div className="space-y-4">
+              {filteredSavedAssessments.map((assessment) => (
+                <Card key={assessment.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-lg font-semibold">{assessment.projectName}</h3>
+                          <Badge variant={assessment.status === 'completed' ? 'default' : 'secondary'}>
+                            {assessment.status}
+                          </Badge>
+                          <Badge variant="outline">
+                            {assessment.score}% Score
+                          </Badge>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                          <div>
+                            <span className="font-medium">Type:</span> {assessment.assessmentType.replace('-', ' ')}
+                          </div>
+                          <div>
+                            <span className="font-medium">Framework:</span> {assessment.framework}
+                          </div>
+                          <div>
+                            <span className="font-medium">Domain:</span> {assessment.domain}
+                          </div>
+                          <div>
+                            <span className="font-medium">Completed:</span> {new Date(assessment.completedAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                        {assessment.relatedReports.length > 0 && (
+                          <div className="mt-2 text-sm text-gray-600">
+                            <span className="font-medium">Related Reports:</span> {assessment.relatedReports.slice(0, 3).join(', ')}
+                            {assessment.relatedReports.length > 3 && ` and ${assessment.relatedReports.length - 3} more`}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <Button variant="outline" size="sm">
+                          View Results
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          Export
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-            
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <AlertTriangle className="h-5 w-5 text-orange-600" />
-                <div>
-                  <p className="font-medium">Auditor Assessment</p>
-                  <p className="text-sm text-gray-600">In Progress - 60% complete</p>
-                </div>
-              </div>
-              <Button variant="outline" size="sm">
-                Continue
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

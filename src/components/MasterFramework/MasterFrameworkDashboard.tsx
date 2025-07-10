@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Search, Filter, Download, MessageSquare, BarChart3, AlertTriangle, CheckCircle } from 'lucide-react';
 import { MasterFrameworkRecord, FilterCriteria } from '../../types/masterFramework';
 import { masterListData, tripwireCoreData, alertData } from '../../data/masterFramework';
+import { 
+  saveMasterFrameworkData, 
+  loadMasterFrameworkData, 
+  addRecord, 
+  deleteRecord, 
+  deleteMultipleRecords, 
+  deleteAllRecords,
+  exportFrameworkData
+} from '../../utils/masterFrameworkStorage';
 import { MasterFrameworkTable } from './MasterFrameworkTable';
 import { MasterFrameworkFilters } from './MasterFrameworkFilters';
 import { ComplianceQA } from './ComplianceQA';
@@ -20,32 +29,70 @@ export function MasterFrameworkDashboard() {
   const [filters, setFilters] = useState<FilterCriteria>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [masterData, setMasterData] = useState(masterListData);
-  const [tripwireData, setTripwireData] = useState(tripwireCoreData);
-  const [alertsData, setAlertsData] = useState(alertData);
+  const [masterData, setMasterData] = useState<MasterFrameworkRecord[]>([]);
+  const [tripwireData, setTripwireData] = useState<MasterFrameworkRecord[]>([]);
+  const [alertsData, setAlertsData] = useState<MasterFrameworkRecord[]>([]);
+
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    const savedMasterData = loadMasterFrameworkData('Master List');
+    const savedTripwireData = loadMasterFrameworkData('Tripwire Core');
+    const savedAlertData = loadMasterFrameworkData('Alert');
+
+    // If no saved data exists, use default data and save it
+    if (savedMasterData.length === 0) {
+      setMasterData(masterListData);
+      saveMasterFrameworkData('Master List', masterListData);
+    } else {
+      setMasterData(savedMasterData);
+    }
+
+    if (savedTripwireData.length === 0) {
+      setTripwireData(tripwireCoreData);
+      saveMasterFrameworkData('Tripwire Core', tripwireCoreData);
+    } else {
+      setTripwireData(savedTripwireData);
+    }
+
+    if (savedAlertData.length === 0) {
+      setAlertsData(alertData);
+      saveMasterFrameworkData('Alert', alertData);
+    } else {
+      setAlertsData(savedAlertData);
+    }
+  }, []);
 
   const handleAddRecord = (newRecord: MasterFrameworkRecord) => {
-    setMasterData(prev => [...prev, newRecord]);
+    const updatedData = [...masterData, newRecord];
+    setMasterData(updatedData);
+    saveMasterFrameworkData('Master List', updatedData);
     console.log('Added new record:', newRecord);
   };
 
   const handleImportRecords = (newRecords: MasterFrameworkRecord[]) => {
-    setMasterData(prev => [...prev, ...newRecords]);
+    const updatedData = [...masterData, ...newRecords];
+    setMasterData(updatedData);
+    saveMasterFrameworkData('Master List', updatedData);
     console.log('Imported records:', newRecords.length);
   };
 
   const handleDeleteRecord = (id: string) => {
-    setMasterData(prev => prev.filter(record => record.id !== id));
+    const updatedData = masterData.filter(record => record.id !== id);
+    setMasterData(updatedData);
+    saveMasterFrameworkData('Master List', updatedData);
     console.log('Deleted record:', id);
   };
 
   const handleDeleteMultiple = (ids: string[]) => {
-    setMasterData(prev => prev.filter(record => !ids.includes(record.id)));
+    const updatedData = masterData.filter(record => !ids.includes(record.id));
+    setMasterData(updatedData);
+    saveMasterFrameworkData('Master List', updatedData);
     console.log('Deleted records:', ids);
   };
 
   const handleDeleteAll = () => {
     setMasterData([]);
+    saveMasterFrameworkData('Master List', []);
     console.log('Deleted all records');
   };
 
@@ -155,13 +202,9 @@ export function MasterFrameworkDashboard() {
   };
 
   const exportData = () => {
-    const dataStr = JSON.stringify(filteredData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${activeTab}-framework-export.json`;
-    link.click();
+    const framework = activeTab === 'master' ? 'Master List' : 
+                     activeTab === 'tripwire' ? 'Tripwire Core' : 'Alert';
+    exportFrameworkData(framework);
   };
 
   const getTabStats = (tabKey: string) => {
@@ -260,20 +303,29 @@ export function MasterFrameworkDashboard() {
             showCorrelations={true}
             onAddRecord={(record) => {
               const newRecord = { ...record, framework: 'Tripwire Core' as const };
-              setTripwireData(prev => [...prev, newRecord]);
+              const updatedData = [...tripwireData, newRecord];
+              setTripwireData(updatedData);
+              saveMasterFrameworkData('Tripwire Core', updatedData);
             }}
             onImportRecords={(records) => {
               const updatedRecords = records.map(r => ({ ...r, framework: 'Tripwire Core' as const }));
-              setTripwireData(prev => [...prev, ...updatedRecords]);
+              const updatedData = [...tripwireData, ...updatedRecords];
+              setTripwireData(updatedData);
+              saveMasterFrameworkData('Tripwire Core', updatedData);
             }}
             onDeleteRecord={(id) => {
-              setTripwireData(prev => prev.filter(record => record.id !== id));
+              const updatedData = tripwireData.filter(record => record.id !== id);
+              setTripwireData(updatedData);
+              saveMasterFrameworkData('Tripwire Core', updatedData);
             }}
             onDeleteMultiple={(ids) => {
-              setTripwireData(prev => prev.filter(record => !ids.includes(record.id)));
+              const updatedData = tripwireData.filter(record => !ids.includes(record.id));
+              setTripwireData(updatedData);
+              saveMasterFrameworkData('Tripwire Core', updatedData);
             }}
             onDeleteAll={() => {
               setTripwireData([]);
+              saveMasterFrameworkData('Tripwire Core', []);
             }}
           />
         </TabsContent>
@@ -285,20 +337,29 @@ export function MasterFrameworkDashboard() {
             showCorrelations={true}
             onAddRecord={(record) => {
               const newRecord = { ...record, framework: 'Alert' as const };
-              setAlertsData(prev => [...prev, newRecord]);
+              const updatedData = [...alertsData, newRecord];
+              setAlertsData(updatedData);
+              saveMasterFrameworkData('Alert', updatedData);
             }}
             onImportRecords={(records) => {
               const updatedRecords = records.map(r => ({ ...r, framework: 'Alert' as const }));
-              setAlertsData(prev => [...prev, ...updatedRecords]);
+              const updatedData = [...alertsData, ...updatedRecords];
+              setAlertsData(updatedData);
+              saveMasterFrameworkData('Alert', updatedData);
             }}
             onDeleteRecord={(id) => {
-              setAlertsData(prev => prev.filter(record => record.id !== id));
+              const updatedData = alertsData.filter(record => record.id !== id);
+              setAlertsData(updatedData);
+              saveMasterFrameworkData('Alert', updatedData);
             }}
             onDeleteMultiple={(ids) => {
-              setAlertsData(prev => prev.filter(record => !ids.includes(record.id)));
+              const updatedData = alertsData.filter(record => !ids.includes(record.id));
+              setAlertsData(updatedData);
+              saveMasterFrameworkData('Alert', updatedData);
             }}
             onDeleteAll={() => {
               setAlertsData([]);
+              saveMasterFrameworkData('Alert', []);
             }}
           />
         </TabsContent>
