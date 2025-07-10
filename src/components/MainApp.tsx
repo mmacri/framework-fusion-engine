@@ -13,6 +13,7 @@ import { CommunityEditsDashboard } from "./Community/CommunityEditsDashboard";
 import { MasterFrameworkDashboard } from "./MasterFramework/MasterFrameworkDashboard";
 import { AssessmentsMain } from "./Assessments/AssessmentsMain";
 import { ReportsMain } from "./Reports/ReportsMain";
+import { ComprehensiveControlMapping } from "./ControlMapping/ComprehensiveControlMapping";
 
 export function MainApp() {
   const [activeView, setActiveView] = useState("master-framework");
@@ -57,6 +58,8 @@ export function MainApp() {
       case "assessment-reports":
       case "compliance-dashboard":
         return <ReportsMain activeView={activeView} />;
+      case "control-mapping":
+        return <ComprehensiveControlMapping />;
       default:
         return <DashboardOverview onFrameworkSelect={handleFrameworkSelect} />;
     }
