@@ -46,6 +46,9 @@ export function MasterFrameworkDashboard() {
 
   const filteredData = useMemo(() => {
     const currentData = allData[activeTab as keyof typeof allData];
+    if (!currentData || !Array.isArray(currentData)) {
+      return [];
+    }
     return currentData.filter(record => {
       // Search term filter
       if (searchTerm && !Object.values(record).some(value => 
@@ -119,6 +122,9 @@ export function MasterFrameworkDashboard() {
 
   const getTabStats = (tabKey: string) => {
     const data = allData[tabKey as keyof typeof allData];
+    if (!data || !Array.isArray(data)) {
+      return { total: 0, mapped: 0, alerts: 0, enabled: 0 };
+    }
     return {
       total: data.length,
       mapped: data.filter(r => r.isMapped).length,
