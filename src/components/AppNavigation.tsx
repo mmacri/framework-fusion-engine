@@ -33,8 +33,7 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
     { id: "master-framework", label: "Master Framework", icon: BarChart3 },
     { id: "overview", label: "Overview", icon: Home },
     { id: "controls", label: "Controls", icon: Shield },
-    { id: "mapping", label: "Mapping", icon: FileText },
-    { id: "gaps", label: "Analysis", icon: Search }
+    { id: "mapping", label: "Mapping", icon: FileText }
   ];
 
   const communityItems = [

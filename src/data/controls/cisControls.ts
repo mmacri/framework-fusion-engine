@@ -1,7 +1,7 @@
 import { Control } from '../../types/report';
 
 export const cisControls: Control[] = [
-  // CIS Control 1: Inventory and Control of Enterprise Assets
+  // CIS Control 1: Inventory and Control of Enterprise Assets (15 controls)
   { 
     id: "CIS-1.1", 
     title: "Establish and Maintain Detailed Asset Inventory", 
@@ -48,16 +48,52 @@ export const cisControls: Control[] = [
     description: "Utilize an active discovery tool to identify assets connected to the enterprise network",
     implementation: "Network scanning tools with scheduled discovery",
     controlEnhancements: ["Credential-based scanning", "Agent-based discovery", "API integration"],
-    relatedControls: ["CIS-1.1", "CIS-1.2"],
+    relatedControls: ["CIS-1.1", "CIS-1.2", "CIS-2.3"],
     masterFrameworkMapping: {
       masterId: "ML-020",
+      correlationType: "partial",
+      correlationScore: 0.88,
+      notes: "Supports asset inventory through active discovery mechanisms"
+    }
+  },
+  { 
+    id: "CIS-1.4", 
+    title: "Use Dynamic Host Configuration Protocol (DHCP) Logging", 
+    category: "Inventory and Control of Enterprise Assets", 
+    family: "IG2",
+    priority: "Medium",
+    status: "Active",
+    description: "Use DHCP logging to update the enterprise asset inventory",
+    implementation: "Enable DHCP logging and integrate with asset management systems",
+    controlEnhancements: ["Automated parsing", "Real-time updates", "Cross-reference validation"],
+    relatedControls: ["CIS-1.1", "CIS-8.2", "CIS-8.5"],
+    masterFrameworkMapping: {
+      masterId: "ML-012",
+      correlationType: "partial",
+      correlationScore: 0.75,
+      notes: "DHCP logs contribute to network traffic analysis for asset tracking"
+    }
+  },
+  { 
+    id: "CIS-1.5", 
+    title: "Use a Passive Asset Discovery Tool", 
+    category: "Inventory and Control of Enterprise Assets", 
+    family: "IG3",
+    priority: "Low",
+    status: "Active",
+    description: "Use a passive discovery tool to identify assets connected to the enterprise network",
+    implementation: "Deploy network packet analyzers and passive monitoring tools",
+    controlEnhancements: ["Deep packet inspection", "Behavioral analysis", "Machine learning detection"],
+    relatedControls: ["CIS-1.3", "CIS-12.1", "CIS-13.1"],
+    masterFrameworkMapping: {
+      masterId: "ML-012",
       correlationType: "exact",
-      correlationScore: 0.90,
-      notes: "Supports System Inventory through active discovery"
+      correlationScore: 0.92,
+      notes: "Passive discovery directly supports network traffic analysis capabilities"
     }
   },
 
-  // CIS Control 2: Inventory and Control of Software Assets
+  // CIS Control 2: Inventory and Control of Software Assets (7 controls)
   { 
     id: "CIS-2.1", 
     title: "Establish and Maintain a Software Inventory", 
@@ -66,14 +102,14 @@ export const cisControls: Control[] = [
     priority: "Critical",
     status: "Active",
     description: "Establish and maintain a detailed inventory of all licensed software installed on enterprise assets",
-    implementation: "Software asset management tools with license compliance tracking",
-    controlEnhancements: ["License optimization", "Usage monitoring", "Compliance reporting"],
-    relatedControls: ["CIS-2.2", "CIS-2.3", "CIS-16.1"],
+    implementation: "Automated software inventory tools with license tracking",
+    controlEnhancements: ["License compliance tracking", "Version management", "Vulnerability correlation"],
+    relatedControls: ["CIS-1.1", "CIS-2.2", "CIS-7.1"],
     masterFrameworkMapping: {
       masterId: "ML-020",
-      correlationType: "exact",
-      correlationScore: 0.90,
-      notes: "Software inventory component of System Inventory"
+      correlationType: "partial",
+      correlationScore: 0.85,
+      notes: "Software inventory is component of comprehensive system inventory"
     }
   },
   { 
@@ -84,14 +120,14 @@ export const cisControls: Control[] = [
     priority: "High",
     status: "Active",
     description: "Ensure that only currently supported software is designated as authorized",
-    implementation: "Lifecycle management with end-of-life tracking",
-    controlEnhancements: ["Vendor support validation", "Migration planning", "Risk assessment"],
-    relatedControls: ["CIS-2.1", "CIS-7.1"],
+    implementation: "Regular review process for software support status and EOL tracking",
+    controlEnhancements: ["Automated EOL notifications", "Replacement planning", "Risk assessment"],
+    relatedControls: ["CIS-2.1", "CIS-2.3", "CIS-7.4"],
     masterFrameworkMapping: {
-      masterId: "ML-014",
+      masterId: "ML-018",
       correlationType: "partial",
-      correlationScore: 0.75,
-      notes: "Relates to Security Patch Status for software lifecycle management"
+      correlationScore: 0.78,
+      notes: "Relates to patching reports through software lifecycle management"
     }
   },
   { 
@@ -101,19 +137,19 @@ export const cisControls: Control[] = [
     family: "IG1",
     priority: "High",
     status: "Active",
-    description: "Ensure that unauthorized software is either removed from use or approved for use",
-    implementation: "Application control with whitelist enforcement",
-    controlEnhancements: ["Automated blocking", "Exception management", "Risk-based approval"],
-    relatedControls: ["CIS-2.1", "CIS-2.2"],
+    description: "Ensure that unauthorized software is either removed or the inventory is updated",
+    implementation: "Automated detection and removal of unauthorized software",
+    controlEnhancements: ["Application whitelisting", "Behavioral monitoring", "Incident response"],
+    relatedControls: ["CIS-2.1", "CIS-2.4", "CIS-8.1"],
     masterFrameworkMapping: {
-      masterId: "ML-019",
-      correlationType: "exact",
-      correlationScore: 0.85,
-      notes: "Maps to Unauthorized Service Alert for software control"
+      masterId: "ML-003",
+      correlationType: "partial",
+      correlationScore: 0.82,
+      notes: "Unauthorized software removal relates to malware protection mechanisms"
     }
   },
 
-  // CIS Control 3: Data Protection
+  // CIS Control 3: Data Protection (14 controls)
   { 
     id: "CIS-3.1", 
     title: "Establish and Maintain a Data Management Process", 
@@ -121,25 +157,37 @@ export const cisControls: Control[] = [
     family: "IG1",
     priority: "High",
     status: "Active",
-    description: "Establish and maintain a data management process that addresses data sensitivity, data retention requirements, and data disposal requirements",
-    implementation: "Data classification policies with automated data lifecycle management",
-    controlEnhancements: ["Data loss prevention", "Encryption at rest", "Retention policies"],
-    relatedControls: ["CIS-3.2", "CIS-3.3", "CIS-13.1"]
+    description: "Establish and maintain a data management process that addresses data sensitivity",
+    implementation: "Data classification framework with handling procedures",
+    controlEnhancements: ["Data discovery", "Classification automation", "Retention policies"],
+    relatedControls: ["CIS-3.2", "CIS-3.3", "CIS-14.1"],
+    masterFrameworkMapping: {
+      masterId: "ML-004",
+      correlationType: "partial",
+      correlationScore: 0.85,
+      notes: "Data management processes support physical security reporting requirements"
+    }
   },
   { 
     id: "CIS-3.2", 
     title: "Establish and Maintain a Data Inventory", 
     category: "Data Protection", 
-    family: "IG2",
-    priority: "Medium",
+    family: "IG1",
+    priority: "High",
     status: "Active",
-    description: "Establish and maintain a data inventory of sensitive data repositories",
-    implementation: "Data discovery tools with classification tagging",
-    controlEnhancements: ["Automated discovery", "Sensitivity labeling", "Access tracking"],
-    relatedControls: ["CIS-3.1", "CIS-3.3"]
+    description: "Establish and maintain an inventory of the enterprise data holdings",
+    implementation: "Automated data discovery and cataloging tools",
+    controlEnhancements: ["Data lineage tracking", "Sensitivity tagging", "Location mapping"],
+    relatedControls: ["CIS-3.1", "CIS-3.3", "CIS-1.1"],
+    masterFrameworkMapping: {
+      masterId: "ML-020",
+      correlationType: "partial",
+      correlationScore: 0.80,
+      notes: "Data inventory complements system inventory for comprehensive asset management"
+    }
   },
 
-  // CIS Control 4: Secure Configuration of Enterprise Assets and Software
+  // CIS Control 4: Secure Configuration of Enterprise Assets and Software (12 controls)
   { 
     id: "CIS-4.1", 
     title: "Establish and Maintain a Secure Configuration Process", 
@@ -147,33 +195,33 @@ export const cisControls: Control[] = [
     family: "IG1",
     priority: "Critical",
     status: "Active",
-    description: "Establish and maintain a secure configuration process for enterprise assets and software",
-    implementation: "Configuration baselines with automated compliance scanning",
-    controlEnhancements: ["Hardening standards", "Configuration drift detection", "Remediation workflows"],
-    relatedControls: ["CIS-4.2", "CIS-4.7", "CIS-18.3"],
+    description: "Establish and maintain a secure configuration process for enterprise assets",
+    implementation: "Configuration management framework with baseline standards",
+    controlEnhancements: ["Automated compliance checking", "Drift detection", "Remediation workflows"],
+    relatedControls: ["CIS-4.2", "CIS-4.3", "CIS-5.1"],
     masterFrameworkMapping: {
-      masterId: "ML-008",
+      masterId: "ML-014",
       correlationType: "exact",
       correlationScore: 0.95,
-      notes: "Direct mapping to Configuration Change Monitor"
+      notes: "Direct alignment with security configuration management reporting"
     }
   },
   { 
     id: "CIS-4.2", 
     title: "Establish and Maintain a Secure Configuration Process for Network Infrastructure", 
     category: "Secure Configuration of Enterprise Assets and Software", 
-    family: "IG1",
+    family: "IG2",
     priority: "High",
     status: "Active",
     description: "Establish and maintain a secure configuration process for network infrastructure",
-    implementation: "Network device hardening with configuration templates",
-    controlEnhancements: ["Template-based deployment", "Change tracking", "Compliance validation"],
-    relatedControls: ["CIS-4.1", "CIS-12.1"],
+    implementation: "Network device hardening standards and automated compliance monitoring",
+    controlEnhancements: ["Template-based deployment", "Change management", "Vulnerability scanning"],
+    relatedControls: ["CIS-4.1", "CIS-12.1", "CIS-12.6"],
     masterFrameworkMapping: {
-      masterId: "ML-013",
+      masterId: "ML-012",
       correlationType: "exact",
-      correlationScore: 0.90,
-      notes: "Maps to Firewall Rule Changes for network configuration control"
+      correlationScore: 0.88,
+      notes: "Network infrastructure configuration supports traffic analysis"
     }
   },
 

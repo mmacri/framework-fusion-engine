@@ -20,12 +20,18 @@ export function MasterFrameworkDashboard() {
   const [filters, setFilters] = useState<FilterCriteria>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [masterData, setMasterData] = useState(masterListData);
+
+  const handleAddRecord = (newRecord: MasterFrameworkRecord) => {
+    setMasterData(prev => [...prev, newRecord]);
+    console.log('Added new record:', newRecord);
+  };
 
   const allData = useMemo(() => ({
-    'master': masterListData,
+    'master': masterData,
     'tripwire': tripwireCoreData,
     'alert': alertData
-  }), []);
+  }), [masterData]);
 
   const allDomains = useMemo(() => {
     const domains = new Set<string>();
@@ -301,11 +307,12 @@ export function MasterFrameworkDashboard() {
         </TabsList>
 
         <TabsContent value="master" className="mt-6">
-          <MasterFrameworkTable
-            data={filteredData}
-            framework="Master List"
-            showCorrelations={true}
-          />
+            <MasterFrameworkTable 
+              data={filteredData} 
+              framework="Master List"
+              showCorrelations={true}
+              onAddRecord={handleAddRecord}
+            />
         </TabsContent>
 
         <TabsContent value="tripwire" className="mt-6">

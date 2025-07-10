@@ -1,7 +1,7 @@
 import { Control } from '../../types/report';
 
 export const nistControls: Control[] = [
-  // Access Control (AC) Family
+  // Access Control (AC) Family - 25 controls
   { 
     id: "AC-1", 
     title: "Access Control Policy and Procedures", 
@@ -48,12 +48,250 @@ export const nistControls: Control[] = [
     description: "Enforce approved authorizations for logical access to information and system resources",
     implementation: "Role-based access control with real-time enforcement",
     controlEnhancements: ["AC-3(2)", "AC-3(4)", "AC-3(7)"],
-    relatedControls: ["AC-2", "AC-4", "AC-6"],
+    relatedControls: ["AC-2", "AC-6", "IA-2"],
     masterFrameworkMapping: {
-      masterId: "ML-002",
+      masterId: "ML-001",
       correlationType: "exact",
       correlationScore: 0.90,
-      notes: "Maps to AD Group Change Alert for access enforcement"
+      notes: "Access enforcement directly relates to AD Access Failure monitoring"
+    }
+  },
+  { 
+    id: "AC-4", 
+    title: "Information Flow Enforcement", 
+    category: "Access Control", 
+    family: "AC",
+    priority: "High",
+    status: "Active",
+    description: "Control information flows within the system and between interconnected systems",
+    implementation: "Network segmentation and data loss prevention controls",
+    controlEnhancements: ["AC-4(2)", "AC-4(8)", "AC-4(21)"],
+    relatedControls: ["SC-7", "SC-8", "CA-3"],
+    masterFrameworkMapping: {
+      masterId: "ML-012",
+      correlationType: "partial",
+      correlationScore: 0.85,
+      notes: "Information flow control supports network traffic analysis"
+    }
+  },
+  { 
+    id: "AC-5", 
+    title: "Separation of Duties", 
+    category: "Access Control", 
+    family: "AC",
+    priority: "Medium",
+    status: "Active",
+    description: "Separate duties and areas of responsibility to reduce the risk of malevolent activity",
+    implementation: "Role separation matrix with approval workflows",
+    controlEnhancements: ["AC-5(1)"],
+    relatedControls: ["AC-2", "AC-6"],
+    masterFrameworkMapping: {
+      masterId: "ML-002",
+      correlationType: "partial",
+      correlationScore: 0.75,
+      notes: "Duty separation relates to AD Group Change Alert monitoring"
+    }
+  },
+  { 
+    id: "AC-6", 
+    title: "Least Privilege", 
+    category: "Access Control", 
+    family: "AC",
+    priority: "High",
+    status: "Active",
+    description: "Employ the principle of least privilege for specific security functions and privileged accounts",
+    implementation: "Privileged access management with just-in-time elevation",
+    controlEnhancements: ["AC-6(1)", "AC-6(2)", "AC-6(5)"],
+    relatedControls: ["AC-2", "AC-3", "IA-2"],
+    masterFrameworkMapping: {
+      masterId: "ML-001",
+      correlationType: "exact",
+      correlationScore: 0.88,
+      notes: "Least privilege enforcement monitored through AD Access Failure events"
+    }
+  },
+  { 
+    id: "AC-7", 
+    title: "Unsuccessful Logon Attempts", 
+    category: "Access Control", 
+    family: "AC",
+    priority: "Medium",
+    status: "Active",
+    description: "Enforce a limit on consecutive invalid logon attempts by a user",
+    implementation: "Account lockout policies with automated monitoring",
+    controlEnhancements: ["AC-7(1)", "AC-7(2)"],
+    relatedControls: ["AC-2", "IA-5"],
+    masterFrameworkMapping: {
+      masterId: "ML-001",
+      correlationType: "exact",
+      correlationScore: 0.95,
+      notes: "Direct mapping - tracks failed login attempts"
+    }
+  },
+
+  // Audit and Accountability (AU) Family - 16 controls
+  { 
+    id: "AU-1", 
+    title: "Audit and Accountability Policy and Procedures", 
+    category: "Audit and Accountability", 
+    family: "AU",
+    priority: "High",
+    status: "Active",
+    description: "Develop, document, and disseminate audit and accountability policy and procedures",
+    implementation: "Comprehensive audit policy with regular review cycles",
+    controlEnhancements: ["AU-1(1)"],
+    relatedControls: ["PM-9", "PS-8"],
+    masterFrameworkMapping: {
+      masterId: "ML-006",
+      correlationType: "partial",
+      correlationScore: 0.80,
+      notes: "Audit policy supports Windows Event Log Report requirements"
+    }
+  },
+  { 
+    id: "AU-2", 
+    title: "Event Logging", 
+    category: "Audit and Accountability", 
+    family: "AU",
+    priority: "Critical",
+    status: "Active",
+    description: "Identify the types of events that the system is capable of logging",
+    implementation: "Comprehensive event logging configuration",
+    controlEnhancements: ["AU-2(1)", "AU-2(3)"],
+    relatedControls: ["AU-3", "AU-6", "AU-12"],
+    masterFrameworkMapping: {
+      masterId: "ML-006",
+      correlationType: "exact",
+      correlationScore: 0.95,
+      notes: "Direct mapping to Windows Event Log Report"
+    }
+  },
+  { 
+    id: "AU-3", 
+    title: "Content of Audit Records", 
+    category: "Audit and Accountability", 
+    family: "AU",
+    priority: "High",
+    status: "Active",
+    description: "Ensure audit records contain information that establishes what type of event occurred",
+    implementation: "Standardized audit record format with required fields",
+    controlEnhancements: ["AU-3(1)", "AU-3(2)"],
+    relatedControls: ["AU-2", "AU-8", "AU-12"],
+    masterFrameworkMapping: {
+      masterId: "ML-007",
+      correlationType: "exact",
+      correlationScore: 0.90,
+      notes: "Maps to Linux Audit Log Report for comprehensive audit content"
+    }
+  },
+  { 
+    id: "AU-6", 
+    title: "Audit Review, Analysis, and Reporting", 
+    category: "Audit and Accountability", 
+    family: "AU",
+    priority: "High",
+    status: "Active",
+    description: "Review and analyze system audit records for indications of inappropriate activity",
+    implementation: "SIEM-based log analysis with automated alerting",
+    controlEnhancements: ["AU-6(1)", "AU-6(3)", "AU-6(5)"],
+    relatedControls: ["AU-2", "AU-3", "IR-4"],
+    masterFrameworkMapping: {
+      masterId: "ML-012",
+      correlationType: "partial",
+      correlationScore: 0.85,
+      notes: "Audit analysis supports network traffic analysis capabilities"
+    }
+  },
+  { 
+    id: "AU-12", 
+    title: "Audit Generation", 
+    category: "Audit and Accountability", 
+    family: "AU",
+    priority: "Critical",
+    status: "Active",
+    description: "Provide audit record generation capability for the events identified in AU-2",
+    implementation: "Automated audit log generation and collection",
+    controlEnhancements: ["AU-12(1)", "AU-12(3)"],
+    relatedControls: ["AU-2", "AU-3", "AU-6"],
+    masterFrameworkMapping: {
+      masterId: "ML-006",
+      correlationType: "exact",
+      correlationScore: 0.92,
+      notes: "Audit generation directly supports event log reporting"
+    }
+  },
+
+  // Configuration Management (CM) Family - 14 controls
+  { 
+    id: "CM-1", 
+    title: "Configuration Management Policy and Procedures", 
+    category: "Configuration Management", 
+    family: "CM",
+    priority: "High",
+    status: "Active",
+    description: "Develop, document, and disseminate configuration management policy and procedures",
+    implementation: "Configuration management framework with change control",
+    controlEnhancements: ["CM-1(1)"],
+    relatedControls: ["PM-9", "PS-8"],
+    masterFrameworkMapping: {
+      masterId: "ML-008",
+      correlationType: "partial",
+      correlationScore: 0.80,
+      notes: "CM policy supports configuration change monitoring"
+    }
+  },
+  { 
+    id: "CM-2", 
+    title: "Baseline Configuration", 
+    category: "Configuration Management", 
+    family: "CM",
+    priority: "Critical",
+    status: "Active",
+    description: "Develop, document, and maintain a current baseline configuration",
+    implementation: "Automated baseline creation and maintenance",
+    controlEnhancements: ["CM-2(1)", "CM-2(2)", "CM-2(3)"],
+    relatedControls: ["CM-3", "CM-6", "CM-8"],
+    masterFrameworkMapping: {
+      masterId: "ML-008",
+      correlationType: "exact",
+      correlationScore: 0.95,
+      notes: "Direct mapping to Configuration Change Monitor"
+    }
+  },
+  { 
+    id: "CM-3", 
+    title: "Configuration Change Control", 
+    category: "Configuration Management", 
+    family: "CM",
+    priority: "High",
+    status: "Active",
+    description: "Determine the types of changes to the system that are configuration-controlled",
+    implementation: "Change advisory board with automated workflow",
+    controlEnhancements: ["CM-3(1)", "CM-3(2)", "CM-3(4)"],
+    relatedControls: ["CM-2", "CM-5", "CM-9"],
+    masterFrameworkMapping: {
+      masterId: "ML-008",
+      correlationType: "exact",
+      correlationScore: 0.90,
+      notes: "Change control process supports configuration monitoring"
+    }
+  },
+  { 
+    id: "CM-6", 
+    title: "Configuration Settings", 
+    category: "Configuration Management", 
+    family: "CM",
+    priority: "High",
+    status: "Active",
+    description: "Establish and document configuration settings for information technology products",
+    implementation: "Security configuration baselines with compliance monitoring",
+    controlEnhancements: ["CM-6(1)", "CM-6(2)"],
+    relatedControls: ["CM-2", "CM-3", "RA-5"],
+    masterFrameworkMapping: {
+      masterId: "ML-014",
+      correlationType: "exact",
+      correlationScore: 0.88,
+      notes: "Configuration settings support security patch status monitoring"
     }
   },
   { 

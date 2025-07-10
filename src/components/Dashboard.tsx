@@ -4,7 +4,7 @@ import { AppNavigation } from "@/components/AppNavigation";
 import { DashboardOverview } from "@/components/DashboardOverview";
 import { ControlLibrary } from "@/components/ControlLibrary";
 import { FrameworkMapping } from "@/components/FrameworkMapping";
-import { GapAnalysis } from "@/components/GapAnalysis";
+
 import { CommunityDashboard } from "@/components/Community/CommunityDashboard";
 import { CommunityEditsDashboard } from "@/components/Community/CommunityEditsDashboard";
 import { UseCasesLibrary } from "@/components/UseCasesLibrary";
@@ -46,8 +46,6 @@ export function Dashboard() {
         return <ControlLibrary selectedFramework={selectedFramework} />;
       case "mapping":
         return <FrameworkMapping />;
-      case "gaps":
-        return <GapAnalysis />;
       case "community":
         return <CommunityDashboard />;
       case "community-edits":

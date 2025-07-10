@@ -7,16 +7,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, Edit, Link, AlertTriangle, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { Eye, Edit, Link, AlertTriangle, CheckCircle, Clock, XCircle, Plus } from 'lucide-react';
+import { AddRecordDialog } from './AddRecordDialog';
 import { MasterFrameworkRecord } from '../../types/masterFramework';
 
 interface MasterFrameworkTableProps {
   data: MasterFrameworkRecord[];
   framework: string;
   showCorrelations?: boolean;
+  onAddRecord?: (record: MasterFrameworkRecord) => void;
 }
 
-export function MasterFrameworkTable({ data, framework, showCorrelations = false }: MasterFrameworkTableProps) {
+export function MasterFrameworkTable({ data, framework, showCorrelations = false, onAddRecord }: MasterFrameworkTableProps) {
   const [selectedRecord, setSelectedRecord] = useState<MasterFrameworkRecord | null>(null);
   const [editingRecord, setEditingRecord] = useState<MasterFrameworkRecord | null>(null);
 
@@ -67,10 +69,15 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          {framework} Framework
-          <Badge variant="outline">{data.length} Records</Badge>
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            {framework} Framework
+            <Badge variant="outline">{data.length} Records</Badge>
+          </CardTitle>
+          {onAddRecord && (
+            <AddRecordDialog onAdd={onAddRecord} />
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
