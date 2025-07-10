@@ -75,19 +75,19 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
         <Button
           key={item.id}
           variant={activeView === item.id ? "default" : "ghost"}
-          size="sm"
+          size={isMobile ? "default" : "sm"}
           onClick={() => {
             onViewChange(item.id);
             setMobileMenuOpen(false);
           }}
-          className={`flex items-center space-x-2 px-3 py-2 text-sm font-medium transition-all duration-200 ${
+          className={`flex items-center justify-start space-x-2 px-3 py-2 text-sm font-medium transition-all duration-200 w-full md:w-auto ${
             activeView === item.id 
               ? "bg-primary text-primary-foreground shadow-md hover:bg-primary/90" 
               : "text-foreground hover:text-primary hover:bg-primary/10"
           }`}
         >
-          <item.icon className="h-4 w-4" />
-          <span>{item.label}</span>
+          <item.icon className="h-4 w-4 shrink-0" />
+          <span className="truncate">{item.label}</span>
         </Button>
       ))}
 
@@ -280,16 +280,16 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
   return (
     <nav className="bg-background border-b border-border shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-primary" />
+          <div className="flex items-center space-x-2 md:space-x-3">
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <Shield className="h-6 w-6 md:h-8 md:w-8 text-primary" />
               <div className="flex flex-col">
-                <h1 className="text-lg font-bold text-foreground leading-tight">
+                <h1 className="text-base md:text-lg font-bold text-foreground leading-tight">
                   Framework Fusion
                 </h1>
-                <Badge variant="outline" className="text-xs px-2 py-0.5 bg-primary/10 text-primary border-primary/20">
+                <Badge variant="outline" className="text-xs px-1.5 md:px-2 py-0.5 bg-primary/10 text-primary border-primary/20">
                   Engine
                 </Badge>
               </div>
@@ -298,7 +298,7 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1 overflow-x-auto">
               <NavigationItems />
             </div>
           )}
@@ -307,12 +307,12 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
           {isMobile && (
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" className="md:hidden">
+                <Button variant="ghost" size="sm" className="p-2">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80 bg-background">
-                <div className="flex items-center justify-between mb-6">
+              <SheetContent side="right" className="w-[85vw] max-w-sm bg-background overflow-y-auto">
+                <div className="flex items-center justify-between mb-6 pt-2">
                   <div className="flex items-center space-x-2">
                     <Shield className="h-6 w-6 text-primary" />
                     <span className="font-bold text-foreground">Framework Fusion</span>
@@ -321,11 +321,12 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
                     variant="ghost" 
                     size="sm" 
                     onClick={() => setMobileMenuOpen(false)}
+                    className="p-1"
                   >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-3 pb-6">
                   <NavigationItems />
                 </div>
               </SheetContent>
