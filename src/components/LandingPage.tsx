@@ -41,34 +41,34 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div className="container mx-auto px-6 py-12">
         <div className="text-center space-y-8 mb-16">
           <div className="space-y-4">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Shield className="h-12 w-12 text-blue-600" />
-              <h1 className="text-5xl font-bold text-gray-900">
+              <Shield className="h-12 w-12 text-primary" />
+              <h1 className="text-3xl md:text-5xl font-bold text-foreground">
                 Framework Fusion Engine
               </h1>
             </div>
             
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <Badge variant="secondary" className="flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-200">
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+              <Badge variant="secondary" className="flex items-center gap-1 bg-primary/10 text-primary border-primary/20">
                 <Globe className="h-3 w-3" />
                 Open Source
               </Badge>
-              <Badge variant="secondary" className="flex items-center gap-1 bg-gray-100 text-gray-700 border-gray-200">
+              <Badge variant="secondary" className="flex items-center gap-1 bg-muted text-muted-foreground border-border">
                 <Users className="h-3 w-3" />
                 Community-Driven
               </Badge>
-              <Badge variant="secondary" className="flex items-center gap-1 bg-gray-100 text-gray-700 border-gray-200">
+              <Badge variant="secondary" className="flex items-center gap-1 bg-muted text-muted-foreground border-border">
                 <GitBranch className="h-3 w-3" />
                 Wikipedia-Style
               </Badge>
             </div>
             
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               A collaborative platform for managing security controls across multiple compliance frameworks. 
               Join thousands of security professionals building the future of compliance management.
             </p>
@@ -78,12 +78,12 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
             <Button 
               size="lg" 
               onClick={onEnterApp} 
-              className="text-lg px-8 py-6 bg-blue-600 hover:bg-blue-700 text-white"
+              className="text-lg px-8 py-6"
             >
               Enter Platform
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               No registration required • Free and open source • Community maintained
             </p>
           </div>
@@ -92,10 +92,10 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
           {quickStats.map((stat, index) => (
-            <Card key={index} className="text-center bg-white border-gray-200 shadow-sm">
+            <Card key={index} className="text-center bg-card border-border shadow-sm">
               <CardContent className="pt-6">
-                <div className="text-3xl font-bold text-blue-600 mb-1">{stat.value}</div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
+                <div className="text-3xl font-bold text-primary mb-1">{stat.value}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
               </CardContent>
             </Card>
           ))}
@@ -104,15 +104,15 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
           {features.map((feature, index) => (
-            <Card key={index} className="bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+            <Card key={index} className="bg-card border-border shadow-sm hover:shadow-md transition-shadow">
               <CardHeader>
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-blue-50 rounded-lg">
-                    <feature.icon className="h-6 w-6 text-blue-600" />
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <feature.icon className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg text-gray-900">{feature.title}</CardTitle>
-                    <CardDescription className="mt-2 text-gray-600">{feature.description}</CardDescription>
+                    <CardTitle className="text-lg text-foreground">{feature.title}</CardTitle>
+                    <CardDescription className="mt-2 text-muted-foreground">{feature.description}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -121,10 +121,10 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
         </div>
 
         {/* Getting Started Steps */}
-        <Card className="mb-16 bg-white border-gray-200 shadow-sm">
+        <Card className="mb-16 bg-card border-border shadow-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-gray-900">Get Started in Minutes</CardTitle>
-            <CardDescription className="text-gray-600">Follow these simple steps to begin using the platform</CardDescription>
+            <CardTitle className="text-2xl text-foreground">Get Started in Minutes</CardTitle>
+            <CardDescription className="text-muted-foreground">Follow these simple steps to begin using the platform</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -135,11 +135,11 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
                 { step: "4", title: "Contribute", desc: "Join the community" }
               ].map((item, index) => (
                 <div key={index} className="text-center space-y-2">
-                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold mx-auto">
+                  <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold mx-auto">
                     {item.step}
                   </div>
-                  <h4 className="font-medium text-gray-900">{item.title}</h4>
-                  <p className="text-sm text-gray-600">{item.desc}</p>
+                  <h4 className="font-medium text-foreground">{item.title}</h4>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -147,17 +147,17 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
         </Card>
 
         {/* Community Section */}
-        <div className="flex items-center justify-center gap-8 pt-8 border-t border-gray-200">
+        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 pt-8 border-t border-border">
           <div className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-blue-600" />
-            <span className="text-sm text-gray-600">Star us on GitHub</span>
+            <Star className="h-5 w-5 text-primary" />
+            <span className="text-sm text-muted-foreground">Star us on GitHub</span>
           </div>
-          <div className="text-sm text-gray-400">•</div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-muted-foreground/50">•</div>
+          <div className="text-sm text-muted-foreground">
             Join our community discussions
           </div>
-          <div className="text-sm text-gray-400">•</div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-muted-foreground/50">•</div>
+          <div className="text-sm text-muted-foreground">
             Contribute to the project
           </div>
         </div>
