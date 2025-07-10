@@ -132,8 +132,8 @@ export function MasterFrameworkFilters({
           <div className="space-y-2">
             <Label>Frequency</Label>
             <Select 
-              value={filters.frequency?.[0] || ''} 
-              onValueChange={(value) => handleFilterChange('frequency', value ? [value] : [])}
+              value={filters.frequency?.[0] || 'all'} 
+              onValueChange={(value) => handleFilterChange('frequency', value === 'all' ? [] : [value])}
             >
               <SelectTrigger>
                 <SelectValue placeholder="All Frequencies" />
@@ -150,8 +150,8 @@ export function MasterFrameworkFilters({
           <div className="space-y-2">
             <Label>Status</Label>
             <Select 
-              value={filters.status?.[0] || ''} 
-              onValueChange={(value) => handleFilterChange('status', value ? [value] : [])}
+              value={filters.status?.[0] || 'all'} 
+              onValueChange={(value) => handleFilterChange('status', value === 'all' ? [] : [value])}
             >
               <SelectTrigger>
                 <SelectValue placeholder="All Statuses" />
@@ -173,14 +173,14 @@ export function MasterFrameworkFilters({
               <div className="space-y-2">
                 <Label>CIP Standards</Label>
                 <Select 
-                  value={filters.cipStandards?.[0] || ''} 
-                  onValueChange={(value) => handleFilterChange('cipStandards', value ? [value] : [])}
+                  value={filters.cipStandards?.[0] || 'all'} 
+                  onValueChange={(value) => handleFilterChange('cipStandards', value === 'all' ? [] : [value])}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="All CIP Standards" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All CIP Standards</SelectItem>
+                    <SelectItem value="all">All CIP Standards</SelectItem>
                     {filterOptions.cipStandards.map(standard => (
                       <SelectItem key={standard} value={standard}>{standard}</SelectItem>
                     ))}
@@ -191,14 +191,14 @@ export function MasterFrameworkFilters({
               <div className="space-y-2">
                 <Label>Framework</Label>
                 <Select 
-                  value={filters.framework?.[0] || ''} 
-                  onValueChange={(value) => handleFilterChange('framework', value ? [value] : [])}
+                  value={filters.framework?.[0] || 'all'} 
+                  onValueChange={(value) => handleFilterChange('framework', value === 'all' ? [] : [value])}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="All Frameworks" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Frameworks</SelectItem>
+                    <SelectItem value="all">All Frameworks</SelectItem>
                     {filterOptions.frameworks.map(framework => (
                       <SelectItem key={framework} value={framework}>{framework}</SelectItem>
                     ))}
