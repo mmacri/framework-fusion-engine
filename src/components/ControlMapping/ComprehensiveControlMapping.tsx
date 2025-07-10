@@ -7,19 +7,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Progress } from '@/components/ui/progress';
 import { 
   Search, 
-  Filter, 
-  GitBranch, 
   ArrowRight, 
   CheckCircle, 
   AlertTriangle, 
   Eye,
   Download,
-  RefreshCw,
   Shield,
   Link,
-  Target
+  Target,
+  ChevronDown,
+  ChevronRight,
+  GitBranch,
+  Users,
+  BarChart3
 } from 'lucide-react';
 
 // Import all framework data
@@ -30,342 +33,338 @@ import { pciControls } from '../../data/controls/pciControls';
 import { hipaaControls } from '../../data/controls/hipaaControls';
 import { soxControls } from '../../data/controls/soxControls';
 import { controlRelationships } from '../../data/relationships/controlRelationships';
-import { MasterFrameworkRecord } from '../../types/masterFramework';
-import { Control } from '../../types/report';
 
-interface ControlMapping {
-  id: string;
-  framework: string;
-  title: string;
-  category: string;
-  priority: string;
-  mappedControls: {
+interface ControlCorrelation {
+  masterId: string;
+  masterTitle: string;
+  masterDomain: string;
+  frequency: string;
+  correlations: {
     framework: string;
     controlId: string;
     title: string;
-    correlationType: 'exact' | 'partial' | 'related' | 'none';
-    correlationScore: number;
-    notes?: string;
+    mappingType: 'Full' | 'Partial' | 'Related' | 'None';
+    confidence: number;
+    description: string;
+    gaps?: string[];
   }[];
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
-  gapAnalysis: string[];
+}
+
+interface DomainGroup {
+  domain: string;
+  masterControls: number;
+  correlations: {
+    framework: string;
+    mapped: number;
+    total: number;
+    coverage: number;
+  }[];
 }
 
 export function ComprehensiveControlMapping() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDomain, setSelectedDomain] = useState('all');
   const [selectedFramework, setSelectedFramework] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [activeTab, setActiveTab] = useState('mappings');
-  const [showOnlyMapped, setShowOnlyMapped] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState('by-domain');
 
-  // Combine all framework data
-  const allControls = useMemo(() => {
-    const controls: ControlMapping[] = [];
-
-    // Master Framework Records
-    masterListData.forEach(record => {
-      controls.push({
-        id: record.id,
-        framework: 'Master List',
-        title: record.reportName,
-        category: record.domain,
-        priority: record.frequency === 'Alert' ? 'Critical' : record.frequency === 'Daily' ? 'High' : 'Medium',
-        mappedControls: [],
-        riskLevel: record.frequency === 'Alert' ? 'critical' : 'medium',
-        gapAnalysis: []
-      });
-    });
-
-    // Tripwire Core Data
-    tripwireCoreData.forEach(record => {
-      controls.push({
-        id: record.id,
-        framework: 'Tripwire Core',
-        title: record.reportName,
-        category: record.domain,
-        priority: record.frequency === 'Alert' ? 'Critical' : 'High',
-        mappedControls: [],
-        riskLevel: 'high',
-        gapAnalysis: []
-      });
-    });
-
-    // Alert Data
-    alertData.forEach(record => {
-      controls.push({
-        id: record.id,
-        framework: 'Alert',
-        title: record.reportName,
-        category: record.domain,
-        priority: 'Critical',
-        mappedControls: [],
-        riskLevel: 'critical',
-        gapAnalysis: []
-      });
-    });
-
-    // NIST Controls
-    nistControls.forEach(control => {
-      controls.push({
-        id: control.id,
-        framework: 'NIST 800-53',
-        title: control.title,
-        category: control.category,
-        priority: control.priority,
-        mappedControls: [],
-        riskLevel: control.priority === 'Critical' ? 'critical' : 'medium',
-        gapAnalysis: []
-      });
-    });
-
-    // CIS Controls
-    cisControls.forEach(control => {
-      controls.push({
-        id: control.id,
-        framework: 'CIS Controls',
-        title: control.title,
-        category: control.category,
-        priority: control.priority,
-        mappedControls: [],
-        riskLevel: control.priority === 'Critical' ? 'critical' : 'medium',
-        gapAnalysis: []
-      });
-    });
-
-    // PCI Controls
-    pciControls.forEach(control => {
-      controls.push({
-        id: control.id,
-        framework: 'PCI DSS',
-        title: control.title,
-        category: control.category,
-        priority: control.priority,
-        mappedControls: [],
-        riskLevel: control.priority === 'Critical' ? 'critical' : 'medium',
-        gapAnalysis: []
-      });
-    });
-
-    // HIPAA Controls
-    hipaaControls.forEach(control => {
-      controls.push({
-        id: control.id,
-        framework: 'HIPAA',
-        title: control.title,
-        category: control.category,
-        priority: control.priority,
-        mappedControls: [],
-        riskLevel: control.priority === 'Critical' ? 'critical' : 'medium',
-        gapAnalysis: []
-      });
-    });
-
-    // SOX Controls
-    soxControls.forEach(control => {
-      controls.push({
-        id: control.id,
-        framework: 'SOX',
-        title: control.title,
-        category: control.category,
-        priority: control.priority,
-        mappedControls: [],
-        riskLevel: control.priority === 'Critical' ? 'critical' : 'medium',
-        gapAnalysis: []
-      });
-    });
-
-    return controls;
+  // Get unique domains from master list
+  const domains = useMemo(() => {
+    const uniqueDomains = [...new Set(masterListData.map(item => item.domain))];
+    return uniqueDomains.sort();
   }, []);
 
-  // Enhanced mapping logic with control relationships
-  const controlMappings = useMemo(() => {
-    const mappings = [...allControls];
+  // Create correlation mapping based on master list groupings
+  const correlationData = useMemo(() => {
+    const correlations: ControlCorrelation[] = [];
 
-    // Apply existing control relationships
-    controlRelationships.forEach(relationship => {
-      const sourceControl = mappings.find(c => c.id === relationship.source);
-      const targetControl = mappings.find(c => c.id === relationship.target);
+    masterListData.forEach(masterControl => {
+      const correlation: ControlCorrelation = {
+        masterId: masterControl.id,
+        masterTitle: masterControl.reportName,
+        masterDomain: masterControl.domain,
+        frequency: masterControl.frequency,
+        correlations: []
+      };
 
-      if (sourceControl && targetControl) {
-        sourceControl.mappedControls.push({
-          framework: targetControl.framework,
-          controlId: targetControl.id,
-          title: targetControl.title,
-          correlationType: relationship.relationship === 'Direct Mapping' ? 'exact' : 'partial',
-          correlationScore: relationship.confidence,
-          notes: relationship.description
+      // Check Tripwire Core correlations
+      const tripwireMatches = tripwireCoreData.filter(tc => 
+        tc.cipStandards === masterControl.cipStandards ||
+        tc.domain.toLowerCase().includes(masterControl.domain.toLowerCase()) ||
+        tc.correlatedRecords?.includes(masterControl.id)
+      );
+
+      tripwireMatches.forEach(match => {
+        correlation.correlations.push({
+          framework: 'Tripwire Core',
+          controlId: match.id,
+          title: match.reportName,
+          mappingType: match.correlatedRecords?.includes(masterControl.id) ? 'Full' : 'Partial',
+          confidence: match.correlatedRecords?.includes(masterControl.id) ? 95 : 75,
+          description: `Domain: ${match.domain}, CIP: ${match.cipStandards}`,
+          gaps: match.cipStandards !== masterControl.cipStandards ? ['Different CIP standards'] : []
         });
-
-        targetControl.mappedControls.push({
-          framework: sourceControl.framework,
-          controlId: sourceControl.id,
-          title: sourceControl.title,
-          correlationType: relationship.relationship === 'Direct Mapping' ? 'exact' : 'partial',
-          correlationScore: relationship.confidence,
-          notes: relationship.description
-        });
-      }
-    });
-
-    // Add Master Framework mappings from control data
-    mappings.forEach(control => {
-      if (control.framework !== 'Master List') {
-        // Find potential master framework mappings
-        const potentialMappings = masterListData.filter(master => {
-          const domainMatch = master.domain.toLowerCase().includes(control.category.toLowerCase()) ||
-                             control.category.toLowerCase().includes(master.domain.toLowerCase());
-          const cipMatch = control.id.includes('CIP') && master.cipStandards.includes(control.id.split('-')[0]);
-          return domainMatch || cipMatch;
-        });
-
-        potentialMappings.forEach(master => {
-          if (!control.mappedControls.find(m => m.controlId === master.id)) {
-            control.mappedControls.push({
-              framework: 'Master List',
-              controlId: master.id,
-              title: master.reportName,
-              correlationType: 'related',
-              correlationScore: 70,
-              notes: `Mapped based on domain similarity: ${control.category} -> ${master.domain}`
-            });
-          }
-        });
-      }
-    });
-
-    // Add gap analysis
-    mappings.forEach(control => {
-      const gaps: string[] = [];
-      
-      const frameworksCovered = new Set(control.mappedControls.map(m => m.framework));
-      const allFrameworks = ['Master List', 'NIST 800-53', 'CIS Controls', 'PCI DSS', 'HIPAA', 'SOX'];
-      
-      allFrameworks.forEach(framework => {
-        if (!frameworksCovered.has(framework) && control.framework !== framework) {
-          gaps.push(`No mapping to ${framework}`);
-        }
       });
 
-      if (control.mappedControls.length === 0) {
-        gaps.push('Isolated control - no correlations found');
-      }
+      // Check Alert correlations
+      const alertMatches = alertData.filter(al => 
+        al.cipStandards === masterControl.cipStandards ||
+        al.domain.toLowerCase().includes(masterControl.domain.toLowerCase()) ||
+        al.correlatedRecords?.includes(masterControl.id)
+      );
 
-      if (control.mappedControls.filter(m => m.correlationType === 'exact').length === 0) {
-        gaps.push('No exact mappings - review required');
-      }
+      alertMatches.forEach(match => {
+        correlation.correlations.push({
+          framework: 'Alert',
+          controlId: match.id,
+          title: match.reportName,
+          mappingType: match.correlatedRecords?.includes(masterControl.id) ? 'Full' : 'Partial',
+          confidence: match.correlatedRecords?.includes(masterControl.id) ? 95 : 80,
+          description: `Domain: ${match.domain}, CIP: ${match.cipStandards}`,
+          gaps: match.frequency !== masterControl.frequency ? ['Different frequency requirements'] : []
+        });
+      });
 
-      control.gapAnalysis = gaps;
+      // Check NIST correlations
+      const nistMatches = nistControls.filter(nist => {
+        const domainMatch = 
+          (masterControl.domain.includes('Access') && nist.category === 'Access Control') ||
+          (masterControl.domain.includes('AV') && nist.category === 'System and Information Integrity') ||
+          (masterControl.domain.includes('Config') && nist.category === 'Configuration Management') ||
+          (masterControl.domain.includes('Network') && nist.category === 'System and Communications Protection');
+        
+        return domainMatch || nist.masterFrameworkMapping?.masterId === masterControl.id;
+      });
+
+      nistMatches.forEach(match => {
+        const isExactMapping = match.masterFrameworkMapping?.masterId === masterControl.id;
+        correlation.correlations.push({
+          framework: 'NIST 800-53',
+          controlId: match.id,
+          title: match.title,
+          mappingType: isExactMapping ? 'Full' : 'Partial',
+          confidence: isExactMapping ? 90 : 65,
+          description: `Category: ${match.category}, Priority: ${match.priority}`,
+          gaps: !isExactMapping ? ['Requires manual validation'] : []
+        });
+      });
+
+      // Check CIS correlations
+      const cisMatches = cisControls.filter(cis => {
+        const domainMatch = 
+          (masterControl.domain.includes('Access') && cis.category.includes('Access')) ||
+          (masterControl.domain.includes('AV') && cis.category.includes('Malware')) ||
+          (masterControl.domain.includes('Config') && cis.category.includes('Configuration')) ||
+          (masterControl.domain.includes('Network') && cis.category.includes('Network'));
+        
+        return domainMatch || cis.masterFrameworkMapping?.masterId === masterControl.id;
+      });
+
+      cisMatches.forEach(match => {
+        const isExactMapping = match.masterFrameworkMapping?.masterId === masterControl.id;
+        correlation.correlations.push({
+          framework: 'CIS Controls',
+          controlId: match.id,
+          title: match.title,
+          mappingType: isExactMapping ? 'Full' : 'Related',
+          confidence: isExactMapping ? 88 : 60,
+          description: `Category: ${match.category}, Family: ${match.family}`,
+          gaps: !isExactMapping ? ['Category-based mapping only'] : []
+        });
+      });
+
+      // Check PCI correlations  
+      const pciMatches = pciControls.filter(pci => {
+        const domainMatch = 
+          (masterControl.domain.includes('Access') && pci.category === 'Access Control') ||
+          (masterControl.domain.includes('Network') && pci.category === 'Network Security');
+        
+        return domainMatch;
+      });
+
+      pciMatches.forEach(match => {
+        correlation.correlations.push({
+          framework: 'PCI DSS',
+          controlId: match.id,
+          title: match.title,
+          mappingType: 'Related',
+          confidence: 70,
+          description: `Category: ${match.category}, Family: ${match.family}`,
+          gaps: ['Payment focus vs general security', 'Manual review recommended']
+        });
+      });
+
+      // Check HIPAA correlations
+      const hipaaMatches = hipaaControls.filter(hipaa => {
+        const domainMatch = 
+          (masterControl.domain.includes('Access') && hipaa.category.includes('Technical')) ||
+          (masterControl.domain.includes('AV') && hipaa.category.includes('Technical'));
+        
+        return domainMatch;
+      });
+
+      hipaaMatches.forEach(match => {
+        correlation.correlations.push({
+          framework: 'HIPAA',
+          controlId: match.id,
+          title: match.title,
+          mappingType: 'Related',
+          confidence: 65,
+          description: `Category: ${match.category}, Family: ${match.family}`,
+          gaps: ['Healthcare focus vs general security', 'ePHI specific requirements']
+        });
+      });
+
+      // Check SOX correlations
+      const soxMatches = soxControls.filter(sox => {
+        const domainMatch = 
+          (masterControl.domain.includes('Access') && sox.id.includes('CC6')) ||
+          (masterControl.domain.includes('Config') && sox.id.includes('CC8'));
+        
+        return domainMatch;
+      });
+
+      soxMatches.forEach(match => {
+        correlation.correlations.push({
+          framework: 'SOX',
+          controlId: match.id,
+          title: match.title,
+          mappingType: 'Related',
+          confidence: 60,
+          description: `Category: ${match.category}, Family: ${match.family}`,
+          gaps: ['Financial focus vs operational security', 'ITGC perspective needed']
+        });
+      });
+
+      correlations.push(correlation);
     });
 
-    return mappings;
-  }, [allControls]);
+    return correlations;
+  }, []);
 
-  // Filter controls
-  const filteredControls = useMemo(() => {
-    return controlMappings.filter(control => {
-      const matchesSearch = control.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          control.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          control.category.toLowerCase().includes(searchTerm.toLowerCase());
+  // Group by domain for domain view
+  const domainGroups = useMemo(() => {
+    const groups: DomainGroup[] = [];
+    
+    domains.forEach(domain => {
+      const masterControls = masterListData.filter(m => m.domain === domain);
+      const domainCorrelations = correlationData.filter(c => c.masterDomain === domain);
       
-      const matchesFramework = selectedFramework === 'all' || control.framework === selectedFramework;
-      const matchesCategory = selectedCategory === 'all' || control.category === selectedCategory;
-      const matchesMapped = !showOnlyMapped || control.mappedControls.length > 0;
+      const frameworks = ['Tripwire Core', 'Alert', 'NIST 800-53', 'CIS Controls', 'PCI DSS', 'HIPAA', 'SOX'];
+      const correlations = frameworks.map(framework => {
+        const mapped = domainCorrelations.reduce((sum, dc) => 
+          sum + dc.correlations.filter(corr => corr.framework === framework).length, 0);
+        const total = masterControls.length;
+        
+        return {
+          framework,
+          mapped,
+          total,
+          coverage: total > 0 ? Math.round((mapped / total) * 100) : 0
+        };
+      });
 
-      return matchesSearch && matchesFramework && matchesCategory && matchesMapped;
+      groups.push({
+        domain,
+        masterControls: masterControls.length,
+        correlations
+      });
     });
-  }, [controlMappings, searchTerm, selectedFramework, selectedCategory, showOnlyMapped]);
 
-  // Get unique frameworks and categories
-  const frameworks = [...new Set(allControls.map(c => c.framework))];
-  const categories = [...new Set(allControls.map(c => c.category))];
+    return groups;
+  }, [domains, correlationData]);
 
-  const getRiskBadgeColor = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+  // Filter data
+  const filteredData = useMemo(() => {
+    return correlationData.filter(item => {
+      const matchesSearch = item.masterTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          item.masterId.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesDomain = selectedDomain === 'all' || item.masterDomain === selectedDomain;
+      const matchesFramework = selectedFramework === 'all' || 
+                              item.correlations.some(c => c.framework === selectedFramework);
+      
+      return matchesSearch && matchesDomain && matchesFramework;
+    });
+  }, [correlationData, searchTerm, selectedDomain, selectedFramework]);
+
+  const toggleExpanded = (domain: string) => {
+    const newExpanded = new Set(expandedGroups);
+    if (newExpanded.has(domain)) {
+      newExpanded.delete(domain);
+    } else {
+      newExpanded.add(domain);
     }
+    setExpandedGroups(newExpanded);
   };
 
-  const getCorrelationIcon = (type: string) => {
+  const getMappingIcon = (type: string) => {
     switch (type) {
-      case 'exact': return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'partial': return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
-      case 'related': return <Link className="h-4 w-4 text-blue-600" />;
+      case 'Full': return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'Partial': return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+      case 'Related': return <Link className="h-4 w-4 text-blue-600" />;
       default: return <AlertTriangle className="h-4 w-4 text-gray-600" />;
     }
   };
 
-  const stats = useMemo(() => {
-    const totalControls = controlMappings.length;
-    const mappedControls = controlMappings.filter(c => c.mappedControls.length > 0).length;
-    const exactMappings = controlMappings.reduce((sum, c) => 
-      sum + c.mappedControls.filter(m => m.correlationType === 'exact').length, 0);
-    const criticalControls = controlMappings.filter(c => c.riskLevel === 'critical').length;
+  const getMappingColor = (type: string) => {
+    switch (type) {
+      case 'Full': return 'bg-green-100 text-green-800 border-green-200';
+      case 'Partial': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Related': return 'bg-blue-100 text-blue-800 border-blue-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
 
-    return {
-      totalControls,
-      mappedControls,
-      exactMappings,
-      criticalControls,
-      mappingCoverage: totalControls > 0 ? Math.round((mappedControls / totalControls) * 100) : 0
-    };
-  }, [controlMappings]);
+  const frameworks = ['Tripwire Core', 'Alert', 'NIST 800-53', 'CIS Controls', 'PCI DSS', 'HIPAA', 'SOX'];
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Comprehensive Control Mapping</h1>
+          <h1 className="text-3xl font-bold text-foreground">Control Mapping & Correlation</h1>
           <p className="text-muted-foreground">
-            Cross-reference all control frameworks: Master List, Tripwire Core, Alert Lists, and compliance standards
+            See how Master Framework controls correlate across all compliance standards
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
-            Export Mappings
-          </Button>
-          <Button variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+            Export Report
           </Button>
         </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-primary">{stats.totalControls}</div>
-            <p className="text-xs text-muted-foreground">Total Controls</p>
+            <div className="text-2xl font-bold text-primary">{masterListData.length}</div>
+            <p className="text-xs text-muted-foreground">Master Controls</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-green-600">{stats.mappedControls}</div>
-            <p className="text-xs text-muted-foreground">Mapped Controls</p>
+            <div className="text-2xl font-bold text-green-600">
+              {correlationData.filter(c => c.correlations.some(corr => corr.mappingType === 'Full')).length}
+            </div>
+            <p className="text-xs text-muted-foreground">Fully Mapped</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-blue-600">{stats.exactMappings}</div>
-            <p className="text-xs text-muted-foreground">Exact Mappings</p>
+            <div className="text-2xl font-bold text-yellow-600">
+              {correlationData.filter(c => c.correlations.some(corr => corr.mappingType === 'Partial')).length}
+            </div>
+            <p className="text-xs text-muted-foreground">Partially Mapped</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-red-600">{stats.criticalControls}</div>
-            <p className="text-xs text-muted-foreground">Critical Controls</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-purple-600">{stats.mappingCoverage}%</div>
-            <p className="text-xs text-muted-foreground">Mapping Coverage</p>
+            <div className="text-2xl font-bold text-red-600">
+              {correlationData.filter(c => c.correlations.length === 0).length}
+            </div>
+            <p className="text-xs text-muted-foreground">Unmapped</p>
           </CardContent>
         </Card>
       </div>
@@ -378,13 +377,24 @@ export function ComprehensiveControlMapping() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search controls..."
+                  placeholder="Search master controls..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
+            <Select value={selectedDomain} onValueChange={setSelectedDomain}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Select Domain" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Domains</SelectItem>
+                {domains.map(domain => (
+                  <SelectItem key={domain} value={domain}>{domain}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Select value={selectedFramework} onValueChange={setSelectedFramework}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Select Framework" />
@@ -396,25 +406,6 @@ export function ComprehensiveControlMapping() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Select Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>{category}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button
-              variant={showOnlyMapped ? "default" : "outline"}
-              size="sm"
-              onClick={() => setShowOnlyMapped(!showOnlyMapped)}
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Mapped Only
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -422,146 +413,245 @@ export function ComprehensiveControlMapping() {
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="mappings">Control Mappings</TabsTrigger>
-          <TabsTrigger value="gaps">Gap Analysis</TabsTrigger>
-          <TabsTrigger value="matrix">Correlation Matrix</TabsTrigger>
+          <TabsTrigger value="by-domain">By Domain</TabsTrigger>
+          <TabsTrigger value="detailed">Detailed View</TabsTrigger>
+          <TabsTrigger value="coverage">Coverage Matrix</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="mappings">
+        <TabsContent value="by-domain">
+          <div className="space-y-4">
+            {domainGroups
+              .filter(group => selectedDomain === 'all' || group.domain === selectedDomain)
+              .map((group) => (
+                <Card key={group.domain}>
+                  <CardHeader 
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => toggleExpanded(group.domain)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {expandedGroups.has(group.domain) ? 
+                          <ChevronDown className="h-4 w-4" /> : 
+                          <ChevronRight className="h-4 w-4" />
+                        }
+                        <CardTitle className="text-lg">{group.domain}</CardTitle>
+                        <Badge variant="outline">{group.masterControls} controls</Badge>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {group.correlations.map(corr => (
+                          <div key={corr.framework} className="text-center">
+                            <div className="text-sm font-medium">{corr.mapped}/{corr.total}</div>
+                            <div className="text-xs text-muted-foreground">{corr.framework.split(' ')[0]}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      {group.correlations.map(corr => (
+                        <div key={corr.framework} className="flex items-center space-x-2">
+                          <span className="text-sm font-medium w-24">{corr.framework.split(' ')[0]}:</span>
+                          <Progress value={corr.coverage} className="flex-1 h-2" />
+                          <span className="text-sm text-muted-foreground">{corr.coverage}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardHeader>
+                  
+                  {expandedGroups.has(group.domain) && (
+                    <CardContent>
+                      <div className="space-y-3">
+                        {filteredData
+                          .filter(item => item.masterDomain === group.domain)
+                          .map((item) => (
+                            <div key={item.masterId} className="border rounded-lg p-4 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h4 className="font-medium">{item.masterId}: {item.masterTitle}</h4>
+                                  <div className="flex items-center space-x-2 mt-1">
+                                    <Badge variant="outline" className="text-xs">{item.frequency}</Badge>
+                                    <span className="text-sm text-muted-foreground">
+                                      {item.correlations.length} correlations found
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {item.correlations.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                  {item.correlations.map((corr, idx) => (
+                                    <div key={idx} className="border rounded p-3 space-y-2">
+                                      <div className="flex items-center justify-between">
+                                        <Badge variant="outline" className="text-xs">{corr.framework}</Badge>
+                                        <div className="flex items-center space-x-1">
+                                          {getMappingIcon(corr.mappingType)}
+                                          <Badge className={getMappingColor(corr.mappingType)}>
+                                            {corr.mappingType}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <div className="font-medium text-sm">{corr.controlId}</div>
+                                        <div className="text-xs text-muted-foreground">{corr.title}</div>
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">{corr.description}</div>
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-xs">Confidence: {corr.confidence}%</span>
+                                        {corr.gaps && corr.gaps.length > 0 && (
+                                          <div title={corr.gaps.join(', ')}>
+                                            <AlertTriangle className="h-3 w-3 text-yellow-600" />
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <Alert>
+                                  <AlertTriangle className="h-4 w-4" />
+                                  <AlertDescription>
+                                    No correlations found for this control - manual review recommended
+                                  </AlertDescription>
+                                </Alert>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    </CardContent>
+                  )}
+                </Card>
+              ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="detailed">
           <Card>
             <CardHeader>
-              <CardTitle>Control Mappings ({filteredControls.length} controls)</CardTitle>
+              <CardTitle>Detailed Control Correlations</CardTitle>
               <CardDescription>
-                Comprehensive view of control correlations across all frameworks
+                Complete list of correlations with mapping details
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Control ID</TableHead>
-                    <TableHead>Framework</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Risk Level</TableHead>
-                    <TableHead>Mappings</TableHead>
+                    <TableHead>Master Control</TableHead>
+                    <TableHead>Domain</TableHead>
+                    <TableHead>Correlated Frameworks</TableHead>
+                    <TableHead>Best Match</TableHead>
+                    <TableHead>Coverage Score</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredControls.map((control) => (
-                    <TableRow key={`${control.framework}-${control.id}`}>
-                      <TableCell className="font-medium">{control.id}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{control.framework}</Badge>
-                      </TableCell>
-                      <TableCell className="max-w-xs truncate">{control.title}</TableCell>
-                      <TableCell>{control.category}</TableCell>
-                      <TableCell>
-                        <Badge className={getRiskBadgeColor(control.riskLevel)}>
-                          {control.riskLevel}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {control.mappedControls.slice(0, 3).map((mapping, idx) => (
-                            <div key={idx} className="flex items-center gap-1">
-                              {getCorrelationIcon(mapping.correlationType)}
-                              <Badge variant="outline" className="text-xs">
-                                {mapping.controlId}
+                  {filteredData.map((item) => {
+                    const bestMatch = item.correlations.reduce((best, current) => 
+                      current.confidence > (best?.confidence || 0) ? current : best, null);
+                    
+                    const avgCoverage = item.correlations.length > 0 ? 
+                      Math.round(item.correlations.reduce((sum, c) => sum + c.confidence, 0) / item.correlations.length) : 0;
+
+                    return (
+                      <TableRow key={item.masterId}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{item.masterId}</div>
+                            <div className="text-sm text-muted-foreground">{item.masterTitle}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{item.masterDomain}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {frameworks.map(framework => {
+                              const hasMapping = item.correlations.some(c => c.framework === framework);
+                              return (
+                                <Badge 
+                                  key={framework} 
+                                  variant={hasMapping ? "default" : "outline"}
+                                  className={hasMapping ? "bg-green-100 text-green-800" : ""}
+                                >
+                                  {framework.split(' ')[0]}
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {bestMatch ? (
+                            <div className="flex items-center space-x-2">
+                              {getMappingIcon(bestMatch.mappingType)}
+                              <span className="text-sm">{bestMatch.controlId}</span>
+                              <Badge className={getMappingColor(bestMatch.mappingType)}>
+                                {bestMatch.confidence}%
                               </Badge>
                             </div>
-                          ))}
-                          {control.mappedControls.length > 3 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{control.mappedControls.length - 3} more
-                            </Badge>
+                          ) : (
+                            <span className="text-muted-foreground">No matches</span>
                           )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <Progress value={avgCoverage} className="w-16 h-2" />
+                            <span className="text-sm">{avgCoverage}%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="gaps">
+        <TabsContent value="coverage">
           <Card>
             <CardHeader>
-              <CardTitle>Gap Analysis</CardTitle>
+              <CardTitle>Framework Coverage Matrix</CardTitle>
               <CardDescription>
-                Identify controls with missing mappings and coverage gaps
+                Coverage percentage by domain and framework
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {filteredControls
-                  .filter(control => control.gapAnalysis.length > 0)
-                  .map((control) => (
-                    <Alert key={`${control.framework}-${control.id}`}>
-                      <AlertTriangle className="h-4 w-4" />
-                      <AlertDescription>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <span className="font-medium">{control.id}</span> - {control.title}
-                            <div className="text-sm text-muted-foreground mt-1">
-                              {control.gapAnalysis.join(', ')}
-                            </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Domain</TableHead>
+                    <TableHead>Controls</TableHead>
+                    {frameworks.map(framework => (
+                      <TableHead key={framework} className="text-center">
+                        {framework.split(' ')[0]}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {domainGroups.map((group) => (
+                    <TableRow key={group.domain}>
+                      <TableCell className="font-medium">{group.domain}</TableCell>
+                      <TableCell>{group.masterControls}</TableCell>
+                      {group.correlations.map((corr) => (
+                        <TableCell key={corr.framework} className="text-center">
+                          <div className="flex flex-col items-center space-y-1">
+                            <Progress value={corr.coverage} className="w-12 h-2" />
+                            <span className="text-xs">{corr.coverage}%</span>
+                            <span className="text-xs text-muted-foreground">
+                              {corr.mapped}/{corr.total}
+                            </span>
                           </div>
-                          <Badge variant="outline">{control.framework}</Badge>
-                        </div>
-                      </AlertDescription>
-                    </Alert>
+                        </TableCell>
+                      ))}
+                    </TableRow>
                   ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="matrix">
-          <Card>
-            <CardHeader>
-              <CardTitle>Correlation Matrix</CardTitle>
-              <CardDescription>
-                Framework-to-framework mapping overview
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {frameworks.map(sourceFramework => (
-                  <Card key={sourceFramework}>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm">{sourceFramework}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {frameworks
-                          .filter(f => f !== sourceFramework)
-                          .map(targetFramework => {
-                            const mappingCount = controlMappings
-                              .filter(c => c.framework === sourceFramework)
-                              .reduce((sum, control) => 
-                                sum + control.mappedControls.filter(m => m.framework === targetFramework).length, 0);
-                            
-                            return (
-                              <div key={targetFramework} className="flex items-center justify-between text-sm">
-                                <span className="truncate">{targetFramework}</span>
-                                <Badge variant="outline">{mappingCount}</Badge>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
