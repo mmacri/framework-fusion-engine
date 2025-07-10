@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -11,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CheckCircle, AlertTriangle, XCircle, FileText, Download, BarChart3 } from 'lucide-react';
 import { masterListData, tripwireCoreData, alertData } from '../../data/masterFramework';
 import { MasterFrameworkRecord } from '../../types/masterFramework';
+import { saveAssessment, SavedAssessment } from '../../utils/assessmentStorage';
 
 interface Assessment {
   questionId: string;
@@ -34,6 +36,7 @@ export function EnhancedComplianceQA() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [projectName, setProjectName] = useState('');
   const [currentAnswer, setCurrentAnswer] = useState<{
     answer: string;
     evidence: string;
@@ -118,6 +121,32 @@ export function EnhancedComplianceQA() {
   };
 
   const generateReport = () => {
+    // Save assessment results to storage
+    if (projectName && assessments.length > 0) {
+      const savedAssessment: SavedAssessment = {
+        id: `qa-${Date.now()}`,
+        projectName,
+        assessmentType: 'compliance-qa',
+        framework: selectedFramework,
+        domain: selectedDomain,
+        completedAt: new Date().toISOString(),
+        totalQuestions: dynamicQuestions.length,
+        score: assessments.length > 0 ? Math.round((assessments.filter(a => a.answer === 'yes').length / assessments.length) * 100) : 0,
+        status: 'completed',
+        results: assessments,
+        relatedReports: [...new Set(assessments.map(a => {
+          const question = dynamicQuestions.find(q => q.id === a.questionId);
+          return question?.relatedRecord.reportName || '';
+        }).filter(Boolean))],
+        goalObjectives: [...new Set(assessments.map(a => {
+          const question = dynamicQuestions.find(q => q.id === a.questionId);
+          return question?.relatedRecord.goalObjective || '';
+        }).filter(Boolean))]
+      };
+      
+      saveAssessment(savedAssessment);
+    }
+    
     setShowResults(true);
   };
 
@@ -178,6 +207,67 @@ export function EnhancedComplianceQA() {
   };
 
   const progressPercentage = dynamicQuestions.length > 0 ? (assessments.length / dynamicQuestions.length) * 100 : 0;
+
+  if (!projectName) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Start New Assessment</CardTitle>
+          <CardDescription>
+            Enter a project name to begin your compliance assessment
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="projectName">Project Name</Label>
+            <Input
+              id="projectName"
+              placeholder="Enter project name (e.g., Q1 2024 Compliance Review)"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Framework</Label>
+              <Select value={selectedFramework} onValueChange={setSelectedFramework}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Framework" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Frameworks</SelectItem>
+                  {availableFrameworks.map(framework => (
+                    <SelectItem key={framework} value={framework}>{framework}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Domain</Label>
+              <Select value={selectedDomain} onValueChange={setSelectedDomain}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Domain" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Domains</SelectItem>
+                  {availableDomains.map(domain => (
+                    <SelectItem key={domain} value={domain}>{domain}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <Button 
+            onClick={() => projectName && setProjectName(projectName)}
+            disabled={!projectName.trim()}
+            className="w-full"
+          >
+            Start Assessment
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (dynamicQuestions.length === 0) {
     return (

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { masterListData, tripwireCoreData, alertData } from '../../data/masterFramework';
 import { MasterFrameworkRecord } from '../../types/masterFramework';
+import { getSavedAssessments, getAssessmentsByProject, getAssessmentsByReport, getAssessmentsByGoalObjective } from '../../utils/assessmentStorage';
 
 interface ReportFilters {
   framework: string;
@@ -152,24 +153,7 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
     }
   };
 
-  const mockAssessmentResults = [
-    {
-      projectName: 'Q1 2024 Compliance Review',
-      assessmentType: 'Compliance Q&A',
-      completedDate: '2024-01-15',
-      score: 85,
-      status: 'Completed',
-      relatedReports: ['Domain Password Activity history', 'AV Event Alert']
-    },
-    {
-      projectName: 'Network Infrastructure Audit',
-      assessmentType: 'Auditor Assessment',
-      completedDate: '2024-01-10',
-      score: 92,
-      status: 'Completed',
-      relatedReports: ['File Integrity Monitoring', 'Critical Security Alert']
-    }
-  ];
+  const mockAssessmentResults = getSavedAssessments();
 
   return (
     <div className="space-y-6">
@@ -394,75 +378,83 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockAssessmentResults.map((result, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <h3 className="font-semibold">{result.projectName}</h3>
-                        <p className="text-sm text-gray-600">{result.assessmentType}</p>
-                      </div>
-                      <div className="text-right">
-                        <Badge variant={result.score >= 85 ? 'default' : 'secondary'}>
-                          {result.score}% Score
-                        </Badge>
-                        <p className="text-sm text-gray-600">{result.completedDate}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium mb-2">Related Reports:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {result.relatedReports.map((report, idx) => (
-                          <Badge key={idx} variant="outline">{report}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="mt-3 flex gap-2">
-                      <Button size="sm" variant="outline">
-                        <Download className="h-4 w-4 mr-2" />
-                        Export Details
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <FileText className="h-4 w-4 mr-2" />
-                        View Report
-                      </Button>
-                    </div>
+                {mockAssessmentResults.length === 0 ? (
+                  <div className="text-center py-8">
+                    <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">No Assessment Results</h3>
+                    <p className="text-gray-600">Complete assessments to see results here.</p>
                   </div>
-                ))}
+                ) : (
+                  mockAssessmentResults.map((result, index) => (
+                    <div key={result.id || index} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <h3 className="font-semibold">{result.projectName}</h3>
+                          <p className="text-sm text-gray-600">{result.assessmentType}</p>
+                        </div>
+                        <div className="text-right">
+                          <Badge variant={result.score >= 85 ? 'default' : 'secondary'}>
+                            {result.score}% Score
+                          </Badge>
+                          <p className="text-sm text-gray-600">{new Date(result.completedAt).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium mb-2">Related Reports:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {result.relatedReports.slice(0, 3).map((report, idx) => (
+                            <Badge key={idx} variant="outline">{report}</Badge>
+                          ))}
+                          {result.relatedReports.length > 3 && (
+                            <Badge variant="outline">+{result.relatedReports.length - 3} more</Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="mt-3 flex gap-2">
+                        <Button size="sm" variant="outline">
+                          <Download className="h-4 w-4 mr-2" />
+                          Export Details
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <FileText className="h-4 w-4 mr-2" />
+                          View Report
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
                 
                 {/* Generate New Assessment Report Section */}
                 <Card className="border-dashed">
                   <CardContent className="p-6 text-center">
                     <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Generate Assessment Report</h3>
+                    <h3 className="text-lg font-semibold mb-2">Search Assessment Results</h3>
                     <p className="text-gray-600 mb-4">
-                      Create a new assessment report based on your framework data and goals
+                      Find assessment results by project name, report name, or goal/objective
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Framework" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="master-list">Master List</SelectItem>
-                          <SelectItem value="tripwire-core">Tripwire Core</SelectItem>
-                          <SelectItem value="alert">Alert</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Domain" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {filterOptions.domains.map(domain => (
-                            <SelectItem key={domain} value={domain}>{domain}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input placeholder="Project Name" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <Input 
+                        placeholder="Search by project name..." 
+                        onChange={(e) => {
+                          // This would filter the assessment results
+                          console.log('Searching for:', e.target.value);
+                        }}
+                      />
+                      <Input 
+                        placeholder="Search by report name or goal..." 
+                        onChange={(e) => {
+                          // This would filter by report name or goal/objective
+                          console.log('Searching for:', e.target.value);
+                        }}
+                      />
                     </div>
-                    <Button>
-                      <FileText className="h-4 w-4 mr-2" />
-                      Generate Report
+                    <Button onClick={() => {
+                      // Refresh assessment results
+                      const freshResults = getSavedAssessments();
+                      console.log('Found assessments:', freshResults);
+                    }}>
+                      <Search className="h-4 w-4 mr-2" />
+                      Search Assessments
                     </Button>
                   </CardContent>
                 </Card>

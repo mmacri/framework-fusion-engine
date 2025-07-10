@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { masterListData, tripwireCoreData, alertData } from '../../data/masterFramework';
 import { MasterFrameworkRecord } from '../../types/masterFramework';
+import { saveAssessment, SavedAssessment } from '../../utils/assessmentStorage';
 
 interface AuditorAssessmentData {
   questionId: string;
@@ -152,6 +153,32 @@ export function EnhancedAuditorAssessment() {
   };
 
   const generateReport = () => {
+    // Save assessment results to storage
+    if (projectName && Object.keys(assessments).length > 0) {
+      const savedAssessment: SavedAssessment = {
+        id: `auditor-${Date.now()}`,
+        projectName,
+        assessmentType: 'auditor-assessment',
+        framework: selectedFramework,
+        domain: selectedDomain,
+        completedAt: new Date().toISOString(),
+        totalQuestions: auditorQuestions.length,
+        score: completedCount > 0 ? Math.round((Object.values(assessments).filter(a => a.answer === 'compliant').length / completedCount) * 100) : 0,
+        status: 'completed',
+        results: Object.values(assessments),
+        relatedReports: [...new Set(Object.values(assessments).map(a => {
+          const question = auditorQuestions.find(q => q.id === a.questionId);
+          return question?.relatedRecord.reportName || '';
+        }).filter(Boolean))],
+        goalObjectives: [...new Set(Object.values(assessments).map(a => {
+          const question = auditorQuestions.find(q => q.id === a.questionId);
+          return question?.relatedRecord.goalObjective || '';
+        }).filter(Boolean))]
+      };
+      
+      saveAssessment(savedAssessment);
+    }
+    
     setShowResults(true);
   };
 
