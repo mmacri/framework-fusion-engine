@@ -1,5 +1,5 @@
 
-import { Dashboard } from "@/components/Dashboard";
+import { MainApp } from "@/components/MainApp";
 
 const Index = () => {
   console.log('Index page rendering');
@@ -7,7 +7,7 @@ const Index = () => {
   
   return (
     <div className="min-h-screen w-full bg-background">
-      <Dashboard />
+      <MainApp />
     </div>
   );
 };
