@@ -21,7 +21,8 @@ export const masterListData: MasterFrameworkRecord[] = [
     status: "Enabled",
     framework: "Master List",
     isCommon: true,
-    isMapped: true
+    isMapped: true,
+    correlatedRecords: ["TC-001", "AL-001", "AC-3", "CIS-5.1", "PCI-7.1", "164.308(a)(4)", "CC6.1"]
   },
   {
     id: "ML-002",
@@ -43,7 +44,8 @@ export const masterListData: MasterFrameworkRecord[] = [
     status: "Enabled",
     framework: "Master List",
     isCommon: true,
-    isMapped: true
+    isMapped: true,
+    correlatedRecords: ["TC-002", "AL-002", "AC-2", "CIS-5.2", "PCI-7.2", "164.308(a)(3)", "CC6.2"]
   },
   {
     id: "ML-003",
@@ -65,7 +67,8 @@ export const masterListData: MasterFrameworkRecord[] = [
     status: "Enabled",
     framework: "Master List",
     isCommon: true,
-    isMapped: true
+    isMapped: true,
+    correlatedRecords: ["TC-003", "AC-2(4)", "CIS-5.3", "PCI-8.1", "164.308(a)(3)(ii)(C)", "CC6.3"]
   },
   {
     id: "ML-004",
@@ -329,7 +332,8 @@ export const masterListData: MasterFrameworkRecord[] = [
     status: "Enabled",
     framework: "Master List",
     isCommon: true,
-    isMapped: true
+    isMapped: true,
+    correlatedRecords: ["TC-015", "AL-015", "SI-3", "CIS-8.1", "164.308(a)(5)(ii)(B)", "CC7.1"]
   },
   {
     id: "ML-016",
@@ -351,7 +355,8 @@ export const masterListData: MasterFrameworkRecord[] = [
     status: "Enabled",
     framework: "Master List",
     isCommon: true,
-    isMapped: true
+    isMapped: true,
+    correlatedRecords: ["TC-016", "AL-016", "SI-3(1)", "CIS-8.2", "164.308(a)(5)(ii)(B)", "CC7.2"]
   },
   {
     id: "ML-017",

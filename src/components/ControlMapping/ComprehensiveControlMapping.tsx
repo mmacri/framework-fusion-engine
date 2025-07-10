@@ -490,7 +490,14 @@ export function ComprehensiveControlMapping() {
                                         </div>
                                       </div>
                                       <div>
-                                        <div className="font-medium text-sm">{corr.controlId}</div>
+                                        <a 
+                                          href={`/controls/${corr.framework.toLowerCase().replace(/\s+/g, '-')}/${corr.controlId}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="font-medium text-sm text-primary hover:underline"
+                                        >
+                                          {corr.controlId}
+                                        </a>
                                         <div className="text-xs text-muted-foreground">{corr.title}</div>
                                       </div>
                                       <div className="text-xs text-muted-foreground">{corr.description}</div>
@@ -582,7 +589,14 @@ export function ComprehensiveControlMapping() {
                           {bestMatch ? (
                             <div className="flex items-center space-x-2">
                               {getMappingIcon(bestMatch.mappingType)}
-                              <span className="text-sm">{bestMatch.controlId}</span>
+                              <a 
+                                href={`/controls/${bestMatch.framework.toLowerCase().replace(/\s+/g, '-')}/${bestMatch.controlId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-primary hover:underline"
+                              >
+                                {bestMatch.controlId}
+                              </a>
                               <Badge className={getMappingColor(bestMatch.mappingType)}>
                                 {bestMatch.confidence}%
                               </Badge>
