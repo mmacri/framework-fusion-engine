@@ -141,30 +141,30 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
           <Table className="min-w-full table-fixed">
             <TableHeader>
               <TableRow>
-                <TableHead>
+                <TableHead className="w-12">
                   <Checkbox
                     checked={selectedIds.length === data.length && data.length > 0}
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
-                <TableHead>ID</TableHead>
-                <TableHead>Domain</TableHead>
-                <TableHead>CIP Standards</TableHead>
-                <TableHead>CIP Req</TableHead>
-                <TableHead>Report Name</TableHead>
-                <TableHead>Frequency</TableHead>
-                <TableHead>Asset Scope</TableHead>
-                <TableHead>Time Scope</TableHead>
-                <TableHead>Data Retention</TableHead>
-                <TableHead>Goal / Objective</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Details</TableHead>
-                <TableHead>Output Format</TableHead>
-                <TableHead>Primary Audience</TableHead>
-                <TableHead>Likely Source(s)</TableHead>
-                <TableHead>Notes</TableHead>
-                {showCorrelations && <TableHead>Correlations</TableHead>}
-                <TableHead>Actions</TableHead>
+                <TableHead className="w-20">ID</TableHead>
+                <TableHead className="w-32">Domain</TableHead>
+                <TableHead className="w-24">CIP Standards</TableHead>
+                <TableHead className="w-20">CIP Req</TableHead>
+                <TableHead className="w-60">Report Name</TableHead>
+                <TableHead className="w-24">Frequency</TableHead>
+                <TableHead className="w-40">Asset Scope</TableHead>
+                <TableHead className="w-32">Time Scope</TableHead>
+                <TableHead className="w-32">Data Retention</TableHead>
+                <TableHead className="w-72">Goal / Objective</TableHead>
+                <TableHead className="w-80">Description</TableHead>
+                <TableHead className="w-80">Details</TableHead>
+                <TableHead className="w-32">Output Format</TableHead>
+                <TableHead className="w-32">Primary Audience</TableHead>
+                <TableHead className="w-40">Likely Source(s)</TableHead>
+                <TableHead className="w-40">Notes</TableHead>
+                {showCorrelations && <TableHead className="w-32">Correlations</TableHead>}
+                <TableHead className="w-32">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -173,38 +173,58 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
                   key={record.id} 
                   className={record.isMapped ? 'bg-green-50 hover:bg-green-100' : 'hover:bg-gray-50'}
                 >
-                  <TableCell>
+                  <TableCell className="w-12">
                     <Checkbox
                       checked={selectedIds.includes(record.id)}
                       onCheckedChange={(checked) => handleSelectRecord(record.id, checked as boolean)}
                     />
                   </TableCell>
-                  <TableCell className="font-medium">{record.id}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{record.domain}</Badge>
+                  <TableCell className="w-20 font-medium text-xs">{record.id}</TableCell>
+                  <TableCell className="w-32">
+                    <Badge variant="outline" className="text-xs">{record.domain}</Badge>
                   </TableCell>
-                  <TableCell>{record.cipStandards}</TableCell>
-                  <TableCell>{record.cipReq}</TableCell>
-                  <TableCell className="min-w-48 whitespace-normal break-words">{record.reportName}</TableCell>
-                  <TableCell>
-                    <Badge variant={getFrequencyColor(record.frequency)}>
+                  <TableCell className="w-24 text-xs">{record.cipStandards}</TableCell>
+                  <TableCell className="w-20 text-xs">{record.cipReq}</TableCell>
+                  <TableCell className="w-60 whitespace-normal break-words text-sm p-2">
+                    <div className="max-h-20 overflow-y-auto">{record.reportName}</div>
+                  </TableCell>
+                  <TableCell className="w-24">
+                    <Badge variant={getFrequencyColor(record.frequency)} className="text-xs">
                       {record.frequency}
                     </Badge>
                   </TableCell>
-                  <TableCell className="min-w-32 whitespace-normal break-words">{record.assetScope}</TableCell>
-                  <TableCell className="min-w-32 whitespace-normal break-words">{record.timeScope}</TableCell>
-                  <TableCell className="min-w-32 whitespace-normal break-words">{record.dataRetention}</TableCell>
-                  <TableCell className="min-w-48 whitespace-normal break-words">{record.goalObjective}</TableCell>
-                  <TableCell className="min-w-64 whitespace-normal break-words">{record.description}</TableCell>
-                  <TableCell className="min-w-64 whitespace-normal break-words">{record.details}</TableCell>
-                  <TableCell className="min-w-32 whitespace-normal break-words">{record.outputFormat}</TableCell>
-                  <TableCell className="min-w-32 whitespace-normal break-words">{record.primaryAudience}</TableCell>
-                  <TableCell className="min-w-32 whitespace-normal break-words">
-                    {record.likelySources.join(', ')}
+                  <TableCell className="w-40 whitespace-normal break-words text-xs p-2">
+                    <div className="max-h-16 overflow-y-auto">{record.assetScope}</div>
                   </TableCell>
-                  <TableCell className="min-w-32 whitespace-normal break-words">{record.notes}</TableCell>
+                  <TableCell className="w-32 whitespace-normal break-words text-xs p-2">
+                    <div className="max-h-16 overflow-y-auto">{record.timeScope}</div>
+                  </TableCell>
+                  <TableCell className="w-32 whitespace-normal break-words text-xs p-2">
+                    <div className="max-h-16 overflow-y-auto">{record.dataRetention}</div>
+                  </TableCell>
+                  <TableCell className="w-72 whitespace-normal break-words text-sm p-2">
+                    <div className="max-h-24 overflow-y-auto">{record.goalObjective}</div>
+                  </TableCell>
+                  <TableCell className="w-80 whitespace-normal break-words text-sm p-2">
+                    <div className="max-h-24 overflow-y-auto">{record.description}</div>
+                  </TableCell>
+                  <TableCell className="w-80 whitespace-normal break-words text-sm p-2">
+                    <div className="max-h-24 overflow-y-auto">{record.details}</div>
+                  </TableCell>
+                  <TableCell className="w-32 whitespace-normal break-words text-xs p-2">
+                    <div className="max-h-16 overflow-y-auto">{record.outputFormat}</div>
+                  </TableCell>
+                  <TableCell className="w-32 whitespace-normal break-words text-xs p-2">
+                    <div className="max-h-16 overflow-y-auto">{record.primaryAudience}</div>
+                  </TableCell>
+                  <TableCell className="w-40 whitespace-normal break-words text-xs p-2">
+                    <div className="max-h-16 overflow-y-auto">{record.likelySources.join(', ')}</div>
+                  </TableCell>
+                  <TableCell className="w-40 whitespace-normal break-words text-xs p-2">
+                    <div className="max-h-16 overflow-y-auto">{record.notes}</div>
+                  </TableCell>
                   {showCorrelations && (
-                    <TableCell>
+                    <TableCell className="w-32">
                       {record.correlatedRecords?.length ? (
                         <div className="flex gap-1">
                           <Link className="h-4 w-4 text-blue-600" />
@@ -217,7 +237,7 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
                       )}
                     </TableCell>
                   )}
-                  <TableCell>
+                  <TableCell className="w-32">
                     <div className="flex gap-2">
                       <Dialog>
                         <DialogTrigger asChild>
