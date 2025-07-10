@@ -50,11 +50,14 @@ jobs:
           mkdir -p dist/styles
           cp -r styles/* dist/styles/ 2>/dev/null || true
           
-          # Copy landing.html as index.html for root access
+          # Copy landing.html as landing page
           cp public/landing.html dist/landing.html 2>/dev/null || true
           
-          # Copy 404.html
+          # Copy 404.html for SPA routing
           cp public/404.html dist/404.html 2>/dev/null || true
+          
+          # Create redirect from root to React app
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=./index.html"></head><body><p><a href="./index.html">Click here if not redirected</a></p></body></html>' > dist/redirect.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

@@ -22,6 +22,41 @@ export interface ControlRelationship {
 }
 
 export const mockControlsData: Record<string, Control[]> = {
+  "CIS Controls v8": [
+    {
+      id: "CIS-1.1",
+      title: "Establish and Maintain Detailed Asset Inventory",
+      description: "Establish and maintain an accurate, detailed, and up-to-date inventory of all enterprise assets with the potential to store or process data.",
+      category: "Inventory and Control of Enterprise Assets",
+      family: "IG1",
+      priority: "Critical",
+      status: "Active",
+      implementation: "Automated asset discovery tools with manual verification processes.",
+      mappings: ["NIST AC-2", "PCI-DSS 2.4", "ISO 27001 A.8.1"]
+    },
+    {
+      id: "CIS-5.1",
+      title: "Establish and Maintain an Inventory of Accounts",
+      description: "Establish and maintain an inventory of all accounts managed in the enterprise.",
+      category: "Account Management",
+      family: "IG1",
+      priority: "Critical",
+      status: "Active",
+      implementation: "Identity governance tools with automated account lifecycle management.",
+      mappings: ["NIST AC-2", "PCI-DSS 8.1", "HIPAA 164.312(a)(1)"]
+    },
+    {
+      id: "CIS-7.1",
+      title: "Establish and Maintain a Vulnerability Management Process",
+      description: "Establish and maintain a vulnerability management process to identify and address vulnerabilities.",
+      category: "Continuous Vulnerability Management",
+      family: "IG1",
+      priority: "Critical",
+      status: "Active",
+      implementation: "Integrated vulnerability scanning with risk-based remediation.",
+      mappings: ["NIST RA-5", "PCI-DSS 11.2", "ISO 27001 A.12.6"]
+    }
+  ],
   "NIST 800-53": [
     {
       id: "AC-1",
@@ -156,6 +191,42 @@ export const mockControlsData: Record<string, Control[]> = {
 };
 
 export const mockRelationships: ControlRelationship[] = [
+  {
+    source: "CIS-5.1",
+    target: "NIST AC-2",
+    relationship: "Direct Mapping",
+    confidence: 98,
+    description: "Both controls establish account inventory and management processes with similar implementation approaches.",
+    mappingType: "Equivalent",
+    gapAnalysis: "CIS focuses on inventory while NIST emphasizes lifecycle management. Complementary controls."
+  },
+  {
+    source: "CIS-5.1",
+    target: "PCI-DSS 8.1",
+    relationship: "Direct Mapping",
+    confidence: 92,
+    description: "Account management requirements align between CIS and PCI-DSS with focus on user access controls.",
+    mappingType: "Equivalent",
+    gapAnalysis: "PCI adds payment-specific requirements not covered by CIS baseline."
+  },
+  {
+    source: "CIS-1.1",
+    target: "NIST AC-2",
+    relationship: "Partial Overlap",
+    confidence: 75,
+    description: "Asset inventory supports account management but addresses different aspects of enterprise security.",
+    mappingType: "Supporting",
+    gapAnalysis: "Asset inventory is foundational to account management but doesn't fully address user lifecycle."
+  },
+  {
+    source: "CIS-7.1",
+    target: "NIST RA-5",
+    relationship: "Direct Mapping",
+    confidence: 96,
+    description: "Both controls establish comprehensive vulnerability management processes with similar objectives.",
+    mappingType: "Equivalent",
+    gapAnalysis: "NIST provides more detailed procedural guidance while CIS offers practical implementation steps."
+  },
   {
     source: "NIST AC-2",
     target: "PCI-DSS 8.1",

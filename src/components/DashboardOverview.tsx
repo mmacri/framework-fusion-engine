@@ -11,6 +11,14 @@ interface DashboardOverviewProps {
 export function DashboardOverview({ onFrameworkSelect }: DashboardOverviewProps) {
   const frameworks = [
     { 
+      id: "cis", 
+      name: "CIS Controls v8", 
+      controls: 153, 
+      coverage: 100, 
+      status: "complete",
+      description: "Center for Internet Security Controls - Implementation Groups IG1, IG2, IG3"
+    },
+    { 
       id: "nist", 
       name: "NIST 800-53", 
       controls: 945, 
@@ -210,7 +218,7 @@ export function DashboardOverview({ onFrameworkSelect }: DashboardOverviewProps)
               <Shield className="h-12 w-12 text-blue-600 mx-auto" />
               <h3 className="text-lg font-semibold">Explore Controls</h3>
               <p className="text-muted-foreground">Browse and search security controls across frameworks</p>
-              <Button onClick={() => onFrameworkSelect("nist")} className="w-full">
+              <Button onClick={() => onFrameworkSelect("cis")} className="w-full">
                 Get Started
               </Button>
             </div>

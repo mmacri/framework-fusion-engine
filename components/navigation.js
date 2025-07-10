@@ -63,6 +63,7 @@ function createNavigationSection() {
               Frameworks
             </h3>
             <div class="nav-links">
+              <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'cis')">CIS Controls v8</a>
               <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'nist')">NIST Cybersecurity</a>
               <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'pci')">PCI-DSS</a>
               <a href="./index.html" class="btn btn-nav" onclick="localStorage.setItem('ffView', 'controls'); localStorage.setItem('ffFramework', 'hipaa')">HIPAA</a>

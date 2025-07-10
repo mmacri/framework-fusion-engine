@@ -13,11 +13,13 @@ const queryClient = new QueryClient();
 const basename = import.meta.env.PROD ? '/framework-fusion-engine' : '';
 
 const App = () => {
+  console.log('Framework Fusion Engine - App Loading');
   console.log('App loading with basename:', basename);
   console.log('Environment:', import.meta.env.MODE);
   console.log('Production:', import.meta.env.PROD);
   console.log('Base URL:', import.meta.env.BASE_URL);
   console.log('Current location:', window.location.href);
+  console.log('Available frameworks:', ['CIS Controls v8', 'NIST 800-53', 'PCI-DSS', 'HIPAA', 'SOX']);
   
   return (
     <QueryClientProvider client={queryClient}>
