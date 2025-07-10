@@ -39,7 +39,7 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
 
   const mainNavItems = [
     { id: "master-framework", label: "Master Framework", icon: BarChart3 },
-    { id: "overview", label: "Overview", icon: Home },
+    { id: "overview", label: "Control Frameworks", icon: Home },
     { id: "control-mapping", label: "Control Mapping", icon: GitBranch }
   ];
 
