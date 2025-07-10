@@ -29,6 +29,77 @@ export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
     }
   }, [activeView]);
 
+  // If we have an activeView from navigation, use it directly
+  if (activeView && ['compliance-qa', 'auditor-assessment', 'project-assessment'].includes(activeView)) {
+    if (activeView === 'compliance-qa') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Compliance Q&A Assessment</h1>
+              <p className="text-gray-600 mt-2">Interactive questionnaire for compliance verification</p>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setActiveAssessment(null)}
+            >
+              Back to Assessments
+            </Button>
+          </div>
+          <EnhancedComplianceQA />
+        </div>
+      );
+    }
+
+    if (activeView === 'auditor-assessment') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Auditor Assessment</h1>
+              <p className="text-gray-600 mt-2">Comprehensive auditor review and self-assessment tools</p>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setActiveAssessment(null)}
+            >
+              Back to Assessments
+            </Button>
+          </div>
+          <EnhancedAuditorAssessment />
+        </div>
+      );
+    }
+
+    if (activeView === 'project-assessment') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Project Assessment</h1>
+              <p className="text-gray-600 mt-2">Project-specific compliance assessment and tracking</p>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setActiveAssessment(null)}
+            >
+              Back to Assessments
+            </Button>
+          </div>
+          <Card>
+            <CardContent className="p-8 text-center">
+              <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Project Assessment Coming Soon</h3>
+              <p className="text-gray-600">
+                This assessment type is currently under development and will be available in a future update.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+  }
+
   const assessmentTypes = [
     {
       id: 'compliance-qa',
@@ -83,6 +154,7 @@ export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
     }
   };
 
+  // Only show the assessment selection page if no specific activeView is provided
   if (activeAssessment === 'compliance-qa') {
     return (
       <div className="space-y-6">
