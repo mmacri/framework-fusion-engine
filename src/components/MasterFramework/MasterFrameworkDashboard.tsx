@@ -10,7 +10,7 @@ import { Search, Filter, Download, MessageSquare, BarChart3, AlertTriangle, Chec
 import { MasterFrameworkRecord, FilterCriteria } from '../../types/masterFramework';
 import { masterListData, tripwireCoreData, alertData } from '../../data/masterFramework';
 import { MasterFrameworkTable } from './MasterFrameworkTable';
-import { CorrelationView } from './CorrelationView';
+import { MasterFrameworkFilters } from './MasterFrameworkFilters';
 import { ComplianceQA } from './ComplianceQA';
 import { AuditorAssessment } from './AuditorAssessment';
 import { FrameworkStats } from './FrameworkStats';
@@ -162,118 +162,15 @@ export function MasterFrameworkDashboard() {
         </div>
       </div>
 
-      {/* Search and Quick Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex gap-4 items-center">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search across all fields..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <div className="flex gap-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="mapped-only"
-                  checked={filters.showMappedOnly || false}
-                  onCheckedChange={(checked) => handleFilterChange('showMappedOnly', checked)}
-                />
-                <label htmlFor="mapped-only" className="text-sm">Mapped Only</label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="gaps-only"
-                  checked={filters.showGapsOnly || false}
-                  onCheckedChange={(checked) => handleFilterChange('showGapsOnly', checked)}
-                />
-                <label htmlFor="gaps-only" className="text-sm">Gaps Only</label>
-              </div>
-              {Object.keys(filters).length > 0 && (
-                <Button variant="ghost" size="sm" onClick={clearFilters}>
-                  Clear Filters
-                </Button>
-              )}
-            </div>
-          </div>
+      <MasterFrameworkFilters
+        data={allData[activeTab] || []}
+        filters={filters}
+        onFiltersChange={setFilters}
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+      />
 
-          {/* Advanced Filters */}
-          {showAdvancedFilters && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Domains</label>
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {allDomains.map(domain => (
-                      <div key={domain} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`domain-${domain}`}
-                          checked={filters.domains?.includes(domain) || false}
-                          onCheckedChange={() => handleMultiSelectFilter('domains', domain)}
-                        />
-                        <label htmlFor={`domain-${domain}`} className="text-sm">{domain}</label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium mb-2 block">CIP Standards</label>
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {allCipStandards.map(standard => (
-                      <div key={standard} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`standard-${standard}`}
-                          checked={filters.cipStandards?.includes(standard) || false}
-                          onCheckedChange={() => handleMultiSelectFilter('cipStandards', standard)}
-                        />
-                        <label htmlFor={`standard-${standard}`} className="text-sm">{standard}</label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Frequency</label>
-                  <div className="space-y-2">
-                    {allFrequencies.map(freq => (
-                      <div key={freq} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`freq-${freq}`}
-                          checked={filters.frequency?.includes(freq) || false}
-                          onCheckedChange={() => handleMultiSelectFilter('frequency', freq)}
-                        />
-                        <label htmlFor={`freq-${freq}`} className="text-sm">{freq}</label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Status</label>
-                  <div className="space-y-2">
-                    {['Enabled', 'Pending Review', 'Not Implemented', 'Disabled'].map(status => (
-                      <div key={status} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`status-${status}`}
-                          checked={filters.status?.includes(status) || false}
-                          onCheckedChange={() => handleMultiSelectFilter('status', status)}
-                        />
-                        <label htmlFor={`status-${status}`} className="text-sm">{status}</label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Framework Tabs */}
+        {/* Framework Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="master" className="flex items-center gap-2">
@@ -332,7 +229,13 @@ export function MasterFrameworkDashboard() {
         </TabsContent>
 
         <TabsContent value="correlation" className="mt-6">
-          <CorrelationView />
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-center">
+                <p className="text-muted-foreground">Correlation view will be available soon</p>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="qa" className="mt-6">
