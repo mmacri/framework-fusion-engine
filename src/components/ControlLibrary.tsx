@@ -1,11 +1,17 @@
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Shield, Filter, BookOpen } from "lucide-react";
+import { Search, Shield, Filter, BookOpen, Link } from "lucide-react";
+import { cisControls } from "@/data/controls/cisControls";
+import { nistControls } from "@/data/controls/nistControls";
+import { pciControls } from "@/data/controls/pciControls";
+import { hipaaControls } from "@/data/controls/hipaaControls";
+import { soxControls } from "@/data/controls/soxControls";
+import { Control } from "@/types/report";
 
 interface ControlLibraryProps {
   selectedFramework: string | null;
@@ -15,55 +21,69 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
+  // Combine all controls from different frameworks
+  const allControls = useMemo(() => {
+    const cisControlsWithFramework = cisControls.map(control => ({
+      ...control,
+      framework: "CIS Controls v8"
+    }));
+    
+    const nistControlsWithFramework = nistControls.map(control => ({
+      ...control,
+      framework: "NIST 800-53"
+    }));
+    
+    const pciControlsWithFramework = pciControls.map(control => ({
+      ...control,
+      framework: "PCI-DSS"
+    }));
+    
+    const hipaaControlsWithFramework = hipaaControls.map(control => ({
+      ...control,
+      framework: "HIPAA Security"
+    }));
+    
+    const soxControlsWithFramework = soxControls.map(control => ({
+      ...control,
+      framework: "SOX ITGC"
+    }));
+
+    return [
+      ...cisControlsWithFramework,
+      ...nistControlsWithFramework,
+      ...pciControlsWithFramework,
+      ...hipaaControlsWithFramework,
+      ...soxControlsWithFramework
+    ];
+  }, []);
+
   const frameworks = {
-    nist: "NIST 800-53",
-    pci: "PCI-DSS",
-    hipaa: "HIPAA Security",
-    sox: "SOX ITGC",
-    iso27001: "ISO 27001"
+    "cis": "CIS Controls v8",
+    "nist": "NIST 800-53",
+    "pci": "PCI-DSS", 
+    "hipaa": "HIPAA Security",
+    "sox": "SOX ITGC"
   };
 
-  const mockControls = [
-    {
-      id: "AC-1",
-      title: "Access Control Policy and Procedures",
-      framework: "NIST 800-53",
-      category: "Access Control",
-      description: "The organization develops, documents, and disseminates access control policy and procedures.",
-      implementation: "Establish comprehensive access control policies and procedures.",
-      priority: "High"
-    },
-    {
-      id: "PCI-7.1",
-      title: "Restrict Access to System Components",
-      framework: "PCI-DSS",
-      category: "Access Control",
-      description: "Limit access to system components and cardholder data by business need-to-know.",
-      implementation: "Implement role-based access controls and regular access reviews.",
-      priority: "Critical"
-    },
-    {
-      id: "164.308(a)(1)",
-      title: "Security Officer",
-      framework: "HIPAA Security",
-      category: "Administrative",
-      description: "Assign responsibility for the development and implementation of security policies.",
-      implementation: "Designate a security officer responsible for HIPAA compliance.",
-      priority: "High"
-    }
-  ];
+  // Get unique categories from all controls
+  const categories = useMemo(() => {
+    const uniqueCategories = [...new Set(allControls.map(control => control.category))];
+    return uniqueCategories.sort();
+  }, [allControls]);
 
-  const filteredControls = mockControls.filter(control => {
-    const matchesSearch = !searchTerm || 
-      control.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      control.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      control.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory = selectedCategory === "all" || control.category === selectedCategory;
-    const matchesFramework = !selectedFramework || control.framework.toLowerCase().includes(selectedFramework);
-    
-    return matchesSearch && matchesCategory && matchesFramework;
-  });
+  const filteredControls = useMemo(() => {
+    return allControls.filter(control => {
+      const matchesSearch = !searchTerm || 
+        control.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        control.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        control.description.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesCategory = selectedCategory === "all" || control.category === selectedCategory;
+      const matchesFramework = !selectedFramework || control.framework.toLowerCase().includes(selectedFramework);
+      
+      return matchesSearch && matchesCategory && matchesFramework;
+    });
+  }, [allControls, searchTerm, selectedCategory, selectedFramework]);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -105,15 +125,15 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
             />
           </div>
           
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-48 bg-white">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="Access Control">Access Control</SelectItem>
-              <SelectItem value="Administrative">Administrative</SelectItem>
-              <SelectItem value="Technical">Technical</SelectItem>
+              {categories.map(category => (
+                <SelectItem key={category} value={category}>{category}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -155,7 +175,7 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
-            <div className="text-2xl font-bold text-purple-600">12</div>
+            <div className="text-2xl font-bold text-purple-600">{categories.length}</div>
             <div className="text-sm text-muted-foreground">Categories</div>
           </CardContent>
         </Card>
@@ -190,15 +210,44 @@ export function ControlLibrary({ selectedFramework }: ControlLibraryProps) {
                   <h4 className="font-medium text-sm mb-1">Implementation Guidance</h4>
                   <p className="text-sm text-muted-foreground">{control.implementation}</p>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    View Details
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    View Mappings
-                  </Button>
-                </div>
+                 {/* Master Framework Mapping */}
+                 {control.masterFrameworkMapping && (
+                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
+                     <h4 className="font-medium text-sm text-blue-800 mb-1">Master Framework Mapping</h4>
+                     <div className="text-sm text-blue-700 space-y-1">
+                       <p><strong>Master ID:</strong> {control.masterFrameworkMapping.masterId}</p>
+                       <p><strong>Correlation:</strong> {control.masterFrameworkMapping.correlationType} ({Math.round(control.masterFrameworkMapping.correlationScore * 100)}%)</p>
+                       {control.masterFrameworkMapping.notes && (
+                         <p><strong>Notes:</strong> {control.masterFrameworkMapping.notes}</p>
+                       )}
+                     </div>
+                   </div>
+                 )}
+                 
+                 {/* Related Controls */}
+                 {control.relatedControls && control.relatedControls.length > 0 && (
+                   <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
+                     <h4 className="font-medium text-sm text-green-800 mb-2">Related Controls</h4>
+                     <div className="flex flex-wrap gap-1">
+                       {control.relatedControls.map((relatedId, idx) => (
+                         <Badge key={idx} variant="outline" className="text-xs bg-white">
+                           {relatedId}
+                         </Badge>
+                       ))}
+                     </div>
+                   </div>
+                 )}
+
+                 <div className="flex gap-2">
+                   <Button variant="outline" size="sm">
+                     <BookOpen className="h-4 w-4 mr-2" />
+                     View Details
+                   </Button>
+                   <Button variant="outline" size="sm">
+                     <Link className="h-4 w-4 mr-2" />
+                     Find Correlations
+                   </Button>
+                 </div>
               </div>
             </CardContent>
           </Card>
