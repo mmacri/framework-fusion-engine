@@ -5,9 +5,16 @@
     <meta charset="utf-8">
     <title>Framework Fusion Engine</title>
     <script type="text/javascript">
-      // GitHub Pages SPA redirect
-      var pathSegmentsToKeep = 0;
+      // GitHub Pages SPA redirect - handles subdirectory deployments
+      var pathSegmentsToKeep = 1; // Keep repo name segment
       var l = window.location;
+      
+      // Check if we're on a custom domain (no subdirectory needed)
+      var isCustomDomain = !l.hostname.includes('github.io');
+      if (isCustomDomain) {
+        pathSegmentsToKeep = 0;
+      }
+      
       l.replace(
         l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
         l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +

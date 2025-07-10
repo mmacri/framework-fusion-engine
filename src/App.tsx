@@ -9,8 +9,10 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Use consistent basename for both development and production
-const basename = '';
+// Dynamic basename for GitHub Pages vs other deployments
+const basename = import.meta.env.PROD && window.location.hostname.includes('github.io') 
+  ? `/${window.location.pathname.split('/')[1]}` 
+  : '';
 
 const App = () => {
   console.log('Framework Fusion Engine - App Loading');

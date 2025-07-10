@@ -10,7 +10,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/framework-fusion-engine/',
+  base: process.env.GITHUB_REPOSITORY ? `/${process.env.GITHUB_REPOSITORY.split('/')[1]}/` : '/framework-fusion-engine/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',

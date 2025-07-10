@@ -35,6 +35,7 @@ jobs:
         run: npx vite build --config vite.config.github.ts
         env:
           NODE_ENV: production
+          GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: Copy static files to dist
         run: |
@@ -83,6 +84,16 @@ jobs:
           else
             echo "⚠ 404.html not found - skipping"
           fi
+          
+          # Handle CNAME for custom domains
+          if [ -f "public/CNAME" ]; then
+            cp public/CNAME dist/CNAME
+            echo "✓ Copied CNAME for custom domain"
+          fi
+          
+          # Create .nojekyll to ensure GitHub Pages serves all files
+          touch dist/.nojekyll
+          echo "✓ Created .nojekyll file"
           
           # List what we actually have in dist
           echo "📁 Final dist structure:"
