@@ -87,67 +87,73 @@ export function ComprehensiveControlMapping() {
         correlations: []
       };
 
-      // Check Tripwire Core correlations
-      const tripwireMatches = tripwireCoreData.filter(tc => 
-        tc.cipStandards === masterControl.cipStandards ||
-        tc.domain.toLowerCase().includes(masterControl.domain.toLowerCase()) ||
-        tc.correlatedRecords?.includes(masterControl.id)
-      );
+      // Check Tripwire Core correlations using master list correlatedRecords
+      if (masterControl.correlatedRecords) {
+        const tripwireMatches = tripwireCoreData.filter(tc => 
+          masterControl.correlatedRecords?.includes(tc.id) ||
+          tc.cipStandards === masterControl.cipStandards ||
+          tc.domain.toLowerCase().includes(masterControl.domain.toLowerCase())
+        );
 
-      tripwireMatches.forEach(match => {
-        correlation.correlations.push({
-          framework: 'Tripwire Core',
-          controlId: match.id,
-          title: match.reportName,
-          mappingType: match.correlatedRecords?.includes(masterControl.id) ? 'Full' : 'Partial',
-          confidence: match.correlatedRecords?.includes(masterControl.id) ? 95 : 75,
-          description: `Domain: ${match.domain}, CIP: ${match.cipStandards}`,
-          gaps: match.cipStandards !== masterControl.cipStandards ? ['Different CIP standards'] : []
+        tripwireMatches.forEach(match => {
+          const isExactMatch = masterControl.correlatedRecords?.includes(match.id);
+          correlation.correlations.push({
+            framework: 'Tripwire Core',
+            controlId: match.id,
+            title: match.reportName,
+            mappingType: isExactMatch ? 'Full' : 'Partial',
+            confidence: isExactMatch ? 95 : 75,
+            description: `Domain: ${match.domain}, CIP: ${match.cipStandards}`,
+            gaps: match.cipStandards !== masterControl.cipStandards ? ['Different CIP standards'] : []
+          });
         });
-      });
+      }
 
-      // Check Alert correlations
-      const alertMatches = alertData.filter(al => 
-        al.cipStandards === masterControl.cipStandards ||
-        al.domain.toLowerCase().includes(masterControl.domain.toLowerCase()) ||
-        al.correlatedRecords?.includes(masterControl.id)
-      );
+      // Check Alert correlations using master list correlatedRecords
+      if (masterControl.correlatedRecords) {
+        const alertMatches = alertData.filter(al => 
+          masterControl.correlatedRecords?.includes(al.id) ||
+          al.cipStandards === masterControl.cipStandards ||
+          al.domain.toLowerCase().includes(masterControl.domain.toLowerCase())
+        );
 
-      alertMatches.forEach(match => {
-        correlation.correlations.push({
-          framework: 'Alert',
-          controlId: match.id,
-          title: match.reportName,
-          mappingType: match.correlatedRecords?.includes(masterControl.id) ? 'Full' : 'Partial',
-          confidence: match.correlatedRecords?.includes(masterControl.id) ? 95 : 80,
-          description: `Domain: ${match.domain}, CIP: ${match.cipStandards}`,
-          gaps: match.frequency !== masterControl.frequency ? ['Different frequency requirements'] : []
+        alertMatches.forEach(match => {
+          const isExactMatch = masterControl.correlatedRecords?.includes(match.id);
+          correlation.correlations.push({
+            framework: 'Alert',
+            controlId: match.id,
+            title: match.reportName,
+            mappingType: isExactMatch ? 'Full' : 'Partial',
+            confidence: isExactMatch ? 95 : 80,
+            description: `Domain: ${match.domain}, CIP: ${match.cipStandards}`,
+            gaps: match.frequency !== masterControl.frequency ? ['Different frequency requirements'] : []
+          });
         });
-      });
+      }
 
-      // Check NIST correlations
-      const nistMatches = nistControls.filter(nist => {
-        const domainMatch = 
+      // Check NIST correlations using master list correlatedRecords
+      if (masterControl.correlatedRecords) {
+        const nistMatches = nistControls.filter(nist => 
+          masterControl.correlatedRecords?.includes(nist.id) ||
           (masterControl.domain.includes('Access') && nist.category === 'Access Control') ||
           (masterControl.domain.includes('AV') && nist.category === 'System and Information Integrity') ||
           (masterControl.domain.includes('Config') && nist.category === 'Configuration Management') ||
-          (masterControl.domain.includes('Network') && nist.category === 'System and Communications Protection');
-        
-        return domainMatch || nist.masterFrameworkMapping?.masterId === masterControl.id;
-      });
+          (masterControl.domain.includes('Network') && nist.category === 'System and Communications Protection')
+        );
 
-      nistMatches.forEach(match => {
-        const isExactMapping = match.masterFrameworkMapping?.masterId === masterControl.id;
-        correlation.correlations.push({
-          framework: 'NIST 800-53',
-          controlId: match.id,
-          title: match.title,
-          mappingType: isExactMapping ? 'Full' : 'Partial',
-          confidence: isExactMapping ? 90 : 65,
-          description: `Category: ${match.category}, Priority: ${match.priority}`,
-          gaps: !isExactMapping ? ['Requires manual validation'] : []
+        nistMatches.forEach(match => {
+          const isExactMatch = masterControl.correlatedRecords?.includes(match.id);
+          correlation.correlations.push({
+            framework: 'NIST 800-53',
+            controlId: match.id,
+            title: match.title,
+            mappingType: isExactMatch ? 'Full' : 'Partial',
+            confidence: isExactMatch ? 90 : 65,
+            description: `Category: ${match.category}, Priority: ${match.priority}`,
+            gaps: !isExactMatch ? ['Requires manual validation'] : []
+          });
         });
-      });
+      }
 
       // Check CIS correlations
       const cisMatches = cisControls.filter(cis => {
