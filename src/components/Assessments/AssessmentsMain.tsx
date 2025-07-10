@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { ComplianceQA } from '../MasterFramework/ComplianceQA';
 import { AuditorAssessment } from '../MasterFramework/AuditorAssessment';
+import { EnhancedComplianceQA } from './EnhancedComplianceQA';
+import { EnhancedAuditorAssessment } from './EnhancedAuditorAssessment';
 
 interface AssessmentsMainProps {
   activeView?: string;
@@ -31,7 +33,7 @@ export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
     {
       id: 'compliance-qa',
       title: 'Compliance Q&A Assessment',
-      description: 'Interactive questionnaire for compliance verification',
+      description: 'Interactive questionnaire based on your framework reports and goals',
       icon: FileText,
       estimatedTime: '20-30 minutes',
       difficulty: 'Intermediate',
@@ -40,7 +42,7 @@ export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
     {
       id: 'auditor-assessment',
       title: 'Auditor Assessment',
-      description: 'Comprehensive auditor review and self-assessment tools',
+      description: 'Comprehensive auditor review with risk analysis based on framework data',
       icon: Users,
       estimatedTime: '45-60 minutes',
       difficulty: 'Advanced',
@@ -96,7 +98,7 @@ export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
             Back to Assessments
           </Button>
         </div>
-        <ComplianceQA />
+        <EnhancedComplianceQA />
       </div>
     );
   }
@@ -116,7 +118,35 @@ export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
             Back to Assessments
           </Button>
         </div>
-        <AuditorAssessment />
+        <EnhancedAuditorAssessment />
+      </div>
+    );
+  }
+
+  if (activeAssessment === 'project-assessment') {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Project Assessment</h1>
+            <p className="text-gray-600 mt-2">Project-specific compliance assessment and tracking</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveAssessment(null)}
+          >
+            Back to Assessments
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="p-8 text-center">
+            <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Project Assessment Coming Soon</h3>
+            <p className="text-gray-600">
+              This assessment type is currently under development and will be available in a future update.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -127,7 +157,7 @@ export function AssessmentsMain({ activeView }: AssessmentsMainProps) {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Compliance Assessments</h1>
         <p className="text-gray-600 mt-2">
-          Choose from our comprehensive assessment tools to evaluate compliance posture and identify gaps
+          Choose from our comprehensive assessment tools to evaluate compliance posture based on your framework data
         </p>
       </div>
 
