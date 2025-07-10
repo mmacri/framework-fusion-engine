@@ -44,6 +44,7 @@ export function AppNavigation({ activeView, onViewChange }: AppNavigationProps) 
   const resourceItems = [
     { id: "use-cases", label: "Use Cases", icon: BookOpen },
     { id: "reports", label: "Reports", icon: Download },
+    { id: "master-framework", label: "Master Framework", icon: BarChart3 },
     { id: "guide", label: "User Guide", icon: HelpCircle }
   ];
 

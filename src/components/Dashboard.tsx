@@ -11,6 +11,7 @@ import { UseCasesLibrary } from "@/components/UseCasesLibrary";
 import { Reports } from "@/components/Reports";
 import { UserGuide } from "@/components/UserGuide";
 import { RouteHandler } from "@/components/RouteHandler";
+import { MasterFrameworkDashboard } from "@/components/MasterFramework/MasterFrameworkDashboard";
 
 export function Dashboard() {
   const [activeView, setActiveView] = useState("overview");
@@ -57,6 +58,8 @@ export function Dashboard() {
         return <Reports />;
       case "guide":
         return <UserGuide />;
+      case "master-framework":
+        return <MasterFrameworkDashboard />;
       default:
         return <DashboardOverview onFrameworkSelect={handleFrameworkSelect} />;
     }
