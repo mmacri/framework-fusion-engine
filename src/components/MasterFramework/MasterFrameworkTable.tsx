@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, Edit, Link, AlertTriangle, CheckCircle, Clock, XCircle, Plus } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Eye, Edit, Link, AlertTriangle, CheckCircle, Clock, XCircle, Plus, Trash2, Trash } from 'lucide-react';
 import { AddRecordDialog } from './AddRecordDialog';
 import { ExcelImportDialog } from './ExcelImportDialog';
 import { MasterFrameworkRecord } from '../../types/masterFramework';
@@ -18,11 +19,15 @@ interface MasterFrameworkTableProps {
   showCorrelations?: boolean;
   onAddRecord?: (record: MasterFrameworkRecord) => void;
   onImportRecords?: (records: MasterFrameworkRecord[]) => void;
+  onDeleteRecord?: (id: string) => void;
+  onDeleteMultiple?: (ids: string[]) => void;
+  onDeleteAll?: () => void;
 }
 
-export function MasterFrameworkTable({ data, framework, showCorrelations = false, onAddRecord, onImportRecords }: MasterFrameworkTableProps) {
+export function MasterFrameworkTable({ data, framework, showCorrelations = false, onAddRecord, onImportRecords, onDeleteRecord, onDeleteMultiple, onDeleteAll }: MasterFrameworkTableProps) {
   const [selectedRecord, setSelectedRecord] = useState<MasterFrameworkRecord | null>(null);
   const [editingRecord, setEditingRecord] = useState<MasterFrameworkRecord | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -68,6 +73,29 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
     setEditingRecord(null);
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(data.map(record => record.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRecord = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds(prev => [...prev, id]);
+    } else {
+      setSelectedIds(prev => prev.filter(selectedId => selectedId !== id));
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (onDeleteMultiple && selectedIds.length > 0) {
+      onDeleteMultiple(selectedIds);
+      setSelectedIds([]);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -77,6 +105,28 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
               <Badge variant="outline">{data.length} Records</Badge>
             </CardTitle>
             <div className="flex gap-2">
+              {selectedIds.length > 0 && (
+                <>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    onClick={handleDeleteSelected}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Selected ({selectedIds.length})
+                  </Button>
+                </>
+              )}
+              {onDeleteAll && data.length > 0 && (
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={onDeleteAll}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Delete All
+                </Button>
+              )}
               {onImportRecords && (
                 <ExcelImportDialog onImport={onImportRecords} />
               )}
@@ -91,6 +141,12 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>
+                  <Checkbox
+                    checked={selectedIds.length === data.length && data.length > 0}
+                    onCheckedChange={handleSelectAll}
+                  />
+                </TableHead>
                 <TableHead>ID</TableHead>
                 <TableHead>Domain</TableHead>
                 <TableHead>CIP Standards</TableHead>
@@ -117,6 +173,12 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
                   key={record.id} 
                   className={record.isMapped ? 'bg-green-50 hover:bg-green-100' : 'hover:bg-gray-50'}
                 >
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedIds.includes(record.id)}
+                      onCheckedChange={(checked) => handleSelectRecord(record.id, checked as boolean)}
+                    />
+                  </TableCell>
                   <TableCell className="font-medium">{record.id}</TableCell>
                   <TableCell>
                     <Badge variant="outline">{record.domain}</Badge>
@@ -236,6 +298,16 @@ export function MasterFrameworkTable({ data, framework, showCorrelations = false
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
+                      
+                      {onDeleteRecord && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => onDeleteRecord(record.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-600" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

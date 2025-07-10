@@ -32,6 +32,21 @@ export function MasterFrameworkDashboard() {
     console.log('Imported records:', newRecords.length);
   };
 
+  const handleDeleteRecord = (id: string) => {
+    setMasterData(prev => prev.filter(record => record.id !== id));
+    console.log('Deleted record:', id);
+  };
+
+  const handleDeleteMultiple = (ids: string[]) => {
+    setMasterData(prev => prev.filter(record => !ids.includes(record.id)));
+    console.log('Deleted records:', ids);
+  };
+
+  const handleDeleteAll = () => {
+    setMasterData([]);
+    console.log('Deleted all records');
+  };
+
   const allData = useMemo(() => ({
     'master': masterData,
     'tripwire': tripwireCoreData,
@@ -215,6 +230,9 @@ export function MasterFrameworkDashboard() {
               showCorrelations={true}
               onAddRecord={handleAddRecord}
               onImportRecords={handleImportRecords}
+              onDeleteRecord={handleDeleteRecord}
+              onDeleteMultiple={handleDeleteMultiple}
+              onDeleteAll={handleDeleteAll}
             />
         </TabsContent>
 
