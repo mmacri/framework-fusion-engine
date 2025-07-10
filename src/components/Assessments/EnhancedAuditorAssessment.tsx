@@ -179,6 +179,7 @@ export function EnhancedAuditorAssessment() {
       domain: selectedDomain,
       totalQuestions: auditorQuestions.length,
       completedQuestions: completedCount,
+      projectType: `${assessmentType.charAt(0).toUpperCase() + assessmentType.slice(1)} Assessment`,
       riskAnalysis,
       assessments: Object.values(assessments).map(assessment => {
         const question = auditorQuestions.find(q => q.id === assessment.questionId);
@@ -187,7 +188,32 @@ export function EnhancedAuditorAssessment() {
           question: question?.question,
           relatedReport: question?.relatedRecord.reportName,
           auditArea: question?.auditArea,
-          riskWeight: question?.riskWeight
+          riskWeight: question?.riskWeight,
+          relatedRecordId: question?.relatedRecord.id,
+          cipStandards: question?.relatedRecord.cipStandards,
+          cipReq: question?.relatedRecord.cipReq,
+          frequency: question?.relatedRecord.frequency,
+          goalObjective: question?.relatedRecord.goalObjective,
+          domain: question?.relatedRecord.domain
+        };
+      }),
+      summary: {
+        compliant: Object.values(assessments).filter(a => a.answer === 'compliant').length,
+        nonCompliant: Object.values(assessments).filter(a => a.answer === 'non-compliant').length,
+        notApplicable: Object.values(assessments).filter(a => a.answer === 'not-applicable').length,
+        needsReview: Object.values(assessments).filter(a => a.answer === 'needs-review').length,
+        overallComplianceScore: completedCount > 0 ? Math.round((Object.values(assessments).filter(a => a.answer === 'compliant').length / completedCount) * 100) : 0
+      },
+      actionItems: Object.values(assessments).filter(a => a.answer === 'non-compliant' || a.answer === 'needs-review').map(a => {
+        const question = auditorQuestions.find(q => q.id === a.questionId);
+        return {
+          reportName: question?.relatedRecord.reportName,
+          domain: question?.relatedRecord.domain,
+          finding: `${question?.relatedRecord.reportName} requires attention`,
+          recommendation: a.remediationPlan || `Review and improve implementation of "${question?.relatedRecord.reportName}"`,
+          priority: a.riskLevel === 'critical' || a.riskLevel === 'high' ? 'High' : 'Medium',
+          assignee: a.assignee || 'TBD',
+          dueDate: a.dueDate || 'TBD'
         };
       })
     };

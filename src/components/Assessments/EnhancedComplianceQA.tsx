@@ -135,21 +135,37 @@ export function EnhancedComplianceQA() {
       domain: selectedDomain,
       totalQuestions: dynamicQuestions.length,
       completedQuestions: assessments.length,
+      projectType: 'Compliance Q&A Assessment',
       assessments: assessments.map(a => {
         const question = dynamicQuestions.find(q => q.id === a.questionId);
         return {
           ...a,
           question: question?.question,
           relatedReport: question?.relatedRecord.reportName,
-          category: question?.category
+          category: question?.category,
+          relatedRecordId: question?.relatedRecord.id,
+          cipStandards: question?.relatedRecord.cipStandards,
+          cipReq: question?.relatedRecord.cipReq,
+          frequency: question?.relatedRecord.frequency,
+          goalObjective: question?.relatedRecord.goalObjective
         };
       }),
       summary: {
         yesAnswers: assessments.filter(a => a.answer === 'yes').length,
         noAnswers: assessments.filter(a => a.answer === 'no').length,
         partialAnswers: assessments.filter(a => a.answer === 'partial').length,
-        unknownAnswers: assessments.filter(a => a.answer === 'unknown').length
-      }
+        unknownAnswers: assessments.filter(a => a.answer === 'unknown').length,
+        complianceScore: assessments.length > 0 ? Math.round((assessments.filter(a => a.answer === 'yes').length / assessments.length) * 100) : 0
+      },
+      recommendationsBasedOnReports: assessments.filter(a => a.answer === 'no' || a.answer === 'partial').map(a => {
+        const question = dynamicQuestions.find(q => q.id === a.questionId);
+        return {
+          reportName: question?.relatedRecord.reportName,
+          domain: question?.relatedRecord.domain,
+          recommendation: `Review and improve implementation of "${question?.relatedRecord.reportName}" based on assessment findings`,
+          priority: question?.relatedRecord.frequency === 'Alert' ? 'High' : 'Medium'
+        };
+      })
     };
 
     const dataStr = JSON.stringify(report, null, 2);

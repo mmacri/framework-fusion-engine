@@ -416,33 +416,109 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
                         ))}
                       </div>
                     </div>
+                    <div className="mt-3 flex gap-2">
+                      <Button size="sm" variant="outline">
+                        <Download className="h-4 w-4 mr-2" />
+                        Export Details
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <FileText className="h-4 w-4 mr-2" />
+                        View Report
+                      </Button>
+                    </div>
                   </div>
                 ))}
+                
+                {/* Generate New Assessment Report Section */}
+                <Card className="border-dashed">
+                  <CardContent className="p-6 text-center">
+                    <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">Generate Assessment Report</h3>
+                    <p className="text-gray-600 mb-4">
+                      Create a new assessment report based on your framework data and goals
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Framework" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="master-list">Master List</SelectItem>
+                          <SelectItem value="tripwire-core">Tripwire Core</SelectItem>
+                          <SelectItem value="alert">Alert</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Domain" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {filterOptions.domains.map(domain => (
+                            <SelectItem key={domain} value={domain}>{domain}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input placeholder="Project Name" />
+                    </div>
+                    <Button>
+                      <FileText className="h-4 w-4 mr-2" />
+                      Generate Report
+                    </Button>
+                  </CardContent>
+                </Card>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="compliance-dashboard" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Compliance Overview</CardTitle>
+                <CardTitle>Framework Statistics</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span>Master List Compliance</span>
-                    <Badge>78% Complete</Badge>
+                    <span>Master List Records</span>
+                    <Badge>{masterListData.filter(r => r.status === 'Enabled').length} Enabled</Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>Tripwire Core Compliance</span>
-                    <Badge>92% Complete</Badge>
+                    <span>Tripwire Core Records</span>
+                    <Badge>{tripwireCoreData.filter(r => r.status === 'Enabled').length} Enabled</Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>Alert Framework Compliance</span>
-                    <Badge>85% Complete</Badge>
+                    <span>Alert Records</span>
+                    <Badge>{alertData.filter(r => r.status === 'Enabled').length} Enabled</Badge>
                   </div>
+                  <div className="flex justify-between items-center border-t pt-4">
+                    <span className="font-semibold">Total Active</span>
+                    <Badge variant="default">{allData.filter(r => r.status === 'Enabled').length}</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Domain Coverage</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {filterOptions.domains.slice(0, 6).map(domain => {
+                    const domainCount = allData.filter(r => r.domain === domain).length;
+                    return (
+                      <div key={domain} className="flex justify-between items-center text-sm">
+                        <span className="truncate">{domain}</span>
+                        <Badge variant="outline">{domainCount}</Badge>
+                      </div>
+                    );
+                  })}
+                  {filterOptions.domains.length > 6 && (
+                    <p className="text-xs text-gray-500 pt-2">
+                      +{filterOptions.domains.length - 6} more domains
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -452,15 +528,57 @@ export function ReportsMain({ activeView }: ReportsMainProps) {
                 <CardTitle>Recent Activity</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 text-sm">
-                  <p>• Q1 2024 Compliance Review completed</p>
-                  <p>• Network Infrastructure Audit in progress</p>
-                  <p>• 15 new controls added to Master List</p>
-                  <p>• 3 assessment reports generated</p>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4 text-blue-600" />
+                    <span>Assessment completed: Q1 2024 Review</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Target className="h-4 w-4 text-green-600" />
+                    <span>Report generated: Access Control Summary</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <FileText className="h-4 w-4 text-orange-600" />
+                    <span>{allData.length} total framework records available</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-4 w-4 text-purple-600" />
+                    <span>Ready for new assessment</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
+
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+              <CardDescription>
+                Generate reports or start assessments based on your framework data
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Button className="h-auto p-4 flex flex-col items-center space-y-2">
+                  <FileText className="h-6 w-6" />
+                  <span>Domain Report</span>
+                </Button>
+                <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                  <BarChart3 className="h-6 w-6" />
+                  <span>Goal Analysis</span>
+                </Button>
+                <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                  <Target className="h-6 w-6" />
+                  <span>Risk Assessment</span>
+                </Button>
+                <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                  <Calendar className="h-6 w-6" />
+                  <span>Schedule Review</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
