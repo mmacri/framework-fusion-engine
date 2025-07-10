@@ -119,22 +119,6 @@ export function DashboardOverview({ onFrameworkSelect }: DashboardOverviewProps)
         </p>
       </div>
 
-      {/* Platform Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {platformStats.map((stat, index) => (
-          <Card key={index}>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <stat.icon className="h-8 w-8 text-primary" />
-                <div>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
 
       {/* Supported Frameworks */}
       <Card>
@@ -210,47 +194,6 @@ export function DashboardOverview({ onFrameworkSelect }: DashboardOverviewProps)
         </CardContent>
       </Card>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <Shield className="h-12 w-12 text-blue-600 mx-auto" />
-              <h3 className="text-lg font-semibold">Explore Controls</h3>
-              <p className="text-muted-foreground">Browse and search security controls across frameworks</p>
-              <Button onClick={() => onFrameworkSelect("cis")} className="w-full">
-                Get Started
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <BarChart3 className="h-12 w-12 text-green-600 mx-auto" />
-              <h3 className="text-lg font-semibold">Gap Analysis</h3>
-              <p className="text-muted-foreground">Identify coverage gaps in your compliance program</p>
-              <Button variant="outline" className="w-full">
-                Run Analysis
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <Users className="h-12 w-12 text-purple-600 mx-auto" />
-              <h3 className="text-lg font-semibold">Join Community</h3>
-              <p className="text-muted-foreground">Contribute to the collaborative knowledge base</p>
-              <Button variant="outline" className="w-full">
-                Learn More
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }
